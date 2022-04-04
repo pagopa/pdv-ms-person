@@ -1,12 +1,8 @@
 package it.pagopa.pdv.person.connector.dao.config;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.datamodeling.ConversionSchemas;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverterFactory;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
@@ -34,29 +30,22 @@ class DaoConfig {
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(dynamoDBEndpoint, region))
+//                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(dynamoDBEndpoint, region))
                 .build();
     }
 
 
-//    @Bean
-//    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB) {
-//        return new DynamoDBMapper(amazonDynamoDB);
-//    }
-
     @Bean
     public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB) {
-//        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB, new DynamoDBMapperConfig.Builder()
-//                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE)
-//                .withPaginationLoadingStrategy(DynamoDBMapperConfig.PaginationLoadingStrategy.EAGER_LOADING)
-//                .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNameReplacement(PersonConnectorImpl.TABLE_NAME))
-//                .withTableNameResolver(DynamoDBMapperConfig.DefaultTableNameResolver.INSTANCE)
-//                .withTypeConverterFactory(DynamoDBTypeConverterFactory.standard())
-//                .build());
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
-        dynamoDBLocalSetup(amazonDynamoDB, dynamoDBMapper);
-        return dynamoDBMapper;
+        return new DynamoDBMapper(amazonDynamoDB);
     }
+
+//    @Bean
+//    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB) {
+//        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
+//        dynamoDBLocalSetup(amazonDynamoDB, dynamoDBMapper);
+//        return dynamoDBMapper;
+//    }
 
 
     @Bean
@@ -65,7 +54,8 @@ class DaoConfig {
     }
 
 
-    public void dynamoDBLocalSetup(AmazonDynamoDB client, DynamoDBMapper dynamoDBMapper) {
+    // FIXME remove
+    private void dynamoDBLocalSetup(AmazonDynamoDB client, DynamoDBMapper dynamoDBMapper) {
         try {
             ListTablesResult tablesResult = client.listTables();
             if (!tablesResult.getTableNames().contains(PersonConnectorImpl.TABLE_NAME)) {
