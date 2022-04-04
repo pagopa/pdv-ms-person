@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 })
 @EnableOpenApi
 @EnableWebMvc
-@ComponentScan(basePackages = "it.pagopa.pdv.tokenizer.web.controller")
+@ComponentScan(basePackages = "it.pagopa.pdv.person.web.controller")
 @TestPropertySource(locations = "classpath:config/application.yml")
 class SwaggerConfigTest {
 

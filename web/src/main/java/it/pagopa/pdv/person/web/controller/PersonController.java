@@ -34,14 +34,16 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.ms-tokenizer.tokens.api.getUserById.summary}",
-            notes = "${swagger.ms-tokenizer.tokens.api.getUserById.notes}")
+    @ApiOperation(value = "${swagger.people.api.getUserById.summary}",
+            notes = "${swagger.people.api.getUserById.notes}")
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PersonResource getUserById(@ApiParam("${swagger.ms-tokenizer.token.model.id}")
+    public PersonResource getUserById(@ApiParam("${swagger.model.person.id}")
                                       @PathVariable("id")
                                               UUID id,
-                                      @RequestParam boolean isNamespaced) {
+                                      @ApiParam("${swagger.model.person.isNamespaced}")
+                                      @RequestParam("isNamespaced")
+                                              boolean isNamespaced) {
         PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced);
         PersonResource personResource = new PersonResource();
         personResource.setId(personDetailsOperations.getId());
@@ -60,11 +62,11 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.ms-tokenizer.tokens.api.saveDetails.summary}",
-            notes = "${swagger.ms-tokenizer.tokens.api.saveDetails.notes}")
+    @ApiOperation(value = "${swagger.people.api.saveDetails.summary}",
+            notes = "${swagger.people.api.saveDetails.notes}")
     @PutMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void saveDetails(@ApiParam("${swagger.ms-tokenizer.token.model.id}")
+    public void saveDetails(@ApiParam("${swagger.model.person.id}")
                             @PathVariable("id")
                                     UUID id,
                             @RequestBody
@@ -86,14 +88,14 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.ms-tokenizer.tokens.api.saveNamespacedId.summary}",
-            notes = "${swagger.ms-tokenizer.tokens.api.saveNamespacedId.notes}")
+    @ApiOperation(value = "${swagger.people.api.saveNamespacedId.summary}",
+            notes = "${swagger.people.api.saveNamespacedId.notes}")
     @PutMapping(value = "{id}/namespace/{namespace}")
     @ResponseStatus(HttpStatus.OK)
-    public void saveNamespacedId(@ApiParam("${swagger.ms-tokenizer.token.model.id}")
+    public void saveNamespacedId(@ApiParam("${swagger.model.person.id}")
                                  @PathVariable("id")
                                          UUID id,
-                                 @ApiParam("${swagger.ms-tokenizer.token.model.id}")
+                                 @ApiParam("${swagger.model.person.namespace}")
                                  @PathVariable("namespace")
                                          String namespace,
                                  @RequestBody
@@ -106,11 +108,11 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.ms-tokenizer.tokens.api.patchSave.summary}",
-            notes = "${swagger.ms-tokenizer.tokens.api.patchSave.notes}")
+    @ApiOperation(value = "${swagger.people.api.patchSave.summary}",
+            notes = "${swagger.people.api.patchSave.notes}")
     @PatchMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void patchSave(@ApiParam("${swagger.ms-tokenizer.token.model.id}")
+    public void patchSave(@ApiParam("${swagger.model.person.id}")
                           @PathVariable("id")
                                   UUID id,
                           @RequestBody
@@ -132,25 +134,25 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.ms-tokenizer.tokens.api.deletePerson.summary}",
-            notes = "${swagger.ms-tokenizer.tokens.api.deletePerson.notes}")
+    @ApiOperation(value = "${swagger.people.api.deletePerson.summary}",
+            notes = "${swagger.people.api.deletePerson.notes}")
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePerson(@ApiParam("${swagger.ms-tokenizer.token.model.id}")
+    public void deletePerson(@ApiParam("${swagger.model.person.id}")
                              @PathVariable("id")
                                      UUID id) {
         personService.deleteById(id.toString());
     }
 
 
-    @ApiOperation(value = "${swagger.ms-tokenizer.tokens.api.deletePersonNamespace.summary}",
-            notes = "${swagger.ms-tokenizer.tokens.api.deletePersonNamespace.notes}")
+    @ApiOperation(value = "${swagger.people.api.deletePersonNamespace.summary}",
+            notes = "${swagger.people.api.deletePersonNamespace.notes}")
     @DeleteMapping("{id}/namespace/{namespace}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePersonNamespace(@ApiParam("${swagger.ms-tokenizer.token.model.id}")
+    public void deletePersonNamespace(@ApiParam("${swagger.model.person.id}")
                                       @PathVariable("id")
                                               UUID id,
-                                      @ApiParam("${swagger.ms-tokenizer.token.model.id}")
+                                      @ApiParam("${swagger.model.person.namespace}")
                                       @PathVariable("namespace")
                                               String namespace) {
         personService.deleteById(id.toString(), namespace);

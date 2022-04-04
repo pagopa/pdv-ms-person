@@ -1,336 +1,294 @@
 {
-  "openapi" : "3.0.3",
-  "info" : {
-    "title" : "Api Documentation",
-    "description" : "Api Documentation",
-    "termsOfService" : "urn:tos",
-    "contact" : { },
-    "license" : {
-      "name" : "Apache 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
-    },
-    "version" : "1.0"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "pdv-ms-person",
+    "description": "People API documentation",
+    "version": "1.0-SNAPSHOT"
   },
-  "servers" : [ {
-    "url" : "http://localhost:80",
-    "description" : "Inferred Url"
-  } ],
-  "tags" : [ {
-    "name" : "people",
-    "description" : "Person Controller"
-  }, {
-    "name" : "tokens",
-    "description" : "Tokenizer Controller"
-  } ],
-  "paths" : {
-    "/people" : {
-      "put" : {
-        "tags" : [ "people" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.updateOrCreateUserByExternalId.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.updateOrCreateUserByExternalId.notes}",
-        "operationId" : "updateOrCreateUserByExternalIdUsingPUT",
+  "servers": [
+    {
+      "url": "http://localhost:80",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "people",
+      "description": "Person operations"
+    }
+  ],
+  "paths": {
+    "/people/{id}": {
+      "get": {
+        "tags": [
+          "people"
+        ],
+        "summary": "Get user details by internal UUID",
+        "description": "notes",
+        "operationId": "getUserByIdUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "${swagger.model.person.id}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "isNamespaced",
+            "in": "query",
+            "description": "${swagger.model.person.isNamespaced}",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonResource"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "people"
+        ],
+        "summary": "Update user details by internal (global) UUID",
+        "description": "notes",
+        "operationId": "saveDetailsUsingPUT",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "${swagger.model.person.id}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/UserDto"
+                "$ref": "#/components/schemas/SavePersonDto"
               }
             }
           }
         },
         "responses" : {
           "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UserInternalId"
-                }
-              }
-            }
+            "description": "OK"
           },
           "201" : {
             "description" : "Created"
           },
-          "401" : {
-            "description" : "Unauthorized"
+          "401": {
+            "description": "Unauthorized"
           },
-          "403" : {
-            "description" : "Forbidden"
+          "403": {
+            "description": "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         }
-      }
-    },
-    "/people/search" : {
-      "post" : {
-        "tags" : [ "people" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.searchUser.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.searchUser.notes}",
-        "operationId" : "searchUserUsingPOST",
-        "parameters" : [ {
-          "name" : "fields",
-          "in" : "query",
-          "description" : "${swagger.ms-tokenizer.token.model.fields}",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/UserSearchDto"
-              }
+      },
+      "delete": {
+        "tags": [
+          "people"
+        ],
+        "summary": "Delete user details by internal (global) UUID",
+        "description": "notes",
+        "operationId": "deletePersonUsingDELETE",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "${swagger.model.person.id}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
-          }
-        },
+          } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UserResource"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "201" : {
-            "description" : "Created"
+          "401": {
+            "description": "Unauthorized"
           },
-          "401" : {
-            "description" : "Unauthorized"
-          },
-          "403" : {
-            "description" : "Forbidden"
-          },
-          "404" : {
-            "description" : "Not Found"
-          }
-        }
-      }
-    },
-    "/people/{id}" : {
-      "get" : {
-        "tags" : [ "people" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.getUserByInternalId.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.getUserByInternalId.notes}",
-        "operationId" : "getUserByInternalIdUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "${swagger.ms-tokenizer.token.model.id}",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UserResource"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized"
-          },
-          "403" : {
-            "description" : "Forbidden"
-          },
-          "404" : {
-            "description" : "Not Found"
+          "403": {
+            "description": "Forbidden"
           }
         }
       },
       "patch" : {
-        "tags" : [ "people" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.updateUserFieldsByInternalId.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.updateUserFieldsByInternalId.notes}",
-        "operationId" : "updateUserFieldsByInternalIdUsingPATCH",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "${swagger.ms-tokenizer.token.model.id}",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
+        "tags": [
+          "people"
+        ],
+        "summary": "Upsert user details by internal (global) UUID",
+        "description": "notes",
+        "operationId": "patchSaveUsingPATCH",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "${swagger.model.person.id}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/MutableUserFieldsDto"
+                "$ref": "#/components/schemas/SavePersonDto"
               }
             }
           }
         },
         "responses" : {
-          "204" : {
-            "description" : "No Content"
+          "200": {
+            "description": "OK"
           },
-          "401" : {
-            "description" : "Unauthorized"
+          "204": {
+            "description": "No Content"
           },
-          "403" : {
-            "description" : "Forbidden"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
     },
-    "/tokens" : {
-      "put" : {
-        "tags" : [ "tokens" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.save.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.save.notes}",
-        "operationId" : "saveUsingPUT",
-        "parameters" : [ {
-          "name" : "namespace",
-          "in" : "header",
-          "description" : "${swagger.ms-tokenizer.token.model.namespace}",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "enum" : [ "GLOBAL", "IO", "PN", "SELFCARE" ]
+    "/people/{id}/namespace/{namespace}": {
+      "put": {
+        "tags": [
+          "people"
+        ],
+        "summary": "Upsert user namespace by internal (global) UUID",
+        "description": "notes",
+        "operationId": "saveNamespacedIdUsingPUT",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "${swagger.model.person.id}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "namespace",
+            "in": "path",
+            "description": "${swagger.model.person.namespace}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
+        ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/CreateTokenDto"
+                "$ref": "#/components/schemas/SavePersonNamespaceDto"
               }
             }
           }
         },
         "responses" : {
           "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/TokenResource"
-                }
-              }
-            }
+            "description": "OK"
           },
           "201" : {
             "description" : "Created"
           },
-          "401" : {
-            "description" : "Unauthorized"
+          "401": {
+            "description": "Unauthorized"
           },
-          "403" : {
-            "description" : "Forbidden"
+          "403": {
+            "description": "Forbidden"
           },
-          "404" : {
-            "description" : "Not Found"
+          "404": {
+            "description": "Not Found"
           }
         }
-      }
-    },
-    "/tokens/search" : {
-      "post" : {
-        "tags" : [ "tokens" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.getUserByInternalId.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.getUserByInternalId.notes}",
-        "operationId" : "searchTokenUsingPOST",
-        "parameters" : [ {
-          "name" : "namespace",
-          "in" : "header",
-          "description" : "${swagger.ms-tokenizer.token.model.namespace}",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "enum" : [ "GLOBAL", "IO", "PN", "SELFCARE" ]
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FilterCriteria"
-              }
+      },
+      "delete": {
+        "tags": [
+          "people"
+        ],
+        "summary": "Delete user namespace by internal (global) UUID",
+        "description": "notes",
+        "operationId": "deletePersonNamespaceUsingDELETE",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "${swagger.model.person.id}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "namespace",
+            "in": "path",
+            "description": "${swagger.model.person.namespace}",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/TokenResource"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
-          "201" : {
-            "description" : "Created"
+          "401": {
+            "description": "Unauthorized"
           },
-          "401" : {
-            "description" : "Unauthorized"
-          },
-          "403" : {
-            "description" : "Forbidden"
-          },
-          "404" : {
-            "description" : "Not Found"
-          }
-        }
-      }
-    },
-    "/tokens/{token}/pii" : {
-      "get" : {
-        "tags" : [ "tokens" ],
-        "summary" : "${swagger.ms-tokenizer.tokens.api.getUserByInternalId.summary}",
-        "description" : "${swagger.ms-tokenizer.tokens.api.getUserByInternalId.notes}",
-        "operationId" : "findPiiUsingGET",
-        "parameters" : [ {
-          "name" : "token",
-          "in" : "path",
-          "description" : "${swagger.tokenizer.token.model.token}",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PiiResource"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized"
-          },
-          "403" : {
-            "description" : "Forbidden"
-          },
-          "404" : {
-            "description" : "Not Found"
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
@@ -338,133 +296,61 @@
   },
   "components" : {
     "schemas" : {
-      "CreateTokenDto" : {
-        "title" : "CreateTokenDto",
-        "required" : [ "pii" ],
-        "type" : "object",
-        "properties" : {
-          "pii" : {
-            "type" : "string",
-            "description" : "${swagger.tokenizer.token.model.pii}"
+      "PersonResource": {
+        "title": "PersonResource",
+        "type": "object",
+        "properties": {
+          "familyName": {
+            "type": "string"
+          },
+          "givenName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "workContacts": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkContactResource"
+            }
           }
         }
       },
-      "FilterCriteria" : {
-        "title" : "FilterCriteria",
-        "required" : [ "pii" ],
-        "type" : "object",
-        "properties" : {
-          "pii" : {
-            "type" : "string",
-            "description" : "${swagger.tokenizer.token.model.pii}"
+      "SavePersonDto": {
+        "title": "SavePersonDto",
+        "type": "object",
+        "properties": {
+          "familyName": {
+            "type": "string"
+          },
+          "givenName": {
+            "type": "string"
+          },
+          "workContacts": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkContactResource"
+            }
           }
         }
       },
-      "MutableUserFieldsDto" : {
-        "title" : "MutableUserFieldsDto",
-        "type" : "object",
-        "properties" : {
-          "cfields" : {
-            "type" : "object"
-          },
-          "hcFields" : {
-            "type" : "object",
-            "description" : "Certified source of information"
+      "SavePersonNamespaceDto": {
+        "title": "SavePersonNamespaceDto",
+        "type": "object",
+        "properties": {
+          "namespacedId": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },
-      "PiiResource" : {
-        "title" : "PiiResource",
-        "required" : [ "pii" ],
-        "type" : "object",
-        "properties" : {
-          "pii" : {
-            "type" : "string",
-            "description" : "${swagger.tokenizer.token.model.pii}"
-          }
-        }
-      },
-      "TokenResource" : {
-        "title" : "TokenResource",
-        "required" : [ "token" ],
-        "type" : "object",
-        "properties" : {
-          "rootToken" : {
-            "type" : "string",
-            "description" : "${swagger.tokenizer.token.model.rootToken}",
-            "format" : "uuid"
-          },
-          "token" : {
-            "type" : "string",
-            "description" : "${swagger.tokenizer.token.model.token}",
-            "format" : "uuid"
-          }
-        }
-      },
-      "UserDto" : {
-        "title" : "UserDto",
-        "required" : [ "certification", "externalId" ],
-        "type" : "object",
-        "properties" : {
-          "certification" : {
-            "type" : "string",
-            "description" : "Certified source of information",
-            "enum" : [ "NONE", "SPID" ]
-          },
-          "cfields" : {
-            "type" : "object"
-          },
-          "externalId" : {
-            "type" : "string",
-            "description" : "User external id"
-          },
-          "hcFields" : {
-            "type" : "object",
-            "description" : "Certified source of information"
-          }
-        }
-      },
-      "UserInternalId" : {
-        "title" : "UserInternalId",
-        "required" : [ "internalId" ],
-        "type" : "object",
-        "properties" : {
-          "internalId" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }
-      },
-      "UserResource" : {
-        "title" : "UserResource",
-        "required" : [ "certification", "externalId", "internalId" ],
-        "type" : "object",
-        "properties" : {
-          "certification" : {
-            "type" : "string"
-          },
-          "cfields" : {
-            "type" : "object"
-          },
-          "externalId" : {
-            "type" : "string"
-          },
-          "hcFields" : {
-            "type" : "object"
-          },
-          "internalId" : {
-            "type" : "string"
-          }
-        }
-      },
-      "UserSearchDto" : {
-        "title" : "UserSearchDto",
-        "required" : [ "externalId" ],
-        "type" : "object",
-        "properties" : {
-          "externalId" : {
-            "type" : "string",
-            "description" : "User external id"
+      "WorkContactResource": {
+        "title": "WorkContactResource",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
           }
         }
       }

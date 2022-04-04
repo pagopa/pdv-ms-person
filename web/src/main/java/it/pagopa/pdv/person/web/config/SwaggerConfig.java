@@ -8,9 +8,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
@@ -53,29 +55,23 @@ class SwaggerConfig {
     @Bean
     public Docket swaggerSpringPlugin() {
         return (new Docket(DocumentationType.OAS_30))
+                .apiInfo(new ApiInfoBuilder()
+                        .title(environment.getProperty("swagger.title", environment.getProperty("spring.application.name")))
+                        .description(environment.getProperty("swagger.description", "Api and Models"))
+                        .version(environment.getProperty("swagger.version", environment.getProperty("spring.application.version")))
+                        .build())
                 .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.pdv.person.web.controller")).build()
-                .directModelSubstitute(LocalTime.class, String.class);
-    }
-
-//    @Bean
-//    public Docket swaggerSpringPlugin() {
-//        return (new Docket(DocumentationType.OAS_30))
-//                .apiInfo(new ApiInfoBuilder()
-//                        .title(environment.getProperty("swagger.title", environment.getProperty("spring.application.name")))
-//                        .description(environment.getProperty("swagger.description", "Api and Models"))
-//                        .version(environment.getProperty("swagger.version", environment.getProperty("spring.application.version")))
-//                        .build())
-//                .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.pdv.tokenizer.web.controller")).build()
-//                .tags(new Tag("users", environment.getProperty("swagger.users.api.description")))//TODO change Name
-//                .directModelSubstitute(LocalTime.class, String.class)
+                .tags(new Tag("people", environment.getProperty("swagger.people.api.description")))
+                .directModelSubstitute(LocalTime.class, String.class)
 //                .securityContexts(Collections.singletonList(SecurityContext.builder()
 //                        .securityReferences(defaultAuth())
 //                        .build()))
 //                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER
 //                        .name(AUTH_SCHEMA_NAME)
 //                        .description(environment.getProperty("swagger.security.schema.bearer.description"))
-//                        .build()));
-//    }
+//                        .build()))
+                ;
+    }
 
 
     private List<SecurityReference> defaultAuth() {
