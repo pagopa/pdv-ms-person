@@ -1,14 +1,12 @@
 package it.pagopa.pdv.person.connector.dao;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperTableModel;
 import com.amazonaws.services.dynamodbv2.document.*;
-import com.amazonaws.services.dynamodbv2.document.spec.BatchWriteItemSpec;
-import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder;
 import com.amazonaws.services.dynamodbv2.xspec.UpdateAction;
 import it.pagopa.pdv.person.connector.PersonConnector;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
 
@@ -31,6 +28,7 @@ import static com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
 public class PersonConnectorImpl implements PersonConnector {
 
     public static final String TABLE_NAME = "Person";
+    public static final List<String> M_FIELD_WHITELIST = List.of(PersonDetails.Fields.workContacts + ".");
 
     private final DynamoDBMapper dynamoDBMapper;
     private final DynamoDB dynamoDB;
@@ -90,32 +88,81 @@ public class PersonConnectorImpl implements PersonConnector {
     @Override
     public void patch(PersonDetailsOperations personDetails) {
         PersonDetails person = new PersonDetails(personDetails);
-//        dynamoDBMapper.save(person, new DynamoDBMapperConfig.Builder()
-//                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES)
-////                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.APPEND_SET)
-//                .build());
-
-        final Map<String, AttributeValueUpdate> updateValues = new HashMap<>();
         DynamoDBMapperTableModel<PersonDetails> tableModel = dynamoDBMapper.getTableModel(PersonDetails.class);
         Map<String, AttributeValue> attributeValueMap = tableModel.convert(person);
         tableModel.convertKey(person).keySet().forEach(attributeValueMap::remove);
-
-        ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
-        test2(expressionSpecBuilder, attributeValueMap, "");
-        try {
-            table.updateItem(new UpdateItemSpec()
-                    .withPrimaryKey(tableModel.hashKey().name(), tableModel.hashKey().get(person), tableModel.rangeKey().name(), tableModel.rangeKey().get(person))
-                    .withExpressionSpec(expressionSpecBuilder.buildForUpdate()));
-        } catch (AmazonDynamoDBException e) {
-            if ("ValidationException".equals(e.getErrorCode())) {
-
+        PrimaryKey primaryKey = new PrimaryKey(tableModel.hashKey().name(),
+                tableModel.hashKey().get(person),
+                tableModel.rangeKey().name(),
+                tableModel.rangeKey().get(person));
+        if (attributeValueMap.isEmpty()) {
+            table.putItem(new Item().withPrimaryKey(primaryKey));
+        } else {
+            ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
+            Deque<UpdateAction> missingNodes = new ArrayDeque<>();
+            setUpdateActions(expressionSpecBuilder, missingNodes, attributeValueMap, "");
+            UpdateItemSpec updateItemSpec = new UpdateItemSpec()
+                    .withPrimaryKey(primaryKey)
+                    .withExpressionSpec(expressionSpecBuilder.buildForUpdate());
+            try {
+                table.updateItem(updateItemSpec);
+            } catch (AmazonDynamoDBException e) {
+                if ("ValidationException".equals(e.getErrorCode())) {
+                    // create tree parent nodes
+                    createParentNodes(primaryKey, missingNodes);
+                    // retry failed update
+                    table.updateItem(updateItemSpec);
+                }
+                System.out.println();
             }
-            System.out.println();
         }
     }
 
 
-    private void test2(ExpressionSpecBuilder expressionBuilder, Map<String, AttributeValue> attributeValueMap, String attributeNamePrefix) {
+    private void createParentNodes(PrimaryKey primaryKey, Deque<UpdateAction> backwardsMissingNodes) {
+        Deque<UpdateAction> forwardsMissingNodes = createParentNodesBackwards(primaryKey, backwardsMissingNodes);
+        createParentNodesForwards(primaryKey, forwardsMissingNodes);
+    }
+
+    private void createParentNodesForwards(PrimaryKey primaryKey, Deque<UpdateAction> forwardsMissingNodes) {
+        while (forwardsMissingNodes.peek() != null) {
+            // try to create parent node (forwards)
+            UpdateAction updateAction = forwardsMissingNodes.pop();
+            try {
+                doUpdateItem(primaryKey, updateAction);
+            } catch (AmazonDynamoDBException ex) {
+                // do nothing
+                // if the node already exists, it means that other threads have added it
+            }
+        }
+    }
+
+    private Deque<UpdateAction> createParentNodesBackwards(PrimaryKey primaryKey, Deque<UpdateAction> backwardsMissingNodes) {
+        Deque<UpdateAction> forwardsMissingNodes = new ArrayDeque<>();
+        while (backwardsMissingNodes.peek() != null) {
+            // try to create parent node (backwards)
+            UpdateAction updateAction = backwardsMissingNodes.pop();
+            try {
+                doUpdateItem(primaryKey, updateAction);
+                break;
+            } catch (AmazonDynamoDBException ex) {
+                // tree parent node already exists, try with the next one
+                forwardsMissingNodes.push(updateAction);
+            }
+        }
+        return forwardsMissingNodes;
+    }
+
+    private void doUpdateItem(PrimaryKey primaryKey, UpdateAction updateAction) {
+        table.updateItem(new UpdateItemSpec()
+                .withPrimaryKey(primaryKey)
+                .withExpressionSpec(new ExpressionSpecBuilder()
+                        .addUpdate(updateAction)
+                        .buildForUpdate()));
+    }
+
+
+    private void setUpdateActions(ExpressionSpecBuilder expressionBuilder, Deque<UpdateAction> missingNodes, Map<String, AttributeValue> attributeValueMap, String attributeNamePrefix) {
         attributeValueMap.forEach((attributeName, attributeValue) -> {
             if (attributeValue.getBS() != null) {
                 expressionBuilder.addUpdate(BS(attributeNamePrefix + attributeName).append(attributeValue.getBS().toArray(new ByteBuffer[attributeValue.getBS().size()])));
@@ -124,8 +171,12 @@ public class PersonConnectorImpl implements PersonConnector {
             } else if (attributeValue.getSS() != null) {
                 expressionBuilder.addUpdate(SS(attributeNamePrefix + attributeName).append(new HashSet<>(attributeValue.getSS())));
             } else if (attributeValue.getM() != null) {
-//                expressionBuilder.addUpdate(M(attributeNamePrefix + attributeName).set(M(attributeNamePrefix + attributeName).ifNotExists(Map.of())));
-                test2(expressionBuilder, attributeValue.getM(), attributeNamePrefix + attributeName + ".");
+                if (M_FIELD_WHITELIST.contains(attributeNamePrefix)) {
+                    expressionBuilder.addUpdate(M(attributeNamePrefix + attributeName).set(attributeValue.getM()));
+                } else {
+                    missingNodes.push(M(attributeNamePrefix + attributeName).set(M(attributeNamePrefix + attributeName).ifNotExists(Map.of())));
+                    setUpdateActions(expressionBuilder, missingNodes, attributeValue.getM(), attributeNamePrefix + attributeName + ".");
+                }
             } else {
                 expressionBuilder.addUpdate(S(attributeNamePrefix + attributeName).set(attributeValue.getS()));
             }

@@ -7,6 +7,7 @@ import it.pagopa.pdv.person.connector.dao.converter.LocalDateConverter;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
+@FieldNameConstants(onlyExplicitlyIncluded = true)
 @DynamoDBTable(tableName = PersonConnectorImpl.TABLE_NAME)
 public class PersonDetails implements PersonDetailsOperations {
 
@@ -58,6 +60,7 @@ public class PersonDetails implements PersonDetailsOperations {
     private LocalDate birthDate;
 
     @DynamoDBAttribute
+    @FieldNameConstants.Include
     private Map<String, WorkContact> workContacts;
 
 
