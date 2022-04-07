@@ -116,7 +116,8 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "deprecated": true
       },
       "delete": {
         "tags": [
@@ -150,7 +151,7 @@
           }
         }
       },
-      "patch" : {
+      "patch": {
         "tags": [
           "people"
         ],

@@ -54,6 +54,7 @@ public class PersonController {
             notes = "${swagger.people.api.saveDetails.notes}")
     @PutMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Deprecated
     public void saveDetails(@ApiParam("${swagger.model.person.id}")
                             @PathVariable("id")
                                     UUID id,

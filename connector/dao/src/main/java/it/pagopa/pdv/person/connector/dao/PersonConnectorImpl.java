@@ -2,11 +2,13 @@ package it.pagopa.pdv.person.connector.dao;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperTableModel;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTableMapper;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder;
 import com.amazonaws.services.dynamodbv2.xspec.UpdateAction;
 import it.pagopa.pdv.person.connector.PersonConnector;
@@ -35,6 +37,7 @@ public class PersonConnectorImpl implements PersonConnector {
     private final DynamoDB dynamoDB;
     private final Table table;
     private final DynamoDBMapperTableModel<PersonDetails> personDetailsModel;
+    private final DynamoDBTableMapper<PersonDetails, String, String> personDetailsTableMapper;
 
 
     @Autowired
@@ -43,6 +46,7 @@ public class PersonConnectorImpl implements PersonConnector {
         this.dynamoDB = dynamoDB;
         table = dynamoDB.getTable(TABLE_NAME);
         personDetailsModel = dynamoDBMapper.getTableModel(PersonDetails.class);
+        personDetailsTableMapper = dynamoDBMapper.newTableMapper(PersonDetails.class);
     }
 
 
@@ -98,7 +102,12 @@ public class PersonConnectorImpl implements PersonConnector {
                 personDetailsModel.rangeKey().name(),
                 personDetailsModel.rangeKey().get(person));
         if (attributeValueMap.isEmpty()) {
-            table.putItem(new Item().withPrimaryKey(primaryKey));
+            try {
+                personDetailsTableMapper.saveIfNotExists(personDetailsModel.createKey(person.getId(), person.getType()));
+            } catch (ConditionalCheckFailedException e) {
+                // do nothing
+            }
+//            table.putItem(new Item().withPrimaryKey(primaryKey));FIXME: remove
         } else {
             ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
             Deque<UpdateAction> missingNodes = new ArrayDeque<>();
@@ -115,7 +124,6 @@ public class PersonConnectorImpl implements PersonConnector {
                     // retry failed update
                     table.updateItem(updateItemSpec);
                 }
-                System.out.println();
             }
         }
     }
