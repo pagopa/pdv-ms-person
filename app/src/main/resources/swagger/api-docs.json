@@ -89,22 +89,23 @@
               "type": "string",
               "format": "uuid"
             }
-          } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
                 "$ref": "#/components/schemas/SavePersonDto"
               }
             }
           }
         },
-        "responses" : {
-          "200" : {
+        "responses": {
+          "200": {
             "description": "OK"
           },
-          "201" : {
-            "description" : "Created"
+          "201": {
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -135,8 +136,9 @@
               "type": "string",
               "format": "uuid"
             }
-          } ],
-        "responses" : {
+          }
+        ],
+        "responses": {
           "204": {
             "description": "No Content"
           },
@@ -166,17 +168,18 @@
               "type": "string",
               "format": "uuid"
             }
-          } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
                 "$ref": "#/components/schemas/SavePersonDto"
               }
             }
           }
         },
-        "responses" : {
+        "responses": {
           "200": {
             "description": "OK"
           },
@@ -223,21 +226,21 @@
             }
           }
         ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
                 "$ref": "#/components/schemas/SavePersonNamespaceDto"
               }
             }
           }
         },
-        "responses" : {
-          "200" : {
+        "responses": {
+          "200": {
             "description": "OK"
           },
-          "201" : {
-            "description" : "Created"
+          "201": {
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -280,7 +283,7 @@
             }
           }
         ],
-        "responses" : {
+        "responses": {
           "204": {
             "description": "No Content"
           },

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -33,6 +34,7 @@ public class PersonConnectorImpl implements PersonConnector {
     private final DynamoDBMapper dynamoDBMapper;
     private final DynamoDB dynamoDB;
     private final Table table;
+    private final DynamoDBMapperTableModel<PersonDetails> personDetailsModel;
 
 
     @Autowired
@@ -40,6 +42,7 @@ public class PersonConnectorImpl implements PersonConnector {
         this.dynamoDBMapper = dynamoDBMapper;
         this.dynamoDB = dynamoDB;
         table = dynamoDB.getTable(TABLE_NAME);
+        personDetailsModel = dynamoDBMapper.getTableModel(PersonDetails.class);
     }
 
 
@@ -88,13 +91,12 @@ public class PersonConnectorImpl implements PersonConnector {
     @Override
     public void patch(PersonDetailsOperations personDetails) {
         PersonDetails person = new PersonDetails(personDetails);
-        DynamoDBMapperTableModel<PersonDetails> tableModel = dynamoDBMapper.getTableModel(PersonDetails.class);
-        Map<String, AttributeValue> attributeValueMap = tableModel.convert(person);
-        tableModel.convertKey(person).keySet().forEach(attributeValueMap::remove);
-        PrimaryKey primaryKey = new PrimaryKey(tableModel.hashKey().name(),
-                tableModel.hashKey().get(person),
-                tableModel.rangeKey().name(),
-                tableModel.rangeKey().get(person));
+        Map<String, AttributeValue> attributeValueMap = personDetailsModel.convert(person);
+        personDetailsModel.convertKey(person).keySet().forEach(attributeValueMap::remove);
+        PrimaryKey primaryKey = new PrimaryKey(personDetailsModel.hashKey().name(),
+                personDetailsModel.hashKey().get(person),
+                personDetailsModel.rangeKey().name(),
+                personDetailsModel.rangeKey().get(person));
         if (attributeValueMap.isEmpty()) {
             table.putItem(new Item().withPrimaryKey(primaryKey));
         } else {
@@ -165,20 +167,26 @@ public class PersonConnectorImpl implements PersonConnector {
     private void setUpdateActions(ExpressionSpecBuilder expressionBuilder, Deque<UpdateAction> missingNodes, Map<String, AttributeValue> attributeValueMap, String attributeNamePrefix) {
         attributeValueMap.forEach((attributeName, attributeValue) -> {
             if (attributeValue.getBS() != null) {
-                expressionBuilder.addUpdate(BS(attributeNamePrefix + attributeName).append(attributeValue.getBS().toArray(new ByteBuffer[attributeValue.getBS().size()])));
+                expressionBuilder.addUpdate(BS(attributeNamePrefix + attributeName)
+                        .append(attributeValue.getBS().toArray(new ByteBuffer[attributeValue.getBS().size()])));
             } else if (attributeValue.getNS() != null) {
-                throw new IllegalArgumentException();
+                expressionBuilder.addUpdate(NS(attributeNamePrefix + attributeName)
+                        .append(ItemUtils.<Set<BigDecimal>>toSimpleValue(attributeValue)));
             } else if (attributeValue.getSS() != null) {
-                expressionBuilder.addUpdate(SS(attributeNamePrefix + attributeName).append(new HashSet<>(attributeValue.getSS())));
+                expressionBuilder.addUpdate(SS(attributeNamePrefix + attributeName)
+                        .append(ItemUtils.<Set<String>>toSimpleValue(attributeValue)));
             } else if (attributeValue.getM() != null) {
                 if (M_FIELD_WHITELIST.contains(attributeNamePrefix)) {
-                    expressionBuilder.addUpdate(M(attributeNamePrefix + attributeName).set(attributeValue.getM()));
+                    expressionBuilder.addUpdate(M(attributeNamePrefix + attributeName)
+                            .set(ItemUtils.toSimpleMapValue(attributeValue.getM())));
                 } else {
-                    missingNodes.push(M(attributeNamePrefix + attributeName).set(M(attributeNamePrefix + attributeName).ifNotExists(Map.of())));
+                    missingNodes.push(M(attributeNamePrefix + attributeName)
+                            .set(M(attributeNamePrefix + attributeName).ifNotExists(Map.of())));
                     setUpdateActions(expressionBuilder, missingNodes, attributeValue.getM(), attributeNamePrefix + attributeName + ".");
                 }
             } else {
-                expressionBuilder.addUpdate(S(attributeNamePrefix + attributeName).set(attributeValue.getS()));
+                expressionBuilder.addUpdate(S(attributeNamePrefix + attributeName)
+                        .set(attributeValue.getS()));
             }
         });
     }

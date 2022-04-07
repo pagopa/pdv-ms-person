@@ -10,13 +10,13 @@ import it.pagopa.pdv.person.core.PersonService;
 import it.pagopa.pdv.person.web.model.PersonResource;
 import it.pagopa.pdv.person.web.model.SavePersonDto;
 import it.pagopa.pdv.person.web.model.SavePersonNamespaceDto;
+import it.pagopa.pdv.person.web.model.mapper.PersonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 @Slf4j
@@ -45,19 +45,7 @@ public class PersonController {
                                       @RequestParam("isNamespaced")
                                               boolean isNamespaced) {
         PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced);
-        PersonResource personResource = new PersonResource();
-        personResource.setId(personDetailsOperations.getId());
-        personResource.setGivenName(personDetailsOperations.getGivenName());
-        personResource.setFamilyName(personDetailsOperations.getFamilyName());
-        if (personDetailsOperations.getWorkContacts() != null) {
-            HashMap<String, PersonResource.WorkContactResource> workContacts = new HashMap<>(personDetailsOperations.getWorkContacts().size());
-            personDetailsOperations.getWorkContacts().forEach((s, wc) -> {
-                PersonResource.WorkContactResource workContact = new PersonResource.WorkContactResource();
-                workContact.setEmail(wc.getEmail());
-                workContacts.put(s, workContact);
-            });
-            personResource.setWorkContacts(workContacts);
-        }
+        PersonResource personResource = PersonMapper.toResource(personDetailsOperations);
         return personResource;
     }
 
@@ -71,20 +59,8 @@ public class PersonController {
                                     UUID id,
                             @RequestBody
                                     SavePersonDto request) {
-        PersonDto person = new PersonDto();
-        person.setId(id.toString());
-        person.setGivenName(request.getGivenName());
-        person.setFamilyName(request.getFamilyName());
-        if (request.getWorkContacts() != null) {
-            HashMap<String, PersonDto.WorkContactDto> workContacts = new HashMap<>(request.getWorkContacts().size());
-            request.getWorkContacts().forEach((s, wc) -> {
-                PersonDto.WorkContactDto workContact = new PersonDto.WorkContactDto();
-                workContact.setEmail(wc.getEmail());
-                workContacts.put(s, workContact);
-            });
-            person.setWorkContacts(workContacts);
-        }
-        personService.save(person);
+        PersonDto personDto = PersonMapper.assembles(id, request);
+        personService.save(personDto);
     }
 
 
@@ -100,10 +76,7 @@ public class PersonController {
                                          String namespace,
                                  @RequestBody
                                          SavePersonNamespaceDto request) {
-        PersonIdDto personId = new PersonIdDto();
-        personId.setGlobalId(id.toString());
-        personId.setNamespace(namespace);
-        personId.setNamespacedId(request.getNamespacedId().toString());
+        PersonIdDto personId = PersonMapper.assembles(id, namespace, request);
         personService.save(personId);
     }
 
@@ -117,20 +90,8 @@ public class PersonController {
                                   UUID id,
                           @RequestBody
                                   SavePersonDto request) {
-        PersonDto person = new PersonDto();
-        person.setId(id.toString());
-        person.setGivenName(request.getGivenName());
-        person.setFamilyName(request.getFamilyName());
-        if (request.getWorkContacts() != null) {
-            HashMap<String, PersonDto.WorkContactDto> workContacts = new HashMap<>(request.getWorkContacts().size());
-            request.getWorkContacts().forEach((s, wc) -> {
-                PersonDto.WorkContactDto workContact = new PersonDto.WorkContactDto();
-                workContact.setEmail(wc.getEmail());
-                workContacts.put(s, workContact);
-            });
-            person.setWorkContacts(workContacts);
-        }
-        personService.patch(person);
+        PersonDto personDto = PersonMapper.assembles(id, request);
+        personService.patch(personDto);
     }
 
 

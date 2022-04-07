@@ -11,6 +11,7 @@ public class PersonResource {
     private String givenName;
     private String familyName;
     private Map<String, WorkContactResource> workContacts;
+    //TODO certification field
 
 
     @Data
