@@ -7,6 +7,8 @@ public interface PersonService {
 
     PersonDetailsOperations findById(String id, boolean isNamespaced);
 
+    String findIdByNamespacedId(String id);
+
     void save(PersonDetailsOperations personDetails);
 
     void save(PersonIdOperations personId);

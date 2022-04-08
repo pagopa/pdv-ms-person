@@ -51,14 +51,14 @@ public class PersonConnectorImpl implements PersonConnector {
 
 
     @Override
-    public Optional<PersonDetailsOperations> findByGlobalId(String id) {
+    public Optional<PersonDetailsOperations> findById(String id) {
         return Optional.ofNullable(dynamoDBMapper.load(PersonDetails.class, id));
     }
 
 
     @Override
-    public Optional<PersonDetailsOperations> findByNamespacedId(String id) {
-        String globalId;
+    public Optional<String> findIdByNamespacedId(String id) {
+        Optional<String> globalId = Optional.empty();
         Index index = table.getIndex("gsi_namespaced_id");
         ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
                 .withHashKey(PersonId.Fields.namespacedId, id)
@@ -71,12 +71,12 @@ public class PersonConnectorImpl implements PersonConnector {
             } else if (page.getLowLevelResult().getItems().size() > 1) {
                 throw new RuntimeException("Too many results");//FIXME: change exception
             } else {
-                globalId = page.getLowLevelResult().getItems().get(0).getString("PK");
+                globalId = Optional.ofNullable(page.getLowLevelResult().getItems().get(0).getString("PK"));
             }
         } else {
             throw new RuntimeException("Not Found");//FIXME: change exception
         }
-        return findByGlobalId(globalId);
+        return globalId;
     }
 
 
@@ -107,7 +107,6 @@ public class PersonConnectorImpl implements PersonConnector {
             } catch (ConditionalCheckFailedException e) {
                 // do nothing
             }
-//            table.putItem(new Item().withPrimaryKey(primaryKey));FIXME: remove
         } else {
             ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
             Deque<UpdateAction> missingNodes = new ArrayDeque<>();

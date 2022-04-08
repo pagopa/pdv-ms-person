@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface PersonConnector {
 
-    Optional<PersonDetailsOperations> findByGlobalId(String id);
+    Optional<PersonDetailsOperations> findById(String id);
 
-    Optional<PersonDetailsOperations> findByNamespacedId(String id);
+    Optional<String> findIdByNamespacedId(String id);
 
     void save(PersonDetailsOperations personDetails);
 

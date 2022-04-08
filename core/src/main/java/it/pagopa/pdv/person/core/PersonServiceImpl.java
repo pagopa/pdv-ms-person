@@ -22,13 +22,17 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDetailsOperations findById(String id, boolean isNamespaced) {
-        Optional<PersonDetailsOperations> person;
         if (isNamespaced) {
-            person = personConnector.findByNamespacedId(id);
-        } else {
-            person = personConnector.findByGlobalId(id);
+            id = findIdByNamespacedId(id);
         }
+        Optional<PersonDetailsOperations> person = personConnector.findById(id);
         return person.orElseThrow();//FIXME: exception type
+    }
+
+
+    @Override
+    public String findIdByNamespacedId(String id) {
+        return personConnector.findIdByNamespacedId(id).orElseThrow();
     }
 
 

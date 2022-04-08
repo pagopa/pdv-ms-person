@@ -6,9 +6,9 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class UserInternalId {
+public class PersonGlobalId {
 
     @JsonProperty(required = true)
-    private UUID internalId;
+    private UUID id;
 
 }

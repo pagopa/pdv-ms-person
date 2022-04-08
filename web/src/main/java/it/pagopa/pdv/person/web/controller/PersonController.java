@@ -7,6 +7,7 @@ import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonDto;
 import it.pagopa.pdv.person.connector.model.PersonIdDto;
 import it.pagopa.pdv.person.core.PersonService;
+import it.pagopa.pdv.person.web.model.PersonGlobalId;
 import it.pagopa.pdv.person.web.model.PersonResource;
 import it.pagopa.pdv.person.web.model.SavePersonDto;
 import it.pagopa.pdv.person.web.model.SavePersonNamespaceDto;
@@ -47,6 +48,20 @@ public class PersonController {
         PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced);
         PersonResource personResource = PersonMapper.toResource(personDetailsOperations);
         return personResource;
+    }
+
+
+    @ApiOperation(value = "${swagger.people.api.getUserById.summary}",
+            notes = "${swagger.people.api.getUserById.notes}")
+    @GetMapping(value = "/id")
+    @ResponseStatus(HttpStatus.OK)
+    public PersonGlobalId getUserIdByNamespacedId(@ApiParam("${swagger.model.person.id}")
+                                                  @RequestParam("namespacedId")
+                                                          UUID namespacedId) {
+        String id = personService.findIdByNamespacedId(namespacedId.toString());
+        PersonGlobalId personGlobalId = new PersonGlobalId();
+        personGlobalId.setId(UUID.fromString(id));
+        return personGlobalId;
     }
 
 
