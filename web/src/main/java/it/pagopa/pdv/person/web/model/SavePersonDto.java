@@ -1,5 +1,6 @@
 package it.pagopa.pdv.person.web.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Map;
@@ -7,14 +8,11 @@ import java.util.Map;
 @Data
 public class SavePersonDto {
 
+    @ApiModelProperty(value = "${swagger.model.person.givenName}")
     private String givenName;
+    @ApiModelProperty(value = "${swagger.model.person.familyName}")
     private String familyName;
-    private Map<String, PersonResource.WorkContactResource> workContacts;
-
-
-    @Data
-    public static class WorkContact {
-        private String email;
-    }
+    @ApiModelProperty(value = "${swagger.model.person.workContacts}")
+    private Map<String, WorkContactResource> workContacts;
 
 }

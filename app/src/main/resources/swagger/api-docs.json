@@ -13,7 +13,7 @@
   ],
   "tags": [
     {
-      "name": "people",
+      "name": "person",
       "description": "Person operations"
     }
   ],
@@ -21,16 +21,16 @@
     "/people/id": {
       "get": {
         "tags": [
-          "people"
+          "person"
         ],
-        "summary": "Get user details by internal UUID",
-        "description": "notes",
-        "operationId": "getUserIdByNamespacedIdUsingGET",
+        "summary": "Find person id",
+        "description": "Find an existing person id given its namespaced id",
+        "operationId": "findIdByNamespacedIdUsingGET",
         "parameters": [
           {
             "name": "namespacedId",
             "in": "query",
-            "description": "${swagger.model.person.id}",
+            "description": "Person namespaced id",
             "required": true,
             "style": "form",
             "schema": {
@@ -45,7 +45,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonGlobalId"
+                  "$ref": "#/components/schemas/PersonId"
                 }
               }
             }
@@ -65,16 +65,16 @@
     "/people/{id}": {
       "get": {
         "tags": [
-          "people"
+          "person"
         ],
-        "summary": "Get user details by internal UUID",
-        "description": "notes",
-        "operationId": "getUserByIdUsingGET",
+        "summary": "Find person",
+        "description": "Retrieve the person by its internal id",
+        "operationId": "findByIdUsingGET",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "${swagger.model.person.id}",
+            "description": "Person internal id",
             "required": true,
             "style": "simple",
             "schema": {
@@ -85,7 +85,7 @@
           {
             "name": "isNamespaced",
             "in": "query",
-            "description": "${swagger.model.person.isNamespaced}",
+            "description": "Indicates if the Person is namespaced or not",
             "required": true,
             "style": "form",
             "schema": {
@@ -115,66 +115,18 @@
           }
         }
       },
-      "put": {
-        "tags": [
-          "people"
-        ],
-        "summary": "Update user details by internal (global) UUID",
-        "description": "notes",
-        "operationId": "saveDetailsUsingPUT",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "${swagger.model.person.id}",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SavePersonDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "201": {
-            "description": "Created"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "deprecated": true
-      },
       "delete": {
         "tags": [
-          "people"
+          "person"
         ],
-        "summary": "Delete user details by internal (global) UUID",
-        "description": "notes",
+        "summary": "Delete person",
+        "description": "Delete person by its internal id",
         "operationId": "deletePersonUsingDELETE",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "${swagger.model.person.id}",
+            "description": "Person internal id",
             "required": true,
             "style": "simple",
             "schema": {
@@ -197,16 +149,16 @@
       },
       "patch": {
         "tags": [
-          "people"
+          "person"
         ],
-        "summary": "Upsert user details by internal (global) UUID",
-        "description": "notes",
-        "operationId": "patchSaveUsingPATCH",
+        "summary": "Upsert person details",
+        "description": "Update the given subset fields of an existing person by its internal (global) id, if not present create a new one",
+        "operationId": "saveUsingPATCH",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "${swagger.model.person.id}",
+            "description": "Person internal id",
             "required": true,
             "style": "simple",
             "schema": {
@@ -243,16 +195,16 @@
     "/people/{id}/namespace/{namespace}": {
       "put": {
         "tags": [
-          "people"
+          "person"
         ],
-        "summary": "Upsert user namespace by internal (global) UUID",
-        "description": "notes",
+        "summary": "Upsert person namespace",
+        "description": "Create a new person namespace given its internal (global) id, if already exists do nothing",
         "operationId": "saveNamespacedIdUsingPUT",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "${swagger.model.person.id}",
+            "description": "Person internal id",
             "required": true,
             "style": "simple",
             "schema": {
@@ -263,7 +215,7 @@
           {
             "name": "namespace",
             "in": "path",
-            "description": "${swagger.model.person.namespace}",
+            "description": "Caller visibility context",
             "required": true,
             "style": "simple",
             "schema": {
@@ -300,16 +252,16 @@
       },
       "delete": {
         "tags": [
-          "people"
+          "person"
         ],
-        "summary": "Delete user namespace by internal (global) UUID",
-        "description": "notes",
+        "summary": "Delete person namespace",
+        "description": "Delete person namespace by internal (global) id",
         "operationId": "deletePersonNamespaceUsingDELETE",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "${swagger.model.person.id}",
+            "description": "Person internal id",
             "required": true,
             "style": "simple",
             "schema": {
@@ -320,7 +272,7 @@
           {
             "name": "namespace",
             "in": "path",
-            "description": "${swagger.model.person.namespace}",
+            "description": "Caller visibility context",
             "required": true,
             "style": "simple",
             "schema": {
@@ -344,8 +296,8 @@
   },
   "components" : {
     "schemas" : {
-      "PersonGlobalId": {
-        "title": "PersonGlobalId",
+      "PersonId": {
+        "title": "PersonId",
         "required": [
           "id"
         ],
@@ -353,28 +305,37 @@
         "properties": {
           "id": {
             "type": "string",
+            "description": "Person internal id",
             "format": "uuid"
           }
         }
       },
       "PersonResource": {
         "title": "PersonResource",
+        "required": [
+          "id"
+        ],
         "type": "object",
         "properties": {
           "familyName": {
-            "type": "string"
+            "type": "string",
+            "description": "Person family name"
           },
           "givenName": {
-            "type": "string"
+            "type": "string",
+            "description": "Person given name"
           },
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Person internal id",
+            "format": "uuid"
           },
           "workContacts": {
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/WorkContactResource"
-            }
+            },
+            "description": "Person work contacts"
           }
         }
       },
@@ -383,25 +344,32 @@
         "type": "object",
         "properties": {
           "familyName": {
-            "type": "string"
+            "type": "string",
+            "description": "Person family name"
           },
           "givenName": {
-            "type": "string"
+            "type": "string",
+            "description": "Person given name"
           },
           "workContacts": {
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/WorkContactResource"
-            }
+            },
+            "description": "Person work contacts"
           }
         }
       },
       "SavePersonNamespaceDto": {
         "title": "SavePersonNamespaceDto",
+        "required": [
+          "namespacedId"
+        ],
         "type": "object",
         "properties": {
           "namespacedId": {
             "type": "string",
+            "description": "Person namespaced id",
             "format": "uuid"
           }
         }
@@ -411,7 +379,8 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "description": "Person work email"
           }
         }
       }

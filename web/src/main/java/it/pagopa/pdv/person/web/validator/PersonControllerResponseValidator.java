@@ -15,13 +15,13 @@ import java.util.*;
 @Slf4j
 @Aspect
 @Component
-public class NameControllerResponseValidator {//TODO change Name
+public class PersonControllerResponseValidator {
 
     private final Validator validator;
 
 
-    public NameControllerResponseValidator(Validator validator) {
-        log.trace("Initializing {}", NameControllerResponseValidator.class.getSimpleName());
+    public PersonControllerResponseValidator(Validator validator) {
+        log.trace("Initializing {}", PersonControllerResponseValidator.class.getSimpleName());
         Assert.notNull(validator, "Validator is required");
         this.validator = validator;
     }
@@ -55,7 +55,7 @@ public class NameControllerResponseValidator {//TODO change Name
     }
 
 
-    @Pointcut("execution(* it.pagopa.private_data_vault.web.controller.*.*(..))")
+    @Pointcut("execution(* it.pagopa.pdv.person.web.controller.*.*(..))")
     public void controllersPointcut() {
         // Do nothing because is a pointcut
     }

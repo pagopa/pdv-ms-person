@@ -6,6 +6,7 @@ import it.pagopa.pdv.person.connector.model.PersonIdDto;
 import it.pagopa.pdv.person.web.model.PersonResource;
 import it.pagopa.pdv.person.web.model.SavePersonDto;
 import it.pagopa.pdv.person.web.model.SavePersonNamespaceDto;
+import it.pagopa.pdv.person.web.model.WorkContactResource;
 
 import java.util.Map;
 import java.util.UUID;
@@ -43,7 +44,7 @@ public class PersonMapper {
     }
 
 
-    static PersonDto.WorkContactDto toDto(PersonResource.WorkContactResource workContactResource) {
+    static PersonDto.WorkContactDto toDto(WorkContactResource workContactResource) {
         PersonDto.WorkContactDto workContactDto = null;
         if (workContactResource != null) {
             workContactDto = new PersonDto.WorkContactDto();
@@ -57,7 +58,7 @@ public class PersonMapper {
         PersonResource personResource = null;
         if (personDetailsOperations != null) {
             personResource = new PersonResource();
-            personResource.setId(personDetailsOperations.getId());
+            personResource.setId(UUID.fromString(personDetailsOperations.getId()));
             personResource.setGivenName(personDetailsOperations.getGivenName());
             personResource.setFamilyName(personDetailsOperations.getFamilyName());
             if (personDetailsOperations.getWorkContacts() != null) {
@@ -70,10 +71,10 @@ public class PersonMapper {
     }
 
 
-    static PersonResource.WorkContactResource toResource(PersonDetailsOperations.WorkContactOperations workContactOperations) {
-        PersonResource.WorkContactResource workContactResource = null;
+    static WorkContactResource toResource(PersonDetailsOperations.WorkContactOperations workContactOperations) {
+        WorkContactResource workContactResource = null;
         if (workContactOperations != null) {
-            workContactResource = new PersonResource.WorkContactResource();
+            workContactResource = new WorkContactResource();
             workContactResource.setEmail(workContactOperations.getEmail());
         }
         return workContactResource;

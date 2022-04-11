@@ -10,24 +10,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
 
-/**
- * The Class SwaggerConfig.
- */
 @Slf4j
 @Configuration
 class SwaggerConfig {
-
-    public static final String AUTH_SCHEMA_NAME = "bearerAuth";
 
     @Configuration
     @Profile("swaggerIT")
@@ -61,24 +52,8 @@ class SwaggerConfig {
                         .version(environment.getProperty("swagger.version", environment.getProperty("spring.application.version")))
                         .build())
                 .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.pdv.person.web.controller")).build()
-                .tags(new Tag("people", environment.getProperty("swagger.people.api.description")))
-                .directModelSubstitute(LocalTime.class, String.class)
-//                .securityContexts(Collections.singletonList(SecurityContext.builder()
-//                        .securityReferences(defaultAuth())
-//                        .build()))
-//                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER
-//                        .name(AUTH_SCHEMA_NAME)
-//                        .description(environment.getProperty("swagger.security.schema.bearer.description"))
-//                        .build()))
-                ;
-    }
-
-
-    private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-        authorizationScopes[0] = authorizationScope;
-        return Collections.singletonList(new SecurityReference(AUTH_SCHEMA_NAME, authorizationScopes));
+                .tags(new Tag("person", environment.getProperty("swagger.tag.person.description")))
+                .directModelSubstitute(LocalTime.class, String.class);
     }
 
 }
