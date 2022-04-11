@@ -10,7 +10,6 @@ import java.util.UUID;
 public class SavePersonNamespaceDto {
 
     @ApiModelProperty(value = "${swagger.model.person.namespacedId}", required = true)
-    @
     @NotNull
     private UUID namespacedId;
 
