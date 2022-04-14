@@ -1,22 +1,27 @@
 package it.pagopa.pdv.person.connector.model;
 
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public interface PersonDetailsOperations {
 
     String getId();
 
-    String getGivenName();
+    CertifiableField<String> getName();
 
-    String getFamilyName();
+    CertifiableField<String> getFamilyName();
+
+    CertifiableField<String> getEmail();
+
+    CertifiableField<LocalDate> getBirthDate();
 
     Map<String, ? extends WorkContactOperations> getWorkContacts();
 
 
     interface WorkContactOperations {
 
-        String getEmail();
+        CertifiableField<String> getEmail();
 
     }
 

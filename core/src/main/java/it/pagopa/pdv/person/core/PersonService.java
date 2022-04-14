@@ -7,13 +7,11 @@ public interface PersonService {
 
     PersonDetailsOperations findById(String id, boolean isNamespaced);
 
-    String findIdByNamespacedId(String id);
-
-    void save(PersonDetailsOperations personDetails);
+    String findIdByNamespacedId(String namespacedId);
 
     void save(PersonIdOperations personId);
 
-    void patch(PersonDetailsOperations personDetails);
+    void save(PersonDetailsOperations personDetails);
 
     void deleteById(String id);
 

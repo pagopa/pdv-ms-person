@@ -3,10 +3,7 @@ package it.pagopa.pdv.person.web.model.mapper;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonDto;
 import it.pagopa.pdv.person.connector.model.PersonIdDto;
-import it.pagopa.pdv.person.web.model.PersonResource;
-import it.pagopa.pdv.person.web.model.SavePersonDto;
-import it.pagopa.pdv.person.web.model.SavePersonNamespaceDto;
-import it.pagopa.pdv.person.web.model.WorkContactResource;
+import it.pagopa.pdv.person.web.model.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +29,7 @@ public class PersonMapper {
         if (savePersonDto != null) {
             personDto = new PersonDto();
             personDto.setId(id.toString());
-            personDto.setGivenName(savePersonDto.getGivenName());
+            personDto.setName(savePersonDto.getName());
             personDto.setFamilyName(savePersonDto.getFamilyName());
             if (savePersonDto.getWorkContacts() != null) {
                 personDto.setWorkContacts(savePersonDto.getWorkContacts().entrySet().stream()
@@ -48,7 +45,9 @@ public class PersonMapper {
         PersonDto.WorkContactDto workContactDto = null;
         if (workContactResource != null) {
             workContactDto = new PersonDto.WorkContactDto();
-            workContactDto.setEmail(workContactResource.getEmail());
+            if (workContactResource.getEmail() != null) {
+                workContactDto.setEmail(new CertifiableFieldResource<>(workContactResource.getEmail()));
+            }
         }
         return workContactDto;
     }
@@ -59,8 +58,12 @@ public class PersonMapper {
         if (personDetailsOperations != null) {
             personResource = new PersonResource();
             personResource.setId(UUID.fromString(personDetailsOperations.getId()));
-            personResource.setGivenName(personDetailsOperations.getGivenName());
-            personResource.setFamilyName(personDetailsOperations.getFamilyName());
+            if (personDetailsOperations.getName() != null) {
+                personResource.setName(new CertifiableFieldResource<>(personDetailsOperations.getName()));
+            }
+            if (personDetailsOperations.getFamilyName() != null) {
+                personResource.setFamilyName(new CertifiableFieldResource<>(personDetailsOperations.getFamilyName()));
+            }
             if (personDetailsOperations.getWorkContacts() != null) {
                 personResource.setWorkContacts(personDetailsOperations.getWorkContacts().entrySet().stream()
                         .map(entry -> Map.entry(entry.getKey(), toResource(entry.getValue())))
@@ -75,7 +78,9 @@ public class PersonMapper {
         WorkContactResource workContactResource = null;
         if (workContactOperations != null) {
             workContactResource = new WorkContactResource();
-            workContactResource.setEmail(workContactOperations.getEmail());
+            if (workContactOperations.getEmail() != null) {
+                workContactResource.setEmail(new CertifiableFieldResource<>(workContactOperations.getEmail()));
+            }
         }
         return workContactResource;
     }

@@ -7,6 +7,6 @@ import lombok.Data;
 public class WorkContactResource {
 
     @ApiModelProperty(value = "${swagger.model.person.workContact.email}")
-    private String email;
+    private CertifiableFieldResource<String> email;
 
 }

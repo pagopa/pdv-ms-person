@@ -17,8 +17,11 @@ import it.pagopa.pdv.person.connector.dao.model.PersonId;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -32,68 +35,78 @@ public class PersonConnectorImpl implements PersonConnector {
 
     public static final String TABLE_NAME = "Person";
     public static final List<String> M_FIELD_WHITELIST = List.of(PersonDetails.Fields.workContacts + ".");
+    private static final Marker CONFIDENTIAL_MARKER = MarkerFactory.getMarker("CONFIDENTIAL");
 
-    private final DynamoDBMapper dynamoDBMapper;
-    private final DynamoDB dynamoDB;
     private final Table table;
     private final DynamoDBMapperTableModel<PersonDetails> personDetailsModel;
     private final DynamoDBTableMapper<PersonDetails, String, String> personDetailsTableMapper;
+    private final DynamoDBTableMapper<PersonId, String, String> personIdTableMapper;
 
 
     @Autowired
     public PersonConnectorImpl(DynamoDBMapper dynamoDBMapper, DynamoDB dynamoDB) {
-        this.dynamoDBMapper = dynamoDBMapper;
-        this.dynamoDB = dynamoDB;
+        log.trace("Initializing {}", PersonConnectorImpl.class.getSimpleName());
         table = dynamoDB.getTable(TABLE_NAME);
         personDetailsModel = dynamoDBMapper.getTableModel(PersonDetails.class);
         personDetailsTableMapper = dynamoDBMapper.newTableMapper(PersonDetails.class);
+        personIdTableMapper = dynamoDBMapper.newTableMapper(PersonId.class);
     }
 
 
     @Override
     public Optional<PersonDetailsOperations> findById(String id) {
-        return Optional.ofNullable(dynamoDBMapper.load(PersonDetails.class, id));
+        log.trace("[findById] start");
+        log.debug("[findById] inputs: id = {}", id);
+        Assert.hasText(id, "A person id is required");
+        Optional<PersonDetailsOperations> personDetails = Optional.ofNullable(personDetailsTableMapper.load(id));
+        log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personDetails);
+        log.trace("[findById] end");
+        return personDetails;
     }
 
 
     @Override
-    public Optional<String> findIdByNamespacedId(String id) {
-        Optional<String> globalId = Optional.empty();
+    public Optional<String> findIdByNamespacedId(String namespacedId) {
+        log.trace("[findIdByNamespacedId] start");
+        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
+        Assert.hasText(namespacedId, "A person namespaced id is required");
+        Optional<String> id = Optional.empty();
         Index index = table.getIndex("gsi_namespaced_id");
         ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
-                .withHashKey(PersonId.Fields.namespacedId, id)
-                .withProjectionExpression("PK"));
+                .withHashKey(PersonId.Fields.namespacedId, namespacedId)
+                .withProjectionExpression(personDetailsModel.hashKey().name()));
         Iterator<Page<Item, QueryOutcome>> iterator = itemCollection.pages().iterator();
         if (iterator.hasNext()) {
             Page<Item, QueryOutcome> page = iterator.next();
-            if (page.getLowLevelResult().getItems().size() == 0) {
-                throw new RuntimeException("Not Found");//FIXME: change exception
-            } else if (page.getLowLevelResult().getItems().size() > 1) {
-                throw new RuntimeException("Too many results");//FIXME: change exception
-            } else {
-                globalId = Optional.ofNullable(page.getLowLevelResult().getItems().get(0).getString("PK"));
+            if (page.getLowLevelResult().getItems().size() == 1) {
+                id = Optional.ofNullable(page.getLowLevelResult().getItems().get(0).getString(personDetailsModel.hashKey().name()));
             }
-        } else {
-            throw new RuntimeException("Not Found");//FIXME: change exception
         }
-        return globalId;
-    }
-
-
-    @Override
-    public void save(PersonDetailsOperations personDetails) {
-        dynamoDBMapper.save(new PersonDetails(personDetails));
+        log.debug("[findIdByNamespacedId] output = {}", id);
+        log.trace("[findIdByNamespacedId] end");
+        return id;
     }
 
 
     @Override
     public void save(PersonIdOperations personId) {
-        dynamoDBMapper.save(new PersonId(personId));
+        log.trace("[save] start");
+        log.debug("[save] inputs: personId = {}", personId);
+        Assert.notNull(personId, "A person id is required");
+        try {
+            personIdTableMapper.saveIfNotExists(new PersonId(personId));//TODO: good for performance??
+        } catch (ConditionalCheckFailedException e) {
+            log.debug("A PersonId with the given primary key already exists");
+        }
+        log.trace("[save] end");
     }
 
 
     @Override
-    public void patch(PersonDetailsOperations personDetails) {
+    public void save(PersonDetailsOperations personDetails) {
+        log.trace("[save] start");
+        log.debug(CONFIDENTIAL_MARKER, "[save] inputs: personDetails = {}", personDetails);
+        Assert.notNull(personDetails, "A person details is required");
         PersonDetails person = new PersonDetails(personDetails);
         Map<String, AttributeValue> attributeValueMap = personDetailsModel.convert(person);
         personDetailsModel.convertKey(person).keySet().forEach(attributeValueMap::remove);
@@ -103,9 +116,9 @@ public class PersonConnectorImpl implements PersonConnector {
                 personDetailsModel.rangeKey().get(person));
         if (attributeValueMap.isEmpty()) {
             try {
-                personDetailsTableMapper.saveIfNotExists(personDetailsModel.createKey(person.getId(), person.getType()));
+                personDetailsTableMapper.saveIfNotExists(personDetailsModel.createKey(person.getId(), person.getType()));//TODO: good for performance??
             } catch (ConditionalCheckFailedException e) {
-                // do nothing
+                log.debug("A PersonDetails with the given primary key already exists");
             }
         } else {
             ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
@@ -125,6 +138,7 @@ public class PersonConnectorImpl implements PersonConnector {
                 }
             }
         }
+        log.trace("[save] end");
     }
 
 
@@ -133,9 +147,10 @@ public class PersonConnectorImpl implements PersonConnector {
         createParentNodesForwards(primaryKey, forwardsMissingNodes);
     }
 
+
     private void createParentNodesForwards(PrimaryKey primaryKey, Deque<UpdateAction> forwardsMissingNodes) {
+        // try to create parent nodes (forwards)
         while (forwardsMissingNodes.peek() != null) {
-            // try to create parent node (forwards)
             UpdateAction updateAction = forwardsMissingNodes.pop();
             try {
                 doUpdateItem(primaryKey, updateAction);
@@ -146,10 +161,11 @@ public class PersonConnectorImpl implements PersonConnector {
         }
     }
 
+
     private Deque<UpdateAction> createParentNodesBackwards(PrimaryKey primaryKey, Deque<UpdateAction> backwardsMissingNodes) {
         Deque<UpdateAction> forwardsMissingNodes = new ArrayDeque<>();
+        // try to create parent nodes (backwards)
         while (backwardsMissingNodes.peek() != null) {
-            // try to create parent node (backwards)
             UpdateAction updateAction = backwardsMissingNodes.pop();
             try {
                 doUpdateItem(primaryKey, updateAction);
@@ -161,6 +177,7 @@ public class PersonConnectorImpl implements PersonConnector {
         }
         return forwardsMissingNodes;
     }
+
 
     private void doUpdateItem(PrimaryKey primaryKey, UpdateAction updateAction) {
         table.updateItem(new UpdateItemSpec()
@@ -201,16 +218,25 @@ public class PersonConnectorImpl implements PersonConnector {
 
     @Override
     public void deleteById(String id) {
-        dynamoDBMapper.delete(new PersonDetails(id));
+        log.trace("[deleteById] start");
+        log.debug("[deleteById] inputs: id = {}", id);
+        Assert.hasText(id, "A person id is required");
+        personDetailsTableMapper.delete(new PersonDetails(id));
+        log.trace("[deleteById] end");
     }
 
 
     @Override
     public void deleteById(String id, String namespace) {
+        log.trace("[deleteById] start");
+        log.debug("[deleteById] inputs: id = {}, namespace = {}", id, namespace);
+        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, "A namespace is required");
         PersonId personId = new PersonId();
         personId.setGlobalId(id);
         personId.setNamespace(namespace);
-        dynamoDBMapper.delete(personId);
+        personIdTableMapper.delete(personId);
+        log.trace("[deleteById] end");
     }
 
 }

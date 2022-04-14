@@ -53,7 +53,8 @@ class SwaggerConfig {
                         .build())
                 .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.pdv.person.web.controller")).build()
                 .tags(new Tag("person", environment.getProperty("swagger.tag.person.description")))
-                .directModelSubstitute(LocalTime.class, String.class);
+                .directModelSubstitute(LocalTime.class, String.class)
+                .forCodeGeneration(true);
     }
 
 }

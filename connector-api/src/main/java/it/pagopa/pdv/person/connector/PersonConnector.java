@@ -9,11 +9,9 @@ public interface PersonConnector {
 
     Optional<PersonDetailsOperations> findById(String id);
 
-    Optional<String> findIdByNamespacedId(String id);
+    Optional<String> findIdByNamespacedId(String namespacedId);
 
     void save(PersonDetailsOperations personDetails);
-
-    void patch(PersonDetailsOperations personDetails);
 
     void save(PersonIdOperations personId);
 

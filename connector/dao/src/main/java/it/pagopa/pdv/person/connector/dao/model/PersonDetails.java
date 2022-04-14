@@ -3,7 +3,6 @@ package it.pagopa.pdv.person.connector.dao.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import it.pagopa.pdv.person.connector.dao.PersonConnectorImpl;
-import it.pagopa.pdv.person.connector.dao.converter.LocalDateConverter;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,8 +24,12 @@ public class PersonDetails implements PersonDetailsOperations {
 
     public PersonDetails(PersonDetailsOperations personDetails) {
         id = personDetails.getId();
-        givenName = personDetails.getGivenName();
-        familyName = personDetails.getFamilyName();
+        if (personDetails.getName() != null) {
+            name = new DynamoCBCertifiableField<>(personDetails.getName());
+        }
+        if (personDetails.getFamilyName() != null) {
+            familyName = new DynamoCBCertifiableField<>(personDetails.getFamilyName());
+        }
         if (personDetails.getWorkContacts() != null) {
             workContacts = new HashMap<>(personDetails.getWorkContacts().size());
             personDetails.getWorkContacts().forEach((s, wc) -> workContacts.put(s, new WorkContact(wc)));
@@ -47,17 +50,17 @@ public class PersonDetails implements PersonDetailsOperations {
     }
 
     @DynamoDBAttribute
-    private String givenName;
+    private DynamoCBCertifiableField<String> name;
 
     @DynamoDBAttribute
-    private String familyName;
+    private DynamoCBCertifiableField<String> familyName;
 
     @DynamoDBAttribute
-    private String email;
+    private DynamoCBCertifiableField<String> email;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConverted(converter = LocalDateConverter.class)
-    private LocalDate birthDate;
+    private DynamoCBCertifiableField<LocalDate> birthDate;
+
 
     @DynamoDBAttribute
     @FieldNameConstants.Include
@@ -70,11 +73,13 @@ public class PersonDetails implements PersonDetailsOperations {
     public static class WorkContact implements WorkContactOperations {
 
         public WorkContact(WorkContactOperations workContact) {
-            email = workContact.getEmail();
+            if (workContact.getEmail() != null) {
+                email = new DynamoCBCertifiableField<>(workContact.getEmail());
+            }
         }
 
         @DynamoDBAttribute
-        private String email;
+        private DynamoCBCertifiableField<String> email;
 
     }
 
