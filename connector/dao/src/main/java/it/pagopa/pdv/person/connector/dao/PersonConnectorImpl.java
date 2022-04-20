@@ -14,6 +14,7 @@ import com.amazonaws.services.dynamodbv2.xspec.UpdateAction;
 import it.pagopa.pdv.person.connector.PersonConnector;
 import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.PersonId;
+import it.pagopa.pdv.person.connector.dao.model.Status;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.function.Function;
 
 import static com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
 
@@ -58,7 +60,9 @@ public class PersonConnectorImpl implements PersonConnector {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}", id);
         Assert.hasText(id, "A person id is required");
-        Optional<PersonDetailsOperations> personDetails = Optional.ofNullable(personDetailsTableMapper.load(id));
+        Optional<PersonDetailsOperations> personDetails = Optional.ofNullable(personDetailsTableMapper.load(id))
+                .filter(p -> Status.ACTIVE.equals(p.getStatus()))
+                .map(Function.identity());
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personDetails);
         log.trace("[findById] end");
         return personDetails;
@@ -103,20 +107,21 @@ public class PersonConnectorImpl implements PersonConnector {
 
 
     @Override
-    public void save(PersonDetailsOperations personDetails) {
+    public boolean save(PersonDetailsOperations personDetails) {
         log.trace("[save] start");
         log.debug(CONFIDENTIAL_MARKER, "[save] inputs: personDetails = {}", personDetails);
         Assert.notNull(personDetails, "A person details is required");
+        boolean result = true;
         PersonDetails person = new PersonDetails(personDetails);
         Map<String, AttributeValue> attributeValueMap = personDetailsModel.convert(person);
         personDetailsModel.convertKey(person).keySet().forEach(attributeValueMap::remove);
         PrimaryKey primaryKey = new PrimaryKey(personDetailsModel.hashKey().name(),
-                personDetailsModel.hashKey().get(person),
+                person.getId(),
                 personDetailsModel.rangeKey().name(),
-                personDetailsModel.rangeKey().get(person));
+                person.getType());
         if (attributeValueMap.isEmpty()) {
             try {
-                personDetailsTableMapper.saveIfNotExists(personDetailsModel.createKey(person.getId(), person.getType()));//TODO: good for performance??
+                personDetailsTableMapper.saveIfNotExists(person);//TODO: good for performance??
             } catch (ConditionalCheckFailedException e) {
                 log.debug("A PersonDetails with the given primary key already exists");
             }
@@ -124,11 +129,14 @@ public class PersonConnectorImpl implements PersonConnector {
             ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
             Deque<UpdateAction> missingNodes = new ArrayDeque<>();
             setUpdateActions(expressionSpecBuilder, missingNodes, attributeValueMap, "");
+            expressionSpecBuilder.withCondition(S(PersonDetails.Fields.status).ne(Status.PENDING_DELETE.toString()));
             UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                     .withPrimaryKey(primaryKey)
                     .withExpressionSpec(expressionSpecBuilder.buildForUpdate());
             try {
                 table.updateItem(updateItemSpec);
+            } catch (ConditionalCheckFailedException e) {
+                result = false;
             } catch (AmazonDynamoDBException e) {
                 if ("ValidationException".equals(e.getErrorCode())) {
                     // create tree parent nodes
@@ -138,7 +146,9 @@ public class PersonConnectorImpl implements PersonConnector {
                 }
             }
         }
+        log.debug("[save] output = {}", result);
         log.trace("[save] end");
+        return result;
     }
 
 
@@ -217,12 +227,32 @@ public class PersonConnectorImpl implements PersonConnector {
 
 
     @Override
-    public void deleteById(String id) {
+    public boolean deleteById(String id) {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}", id);
         Assert.hasText(id, "A person id is required");
-        personDetailsTableMapper.delete(new PersonDetails(id));
+        boolean result = true;
+        PersonDetails personDetails = new PersonDetails(id);
+        PrimaryKey primaryKey = new PrimaryKey(personDetailsTableMapper.hashKey().name(),
+                personDetailsTableMapper.hashKey().get(personDetails),
+                personDetailsTableMapper.rangeKey().name(),
+                personDetailsTableMapper.rangeKey().get(personDetails));
+        try {
+            table.updateItem(new UpdateItemSpec()
+                    .withPrimaryKey(primaryKey)
+                    .withExpressionSpec(new ExpressionSpecBuilder()
+                            .addUpdate(S(PersonDetails.Fields.status).set(Status.PENDING_DELETE.toString()))
+                            .withCondition(attribute_exists(personDetailsTableMapper.hashKey().name())
+                                    .and(attribute_exists(personDetailsTableMapper.rangeKey().name()))
+                                    .and(S(PersonDetails.Fields.status).ne(Status.PENDING_DELETE.toString())))
+                            .buildForUpdate())
+            );
+        } catch (ConditionalCheckFailedException e) {
+            result = false;
+        }
+        log.debug("[deleteById] output = {}", result);
         log.trace("[deleteById] end");
+        return result;
     }
 
 

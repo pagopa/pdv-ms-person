@@ -66,7 +66,9 @@ class PersonServiceImpl implements PersonService {
         log.trace("[save] start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "[save] inputs: personDetails = {}", personDetails);
         Assert.notNull(personDetails, "A person details is required");
-        personConnector.save(personDetails);
+        if (!personConnector.save(personDetails)) {
+            throw new ResourceNotFoundException();
+        }
         log.trace("[save] end");
     }
 
@@ -76,7 +78,9 @@ class PersonServiceImpl implements PersonService {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}", id);
         Assert.hasText(id, "A person id is required");
-        personConnector.deleteById(id);
+        if (!personConnector.deleteById(id)) {
+            throw new ResourceNotFoundException();
+        }
         log.trace("[deleteById] end");
     }
 

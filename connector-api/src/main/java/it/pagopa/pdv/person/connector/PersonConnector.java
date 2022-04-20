@@ -11,11 +11,11 @@ public interface PersonConnector {
 
     Optional<String> findIdByNamespacedId(String namespacedId);
 
-    void save(PersonDetailsOperations personDetails);
+    boolean save(PersonDetailsOperations personDetails);
 
     void save(PersonIdOperations personId);
 
-    void deleteById(String id);
+    boolean deleteById(String id);
 
     void deleteById(String id, String namespace);
 }

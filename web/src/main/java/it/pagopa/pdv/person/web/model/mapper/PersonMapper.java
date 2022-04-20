@@ -31,6 +31,8 @@ public class PersonMapper {
             personDto.setId(id.toString());
             personDto.setName(savePersonDto.getName());
             personDto.setFamilyName(savePersonDto.getFamilyName());
+            personDto.setEmail(savePersonDto.getEmail());
+            personDto.setBirthDate(savePersonDto.getBirthDate());
             if (savePersonDto.getWorkContacts() != null) {
                 personDto.setWorkContacts(savePersonDto.getWorkContacts().entrySet().stream()
                         .map(entry -> Map.entry(entry.getKey(), toDto(entry.getValue())))
@@ -63,6 +65,12 @@ public class PersonMapper {
             }
             if (personDetailsOperations.getFamilyName() != null) {
                 personResource.setFamilyName(new CertifiableFieldResource<>(personDetailsOperations.getFamilyName()));
+            }
+            if (personDetailsOperations.getEmail() != null) {
+                personResource.setEmail(new CertifiableFieldResource<>(personDetailsOperations.getEmail()));
+            }
+            if (personDetailsOperations.getBirthDate() != null) {
+                personResource.setBirthDate(new CertifiableFieldResource<>(personDetailsOperations.getBirthDate()));
             }
             if (personDetailsOperations.getWorkContacts() != null) {
                 personResource.setWorkContacts(personDetailsOperations.getWorkContacts().entrySet().stream()
