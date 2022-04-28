@@ -15,6 +15,7 @@ import it.pagopa.pdv.person.connector.PersonConnector;
 import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.PersonId;
 import it.pagopa.pdv.person.connector.dao.model.Status;
+import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import lombok.extern.slf4j.Slf4j;
@@ -107,11 +108,10 @@ public class PersonConnectorImpl implements PersonConnector {
 
 
     @Override
-    public boolean save(PersonDetailsOperations personDetails) {
+    public void save(PersonDetailsOperations personDetails) {
         log.trace("[save] start");
         log.debug(CONFIDENTIAL_MARKER, "[save] inputs: personDetails = {}", personDetails);
         Assert.notNull(personDetails, "A person details is required");
-        boolean result = true;
         PersonDetails person = new PersonDetails(personDetails);
         Map<String, AttributeValue> attributeValueMap = personDetailsModel.convert(person);
         personDetailsModel.convertKey(person).keySet().forEach(attributeValueMap::remove);
@@ -136,7 +136,7 @@ public class PersonConnectorImpl implements PersonConnector {
             try {
                 table.updateItem(updateItemSpec);
             } catch (ConditionalCheckFailedException e) {
-                result = false;
+                throw new ResourceNotFoundException();
             } catch (AmazonDynamoDBException e) {
                 if ("ValidationException".equals(e.getErrorCode())) {
                     // create tree parent nodes
@@ -146,9 +146,7 @@ public class PersonConnectorImpl implements PersonConnector {
                 }
             }
         }
-        log.debug("[save] output = {}", result);
         log.trace("[save] end");
-        return result;
     }
 
 
@@ -227,11 +225,10 @@ public class PersonConnectorImpl implements PersonConnector {
 
 
     @Override
-    public boolean deleteById(String id) {
+    public void deleteById(String id) {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}", id);
         Assert.hasText(id, "A person id is required");
-        boolean result = true;
         PersonDetails personDetails = new PersonDetails(id);
         PrimaryKey primaryKey = new PrimaryKey(personDetailsTableMapper.hashKey().name(),
                 personDetailsTableMapper.hashKey().get(personDetails),
@@ -248,11 +245,9 @@ public class PersonConnectorImpl implements PersonConnector {
                             .buildForUpdate())
             );
         } catch (ConditionalCheckFailedException e) {
-            result = false;
+            throw new ResourceNotFoundException();
         }
-        log.debug("[deleteById] output = {}", result);
         log.trace("[deleteById] end");
-        return result;
     }
 
 

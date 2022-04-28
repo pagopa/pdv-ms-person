@@ -1,6 +1,6 @@
 package it.pagopa.pdv.person.web.handler;
 
-import it.pagopa.pdv.person.core.exception.ResourceNotFoundException;
+import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.web.model.Problem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

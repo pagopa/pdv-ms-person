@@ -1,4 +1,4 @@
-package it.pagopa.pdv.person.core.exception;
+package it.pagopa.pdv.person.connector.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 }

@@ -21,7 +21,6 @@ import java.util.TimeZone;
 
 @Slf4j
 @Configuration
-//@ComponentScan(basePackages = {"it.pagopa.private_data_vault.web.interceptor", "it.pagopa.private_data_vault.web.handler"})
 class WebConfig implements WebMvcConfigurer {
 
 

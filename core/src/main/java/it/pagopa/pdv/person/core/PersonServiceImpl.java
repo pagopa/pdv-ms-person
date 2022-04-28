@@ -1,9 +1,9 @@
 package it.pagopa.pdv.person.core;
 
 import it.pagopa.pdv.person.connector.PersonConnector;
+import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
-import it.pagopa.pdv.person.core.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.core.logging.LogUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,9 +66,7 @@ class PersonServiceImpl implements PersonService {
         log.trace("[save] start");
         log.debug(LogUtils.CONFIDENTIAL_MARKER, "[save] inputs: personDetails = {}", personDetails);
         Assert.notNull(personDetails, "A person details is required");
-        if (!personConnector.save(personDetails)) {
-            throw new ResourceNotFoundException();
-        }
+        personConnector.save(personDetails);
         log.trace("[save] end");
     }
 
@@ -78,9 +76,7 @@ class PersonServiceImpl implements PersonService {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}", id);
         Assert.hasText(id, "A person id is required");
-        if (!personConnector.deleteById(id)) {
-            throw new ResourceNotFoundException();
-        }
+        personConnector.deleteById(id);
         log.trace("[deleteById] end");
     }
 
@@ -90,7 +86,7 @@ class PersonServiceImpl implements PersonService {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, "A person id is required");
-        Assert.hasText(id, "A namespace is required");
+        Assert.hasText(namespace, "A namespace is required");
         personConnector.deleteById(id, namespace);
         log.trace("[deleteById] end");
     }

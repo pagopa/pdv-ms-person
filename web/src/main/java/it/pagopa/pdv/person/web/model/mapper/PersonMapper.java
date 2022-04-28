@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 public class PersonMapper {
 
     public static PersonIdDto assembles(UUID id, String namespace, SavePersonNamespaceDto savePersonNamespaceDto) {
-        PersonIdDto personIdDto = new PersonIdDto();
-        personIdDto.setNamespace(namespace);
+        PersonIdDto personIdDto = null;
         if (id != null) {
+            personIdDto = new PersonIdDto();
             personIdDto.setGlobalId(id.toString());
-        }
-        if (savePersonNamespaceDto != null && savePersonNamespaceDto.getNamespacedId() != null) {
-            personIdDto.setNamespacedId(savePersonNamespaceDto.getNamespacedId().toString());
+            personIdDto.setNamespace(namespace);
+            if (savePersonNamespaceDto != null && savePersonNamespaceDto.getNamespacedId() != null) {
+                personIdDto.setNamespacedId(savePersonNamespaceDto.getNamespacedId().toString());
+            }
         }
         return personIdDto;
     }
@@ -26,17 +27,19 @@ public class PersonMapper {
 
     public static PersonDto assembles(UUID id, SavePersonDto savePersonDto) {
         PersonDto personDto = null;
-        if (savePersonDto != null) {
+        if (id != null) {
             personDto = new PersonDto();
             personDto.setId(id.toString());
-            personDto.setName(savePersonDto.getName());
-            personDto.setFamilyName(savePersonDto.getFamilyName());
-            personDto.setEmail(savePersonDto.getEmail());
-            personDto.setBirthDate(savePersonDto.getBirthDate());
-            if (savePersonDto.getWorkContacts() != null) {
-                personDto.setWorkContacts(savePersonDto.getWorkContacts().entrySet().stream()
-                        .map(entry -> Map.entry(entry.getKey(), toDto(entry.getValue())))
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            if (savePersonDto != null) {
+                personDto.setName(savePersonDto.getName());
+                personDto.setFamilyName(savePersonDto.getFamilyName());
+                personDto.setEmail(savePersonDto.getEmail());
+                personDto.setBirthDate(savePersonDto.getBirthDate());
+                if (savePersonDto.getWorkContacts() != null) {
+                    personDto.setWorkContacts(savePersonDto.getWorkContacts().entrySet().stream()
+                            .map(entry -> Map.entry(entry.getKey(), toDto(entry.getValue())))
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                }
             }
         }
         return personDto;
@@ -48,7 +51,7 @@ public class PersonMapper {
         if (workContactResource != null) {
             workContactDto = new PersonDto.WorkContactDto();
             if (workContactResource.getEmail() != null) {
-                workContactDto.setEmail(new CertifiableFieldResource<>(workContactResource.getEmail()));
+                workContactDto.setEmail(workContactResource.getEmail());
             }
         }
         return workContactDto;
