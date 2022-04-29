@@ -296,146 +296,21 @@
   },
   "components" : {
     "schemas" : {
-      "CertifiableFieldResourceOfLocalDate": {
-        "title": "CertifiableFieldResourceOfLocalDate",
-        "required": [
-          "certification",
-          "value"
-        ],
-        "type": "object",
-        "properties": {
-          "certification": {
-            "type": "string",
-            "description": "Certified source of information"
-          },
-          "value": {
-            "type": "string",
-            "description": "Field value",
-            "format": "date"
-          }
-        }
-      },
-      "CertifiableFieldResourceOfstring": {
-        "title": "CertifiableFieldResourceOfstring",
-        "required": [
-          "certification",
-          "value"
-        ],
-        "type": "object",
-        "properties": {
-          "certification": {
-            "type": "string",
-            "description": "Certified source of information"
-          },
-          "value": {
-            "type": "string",
-            "description": "Field value"
-          }
-        }
-      },
       "PersonId": {
         "title": "PersonId",
-        "required": [
-          "id"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Person internal id",
-            "format": "uuid"
-          }
-        }
+        "type": "object"
       },
       "PersonResource": {
         "title": "PersonResource",
-        "required": [
-          "id"
-        ],
-        "type": "object",
-        "properties": {
-          "birthDate": {
-            "description": "Person date of birth",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfLocalDate"
-          },
-          "email": {
-            "description": "Person email",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          },
-          "familyName": {
-            "description": "Person family name",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          },
-          "id": {
-            "type": "string",
-            "description": "Person internal id",
-            "format": "uuid"
-          },
-          "name": {
-            "description": "Person name",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          },
-          "workContacts": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/WorkContactResource"
-            },
-            "description": "Person work contacts"
-          }
-        }
+        "type": "object"
       },
       "SavePersonDto": {
         "title": "SavePersonDto",
-        "type": "object",
-        "properties": {
-          "birthDate": {
-            "description": "Person date of birth",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfLocalDate"
-          },
-          "email": {
-            "description": "Person email",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          },
-          "familyName": {
-            "description": "Person family name",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          },
-          "name": {
-            "description": "Person name",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          },
-          "workContacts": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/WorkContactResource"
-            },
-            "description": "Person work contacts"
-          }
-        }
+        "type": "object"
       },
       "SavePersonNamespaceDto": {
         "title": "SavePersonNamespaceDto",
-        "required": [
-          "namespacedId"
-        ],
-        "type": "object",
-        "properties": {
-          "namespacedId": {
-            "type": "string",
-            "description": "Person namespaced id",
-            "format": "uuid"
-          }
-        }
-      },
-      "WorkContactResource": {
-        "title": "WorkContactResource",
-        "type": "object",
-        "properties": {
-          "email": {
-            "description": "Person work email",
-            "$ref": "#/components/schemas/CertifiableFieldResourceOfstring"
-          }
-        }
+        "type": "object"
       }
     }
   }

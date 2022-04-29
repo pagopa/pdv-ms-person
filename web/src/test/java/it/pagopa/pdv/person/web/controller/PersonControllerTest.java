@@ -40,7 +40,7 @@ class PersonControllerTest {
     private static final String BASE_URL = "/people";
 
     @MockBean
-    private PersonService personService;
+    private PersonService personServiceMock;
 
     @Autowired
     protected MockMvc mvc;
@@ -60,7 +60,7 @@ class PersonControllerTest {
         // given
         UUID uuid = UUID.randomUUID();
         Boolean isNamespaced = Boolean.FALSE;
-        Mockito.when(personService.findById(Mockito.anyString(), Mockito.anyBoolean()))
+        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.anyBoolean()))
                 .thenReturn(new DummyPersonDetails());
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -73,9 +73,9 @@ class PersonControllerTest {
         // then
         PersonResource person = objectMapper.readValue(result.getResponse().getContentAsString(), PersonResource.class);
         assertNotNull(person);
-        Mockito.verify(personService, Mockito.times(1))
+        Mockito.verify(personServiceMock, Mockito.times(1))
                 .findById(uuid.toString(), isNamespaced);
-        Mockito.verifyNoMoreInteractions(personService);
+        Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 
@@ -83,7 +83,7 @@ class PersonControllerTest {
     void findIdByNamespacedId() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Mockito.when(personService.findIdByNamespacedId(Mockito.anyString()))
+        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString()))
                 .thenReturn(UUID.randomUUID().toString());
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -97,9 +97,9 @@ class PersonControllerTest {
         PersonId personId = objectMapper.readValue(result.getResponse().getContentAsString(), PersonId.class);
         assertNotNull(personId);
         assertNotEquals(uuid, personId.getId());
-        Mockito.verify(personService, Mockito.times(1))
+        Mockito.verify(personServiceMock, Mockito.times(1))
                 .findIdByNamespacedId(uuid.toString());
-        Mockito.verifyNoMoreInteractions(personService);
+        Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 
@@ -110,7 +110,7 @@ class PersonControllerTest {
         String namespace = "selfcare";
         SavePersonNamespaceDto savePersonNamespaceDto = new SavePersonNamespaceDto();
         savePersonNamespaceDto.setNamespacedId(UUID.randomUUID());
-        Mockito.doNothing().when(personService)
+        Mockito.doNothing().when(personServiceMock)
                 .save(Mockito.any(PersonIdOperations.class));
         // when
         mvc.perform(MockMvcRequestBuilders
@@ -120,14 +120,14 @@ class PersonControllerTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         // then
-        Mockito.verify(personService, Mockito.times(1))
+        Mockito.verify(personServiceMock, Mockito.times(1))
                 .save(personIdOperationsCaptor.capture());
         PersonIdOperations personIdOperations = personIdOperationsCaptor.getValue();
         assertNotNull(personIdOperations);
         assertEquals(uuid.toString(), personIdOperations.getGlobalId());
         assertEquals(namespace, personIdOperations.getNamespace());
         assertEquals(savePersonNamespaceDto.getNamespacedId().toString(), personIdOperations.getNamespacedId());
-        Mockito.verifyNoMoreInteractions(personService);
+        Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 
@@ -149,7 +149,7 @@ class PersonControllerTest {
         WorkContactResource workContactResource = new WorkContactResource();
         workContactResource.setEmail(stringCertifiableFieldResource);
         savePersonDto.setWorkContacts(Map.of("inst-1", workContactResource));
-        Mockito.doNothing().when(personService)
+        Mockito.doNothing().when(personServiceMock)
                 .save(Mockito.any(PersonDetailsOperations.class));
         // when
         mvc.perform(MockMvcRequestBuilders
@@ -159,7 +159,7 @@ class PersonControllerTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         // then
-        Mockito.verify(personService, Mockito.times(1))
+        Mockito.verify(personServiceMock, Mockito.times(1))
                 .save(personDetailsOperationsCaptor.capture());
         PersonDetailsOperations personDetailsOperations = personDetailsOperationsCaptor.getValue();
         assertNotNull(personDetailsOperations);
@@ -170,7 +170,7 @@ class PersonControllerTest {
         assertEquals(savePersonDto.getBirthDate(), personDetailsOperations.getBirthDate());
         assertEquals(savePersonDto.getWorkContacts().size(), personDetailsOperations.getWorkContacts().size());
         assertEquals(savePersonDto.getWorkContacts().get("inst-1").getEmail(), personDetailsOperations.getWorkContacts().get("inst-1").getEmail());
-        Mockito.verifyNoMoreInteractions(personService);
+        Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 
@@ -178,7 +178,7 @@ class PersonControllerTest {
     void deletePerson() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Mockito.doNothing().when(personService)
+        Mockito.doNothing().when(personServiceMock)
                 .deleteById(Mockito.any());
         // when
         mvc.perform(MockMvcRequestBuilders
@@ -187,9 +187,9 @@ class PersonControllerTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         // then
-        Mockito.verify(personService, Mockito.times(1))
+        Mockito.verify(personServiceMock, Mockito.times(1))
                 .deleteById(uuid.toString());
-        Mockito.verifyNoMoreInteractions(personService);
+        Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 
@@ -198,7 +198,7 @@ class PersonControllerTest {
         // given
         UUID uuid = UUID.randomUUID();
         String namespace = "selfcare";
-        Mockito.doNothing().when(personService)
+        Mockito.doNothing().when(personServiceMock)
                 .deleteById(Mockito.any(), Mockito.any());
         // when
         mvc.perform(MockMvcRequestBuilders
@@ -207,9 +207,9 @@ class PersonControllerTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         // then
-        Mockito.verify(personService, Mockito.times(1))
+        Mockito.verify(personServiceMock, Mockito.times(1))
                 .deleteById(uuid.toString(), namespace);
-        Mockito.verifyNoMoreInteractions(personService);
+        Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 }

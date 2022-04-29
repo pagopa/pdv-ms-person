@@ -1,5 +1,6 @@
 package it.pagopa.pdv.person.web.model;
 
+import it.pagopa.pdv.person.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,6 @@ import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -54,8 +54,7 @@ class SavePersonNamespaceDtoTest {
     @Test
     void validateNotNullFields() {
         // given
-        SavePersonNamespaceDto model = new SavePersonNamespaceDto();
-        model.setNamespacedId(UUID.randomUUID());
+        SavePersonNamespaceDto model = TestUtils.mockInstance(new SavePersonNamespaceDto());
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
