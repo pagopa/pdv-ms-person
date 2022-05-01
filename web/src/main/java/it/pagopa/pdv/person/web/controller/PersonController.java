@@ -79,7 +79,7 @@ public class PersonController {
     @ApiOperation(value = "${swagger.api.person.saveNamespacedId.summary}",
             notes = "${swagger.api.person.saveNamespacedId.notes}")
     @PutMapping(value = "{id}/namespace/{namespace}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void saveNamespacedId(@ApiParam("${swagger.model.person.id}")
                                  @PathVariable("id")
                                          UUID id,
@@ -99,7 +99,7 @@ public class PersonController {
     @ApiOperation(value = "${swagger.api.person.save.summary}",
             notes = "${swagger.api.person.save.notes}")
     @PatchMapping(value = "{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void save(@ApiParam("${swagger.model.person.id}")
                      @PathVariable("id")
                              UUID id,

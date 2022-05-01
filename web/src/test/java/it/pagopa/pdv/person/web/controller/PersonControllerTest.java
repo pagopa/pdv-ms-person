@@ -118,7 +118,7 @@ class PersonControllerTest {
                 .content(objectMapper.writeValueAsString(savePersonNamespaceDto))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
                 .save(personIdOperationsCaptor.capture());
@@ -157,7 +157,7 @@ class PersonControllerTest {
                 .content(objectMapper.writeValueAsString(savePersonDto))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
                 .save(personDetailsOperationsCaptor.capture());
