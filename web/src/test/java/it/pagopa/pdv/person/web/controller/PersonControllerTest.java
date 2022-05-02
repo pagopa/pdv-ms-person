@@ -1,33 +1,37 @@
 package it.pagopa.pdv.person.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import it.pagopa.pdv.person.connector.model.CertifiableField;
 import it.pagopa.pdv.person.connector.model.DummyPersonDetails;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import it.pagopa.pdv.person.core.PersonService;
 import it.pagopa.pdv.person.web.config.WebTestConfig;
 import it.pagopa.pdv.person.web.handler.RestExceptionsHandler;
-import it.pagopa.pdv.person.web.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(value = {PersonController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
@@ -45,9 +49,6 @@ class PersonControllerTest {
     @Autowired
     protected MockMvc mvc;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
     @Captor
     private ArgumentCaptor<PersonIdOperations> personIdOperationsCaptor;
 
@@ -63,16 +64,25 @@ class PersonControllerTest {
         Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.anyBoolean()))
                 .thenReturn(new DummyPersonDetails());
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/{id}", uuid)
                 .queryParam("isNamespaced", isNamespaced.toString())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.name.certification", notNullValue()))
+                .andExpect(jsonPath("$.name.value", notNullValue()))
+                .andExpect(jsonPath("$.familyName.certification", notNullValue()))
+                .andExpect(jsonPath("$.familyName.value", notNullValue()))
+                .andExpect(jsonPath("$.email.certification", notNullValue()))
+                .andExpect(jsonPath("$.email.value", notNullValue()))
+                .andExpect(jsonPath("$.birthDate.certification", notNullValue()))
+                .andExpect(jsonPath("$.birthDate.value", notNullValue()))
+                .andExpect(jsonPath("$.birthDate.value", notNullValue()))
+                .andExpect(jsonPath("$.workContacts..email.certification", notNullValue()))
+                .andExpect(jsonPath("$.workContacts..email.value", notNullValue()));
         // then
-        PersonResource person = objectMapper.readValue(result.getResponse().getContentAsString(), PersonResource.class);
-        assertNotNull(person);
         Mockito.verify(personServiceMock, Mockito.times(1))
                 .findById(uuid.toString(), isNamespaced);
         Mockito.verifyNoMoreInteractions(personServiceMock);
@@ -86,17 +96,14 @@ class PersonControllerTest {
         Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString()))
                 .thenReturn(UUID.randomUUID().toString());
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id")
                 .queryParam("namespacedId", uuid.toString())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
+                .andExpect(jsonPath("$.id", not(uuid)));
         // then
-        PersonId personId = objectMapper.readValue(result.getResponse().getContentAsString(), PersonId.class);
-        assertNotNull(personId);
-        assertNotEquals(uuid, personId.getId());
         Mockito.verify(personServiceMock, Mockito.times(1))
                 .findIdByNamespacedId(uuid.toString());
         Mockito.verifyNoMoreInteractions(personServiceMock);
@@ -104,18 +111,16 @@ class PersonControllerTest {
 
 
     @Test
-    void saveNamespacedId() throws Exception {
+    void saveNamespacedId(@Value("classpath:stubs/savePersonNamespaceDto.json") Resource savePersonNamespaceDto) throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
         String namespace = "selfcare";
-        SavePersonNamespaceDto savePersonNamespaceDto = new SavePersonNamespaceDto();
-        savePersonNamespaceDto.setNamespacedId(UUID.randomUUID());
         Mockito.doNothing().when(personServiceMock)
                 .save(Mockito.any(PersonIdOperations.class));
         // when
         mvc.perform(MockMvcRequestBuilders
                 .put(BASE_URL + "/{id}/namespace/{namespace}", uuid, namespace)
-                .content(objectMapper.writeValueAsString(savePersonNamespaceDto))
+                .content(savePersonNamespaceDto.getInputStream().readAllBytes())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
@@ -126,35 +131,22 @@ class PersonControllerTest {
         assertNotNull(personIdOperations);
         assertEquals(uuid.toString(), personIdOperations.getGlobalId());
         assertEquals(namespace, personIdOperations.getNamespace());
-        assertEquals(savePersonNamespaceDto.getNamespacedId().toString(), personIdOperations.getNamespacedId());
+        String stubbedNamespacedId = JsonPath.parse(savePersonNamespaceDto.getInputStream()).read("$.namespacedId", String.class);
+        assertEquals(stubbedNamespacedId, personIdOperations.getNamespacedId());
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
 
     @Test
-    void save() throws Exception {
+    void save(@Value("classpath:stubs/savePersonDto.json") Resource savePersonDto) throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        SavePersonDto savePersonDto = new SavePersonDto();
-        CertifiableFieldResource<String> stringCertifiableFieldResource = new CertifiableFieldResource<>();
-        stringCertifiableFieldResource.setCertification("certification");
-        stringCertifiableFieldResource.setValue("value");
-        CertifiableFieldResource<LocalDate> localDateCertifiableFieldResource = new CertifiableFieldResource<>();
-        localDateCertifiableFieldResource.setCertification("certification");
-        localDateCertifiableFieldResource.setValue(LocalDate.now());
-        savePersonDto.setName(stringCertifiableFieldResource);
-        savePersonDto.setFamilyName(stringCertifiableFieldResource);
-        savePersonDto.setEmail(stringCertifiableFieldResource);
-        savePersonDto.setBirthDate(localDateCertifiableFieldResource);
-        WorkContactResource workContactResource = new WorkContactResource();
-        workContactResource.setEmail(stringCertifiableFieldResource);
-        savePersonDto.setWorkContacts(Map.of("inst-1", workContactResource));
         Mockito.doNothing().when(personServiceMock)
                 .save(Mockito.any(PersonDetailsOperations.class));
         // when
         mvc.perform(MockMvcRequestBuilders
                 .patch(BASE_URL + "/{id}", uuid)
-                .content(objectMapper.writeValueAsString(savePersonDto))
+                .content(savePersonDto.getInputStream().readAllBytes())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
@@ -164,13 +156,24 @@ class PersonControllerTest {
         PersonDetailsOperations personDetailsOperations = personDetailsOperationsCaptor.getValue();
         assertNotNull(personDetailsOperations);
         assertEquals(uuid.toString(), personDetailsOperations.getId());
-        assertEquals(savePersonDto.getName(), personDetailsOperations.getName());
-        assertEquals(savePersonDto.getFamilyName(), personDetailsOperations.getFamilyName());
-        assertEquals(savePersonDto.getEmail(), personDetailsOperations.getEmail());
-        assertEquals(savePersonDto.getBirthDate(), personDetailsOperations.getBirthDate());
-        assertEquals(savePersonDto.getWorkContacts().size(), personDetailsOperations.getWorkContacts().size());
-        assertEquals(savePersonDto.getWorkContacts().get("inst-1").getEmail(), personDetailsOperations.getWorkContacts().get("inst-1").getEmail());
+        Map<String, Object> requestContent = JsonPath.parse(savePersonDto.getInputStream()).json();
+        assertCertifiableFieldEquals(requestContent.get("name"), personDetailsOperations.getName());
+        assertCertifiableFieldEquals(requestContent.get("familyName"), personDetailsOperations.getFamilyName());
+        assertCertifiableFieldEquals(requestContent.get("email"), personDetailsOperations.getEmail());
+        assertCertifiableFieldEquals(requestContent.get("birthDate"), personDetailsOperations.getBirthDate());
+        Map<String, Map<String, Object>> workContacts =
+                (Map<String, Map<String, Object>>) requestContent.get("workContacts");
+        assertEquals(workContacts.size(), personDetailsOperations.getWorkContacts().size());
+        personDetailsOperations.getWorkContacts().forEach((s, workContact) ->
+                assertCertifiableFieldEquals(workContacts.get(s).get("email"), workContact.getEmail()));
         Mockito.verifyNoMoreInteractions(personServiceMock);
+    }
+
+
+    private void assertCertifiableFieldEquals(Object expected, CertifiableField<?> actual) {
+        Map<String, Object> jsonMap = (Map<String, Object>) expected;
+        assertEquals(jsonMap.get("certification"), actual.getCertification());
+        assertEquals(jsonMap.get("value").toString(), actual.getValue().toString());
     }
 
 
