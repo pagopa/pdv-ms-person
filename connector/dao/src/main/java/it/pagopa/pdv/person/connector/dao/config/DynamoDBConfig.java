@@ -21,7 +21,7 @@ import org.springframework.context.annotation.PropertySource;
 import java.util.HashSet;
 
 @Configuration
-class DaoConfig {
+class DynamoDBConfig {
 
     @Configuration
     @Profile("!dev-local")
