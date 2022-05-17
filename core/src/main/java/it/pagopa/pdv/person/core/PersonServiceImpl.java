@@ -13,6 +13,8 @@ import org.springframework.util.Assert;
 @Service
 class PersonServiceImpl implements PersonService {
 
+    private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
+
     private final PersonConnector personConnector;
 
 
@@ -26,7 +28,7 @@ class PersonServiceImpl implements PersonService {
     public PersonDetailsOperations findById(String id, boolean isNamespaced) {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, isNamespaced = {}", id, isNamespaced);
-        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         if (isNamespaced) {
             id = findIdByNamespacedId(id);
         }
@@ -55,7 +57,7 @@ class PersonServiceImpl implements PersonService {
     public void save(PersonIdOperations personId) {
         log.trace("[save] start");
         log.debug("[save] inputs: personId = {}", personId);
-        Assert.notNull(personId, "A person id is required");
+        Assert.notNull(personId, PERSON_ID_REQUIRED_MESSAGE);
         personConnector.save(personId);
         log.trace("[save] end");
     }
@@ -75,7 +77,7 @@ class PersonServiceImpl implements PersonService {
     public void deleteById(String id) {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}", id);
-        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         personConnector.deleteById(id);
         log.trace("[deleteById] end");
     }
@@ -85,7 +87,7 @@ class PersonServiceImpl implements PersonService {
     public void deleteById(String id, String namespace) {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}, namespace = {}", id, namespace);
-        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         Assert.hasText(namespace, "A namespace is required");
         personConnector.deleteById(id, namespace);
         log.trace("[deleteById] end");

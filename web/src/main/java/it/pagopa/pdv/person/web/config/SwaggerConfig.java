@@ -23,13 +23,13 @@ class SwaggerConfig {
     @Configuration
     @Profile("swaggerIT")
     @PropertySource("classpath:/swagger/swagger_it.properties")
-    public static class itConfig {
+    public static class ItConfig {
     }
 
     @Configuration
     @Profile("swaggerEN")
     @PropertySource("classpath:/swagger/swagger_en.properties")
-    public static class enConfig {
+    public static class EnConfig {
     }
 
     private final Environment environment;

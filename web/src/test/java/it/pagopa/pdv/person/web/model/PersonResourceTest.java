@@ -1,6 +1,5 @@
 package it.pagopa.pdv.person.web.model;
 
-import it.pagopa.pdv.person.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +53,7 @@ class PersonResourceTest {
     @Test
     void validateNotNullFields() {
         // given
-        PersonResource model = TestUtils.mockInstance(new PersonResource());
+        PersonResource model = new DummyPersonResource();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(model);
         // then
