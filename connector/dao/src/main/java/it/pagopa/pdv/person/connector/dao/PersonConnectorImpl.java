@@ -37,8 +37,10 @@ import static com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
 public class PersonConnectorImpl implements PersonConnector {
 
     public static final String TABLE_NAME = "Person";
-    public static final List<String> M_FIELD_WHITELIST = List.of(PersonDetails.Fields.workContacts + ".");
+
+    private static final List<String> M_FIELD_WHITELIST = List.of(PersonDetails.Fields.workContacts + ".");
     private static final Marker CONFIDENTIAL_MARKER = MarkerFactory.getMarker("CONFIDENTIAL");
+    private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
 
     private final Table table;
     private final DynamoDBMapperTableModel<PersonDetails> personDetailsModel;
@@ -60,7 +62,7 @@ public class PersonConnectorImpl implements PersonConnector {
     public Optional<PersonDetailsOperations> findById(String id) {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}", id);
-        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         Optional<PersonDetailsOperations> personDetails = Optional.ofNullable(personDetailsTableMapper.load(id))
                 .filter(p -> Status.ACTIVE.equals(p.getStatus()))
                 .map(Function.identity());
@@ -97,7 +99,7 @@ public class PersonConnectorImpl implements PersonConnector {
     public void save(PersonIdOperations personId) {
         log.trace("[save] start");
         log.debug("[save] inputs: personId = {}", personId);
-        Assert.notNull(personId, "A person id is required");
+        Assert.notNull(personId, PERSON_ID_REQUIRED_MESSAGE);
         try {
             personIdTableMapper.saveIfNotExists(new PersonId(personId));//TODO: good for performance??
         } catch (ConditionalCheckFailedException e) {
@@ -228,7 +230,7 @@ public class PersonConnectorImpl implements PersonConnector {
     public void deleteById(String id) {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}", id);
-        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         PersonDetails personDetails = new PersonDetails(id);
         PrimaryKey primaryKey = new PrimaryKey(personDetailsTableMapper.hashKey().name(),
                 personDetailsTableMapper.hashKey().get(personDetails),
@@ -255,7 +257,7 @@ public class PersonConnectorImpl implements PersonConnector {
     public void deleteById(String id, String namespace) {
         log.trace("[deleteById] start");
         log.debug("[deleteById] inputs: id = {}, namespace = {}", id, namespace);
-        Assert.hasText(id, "A person id is required");
+        Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         Assert.hasText(id, "A namespace is required");
         PersonId personId = new PersonId();
         personId.setGlobalId(id);

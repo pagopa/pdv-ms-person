@@ -7,9 +7,9 @@ import org.springframework.util.Assert;
 
 @Data
 @NoArgsConstructor
-public class DynamoDBCertifiableField<T> implements CertifiableField<T> {
+public class DynamoDBCertifiedField<T> implements CertifiableField<T> {
 
-    public DynamoDBCertifiableField(CertifiableField<T> certifiableField) {
+    public DynamoDBCertifiedField(CertifiableField<T> certifiableField) {
         Assert.notNull(certifiableField, "A CertifiableField is required");
         certification = certifiableField.getCertification();
         value = certifiableField.getValue();
