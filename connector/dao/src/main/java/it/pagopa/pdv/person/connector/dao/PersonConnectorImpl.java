@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
+import com.amazonaws.services.dynamodbv2.xspec.Condition;
 import com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder;
 import com.amazonaws.services.dynamodbv2.xspec.UpdateAction;
 import it.pagopa.pdv.person.connector.PersonConnector;
@@ -16,6 +17,7 @@ import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.PersonId;
 import it.pagopa.pdv.person.connector.dao.model.Status;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
+import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,10 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
+import static it.pagopa.pdv.person.connector.dao.model.DynamoDBCertifiedField.Fields.certification;
+import static it.pagopa.pdv.person.connector.dao.model.PersonDetails.Fields.status;
+import static it.pagopa.pdv.person.connector.dao.model.Status.PENDING_DELETE;
+import static it.pagopa.pdv.person.connector.model.CertifiableField.NOT_CERTIFIED_VALUE;
 
 @Slf4j
 @Service
@@ -130,17 +136,21 @@ public class PersonConnectorImpl implements PersonConnector {
         } else {
             ExpressionSpecBuilder expressionSpecBuilder = new ExpressionSpecBuilder();
             Deque<UpdateAction> missingNodes = new ArrayDeque<>();
-            setUpdateActions(expressionSpecBuilder, missingNodes, attributeValueMap, "");
-            expressionSpecBuilder.withCondition(S(PersonDetails.Fields.status).ne(Status.PENDING_DELETE.toString()));
+            ConditionBuilder conditionBuilder = new ConditionBuilder();
+            conditionBuilder.add(S(status).ne(PENDING_DELETE.toString()));
+            setUpdateActions(expressionSpecBuilder, missingNodes, attributeValueMap, "", conditionBuilder);
+            expressionSpecBuilder.withCondition(conditionBuilder.build());
             UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                     .withPrimaryKey(primaryKey)
                     .withExpressionSpec(expressionSpecBuilder.buildForUpdate());
             try {
                 table.updateItem(updateItemSpec);
             } catch (ConditionalCheckFailedException e) {
-                throw new ResourceNotFoundException();
+                throw findById(person.getId())
+                        .map(personFound -> (RuntimeException) new UpdateNotAllowedException())
+                        .orElseGet(ResourceNotFoundException::new);
             } catch (AmazonDynamoDBException e) {
-                if ("ValidationException".equals(e.getErrorCode())) {
+                if ("ValidationException".equals(e.getErrorCode())) {//FIXME: manage the "primary key not found exception" case
                     // create tree parent nodes
                     createParentNodes(primaryKey, missingNodes);
                     // retry failed update
@@ -149,6 +159,20 @@ public class PersonConnectorImpl implements PersonConnector {
             }
         }
         log.trace("[save] end");
+    }
+
+
+    private static class ConditionBuilder {
+        private final List<Condition> conditions = new ArrayList<>();
+
+        private void add(Condition condition) {
+            conditions.add(condition);
+        }
+
+        private Condition build() {
+            return conditions.stream().reduce(Condition::and)
+                    .orElse(null);
+        }
     }
 
 
@@ -198,8 +222,10 @@ public class PersonConnectorImpl implements PersonConnector {
     }
 
 
-    private void setUpdateActions(ExpressionSpecBuilder expressionBuilder, Deque<UpdateAction> missingNodes, Map<String, AttributeValue> attributeValueMap, String attributeNamePrefix) {
-        attributeValueMap.forEach((attributeName, attributeValue) -> {
+    private void setUpdateActions(ExpressionSpecBuilder expressionBuilder, Deque<UpdateAction> missingNodes, Map<String, AttributeValue> attributeValueMap, String attributeNamePrefix, ConditionBuilder conditionBuilder) {
+        for (Map.Entry<String, AttributeValue> entry : attributeValueMap.entrySet()) {
+            String attributeName = entry.getKey();
+            AttributeValue attributeValue = entry.getValue();
             if (attributeValue.getBS() != null) {
                 expressionBuilder.addUpdate(BS(attributeNamePrefix + attributeName)
                         .append(attributeValue.getBS().toArray(new ByteBuffer[attributeValue.getBS().size()])));
@@ -210,19 +236,26 @@ public class PersonConnectorImpl implements PersonConnector {
                 expressionBuilder.addUpdate(SS(attributeNamePrefix + attributeName)
                         .append(ItemUtils.<Set<String>>toSimpleValue(attributeValue)));
             } else if (attributeValue.getM() != null) {
-                if (M_FIELD_WHITELIST.contains(attributeNamePrefix)) {
+                if (attributeValue.getM().containsKey(certification)) {
+                    expressionBuilder.addUpdate(M(attributeNamePrefix + attributeName)
+                            .set(ItemUtils.toSimpleMapValue(attributeValue.getM())));
+                    if (NOT_CERTIFIED_VALUE.equals(attributeValue.getM().get(certification).getS())) {
+                        conditionBuilder.add(parenthesize(M(attributeNamePrefix + attributeName).notExists()
+                                .or(S(attributeNamePrefix + attributeName + "." + certification).eq(NOT_CERTIFIED_VALUE))));
+                    }
+                } else if (M_FIELD_WHITELIST.contains(attributeNamePrefix)) {
                     expressionBuilder.addUpdate(M(attributeNamePrefix + attributeName)
                             .set(ItemUtils.toSimpleMapValue(attributeValue.getM())));
                 } else {
                     missingNodes.push(M(attributeNamePrefix + attributeName)
                             .set(M(attributeNamePrefix + attributeName).ifNotExists(Map.of())));
-                    setUpdateActions(expressionBuilder, missingNodes, attributeValue.getM(), attributeNamePrefix + attributeName + ".");
+                    setUpdateActions(expressionBuilder, missingNodes, attributeValue.getM(), attributeNamePrefix + attributeName + ".", conditionBuilder);
                 }
             } else {
                 expressionBuilder.addUpdate(S(attributeNamePrefix + attributeName)
                         .set(attributeValue.getS()));
             }
-        });
+        }
     }
 
 
@@ -240,10 +273,10 @@ public class PersonConnectorImpl implements PersonConnector {
             table.updateItem(new UpdateItemSpec()
                     .withPrimaryKey(primaryKey)
                     .withExpressionSpec(new ExpressionSpecBuilder()
-                            .addUpdate(S(PersonDetails.Fields.status).set(Status.PENDING_DELETE.toString()))
+                            .addUpdate(S(status).set(PENDING_DELETE.toString()))
                             .withCondition(attribute_exists(personDetailsTableMapper.hashKey().name())
                                     .and(attribute_exists(personDetailsTableMapper.rangeKey().name()))
-                                    .and(S(PersonDetails.Fields.status).ne(Status.PENDING_DELETE.toString())))
+                                    .and(S(status).ne(PENDING_DELETE.toString())))
                             .buildForUpdate())
             );
         } catch (ConditionalCheckFailedException e) {

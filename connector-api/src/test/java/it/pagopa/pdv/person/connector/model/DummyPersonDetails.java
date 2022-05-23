@@ -21,10 +21,10 @@ public class DummyPersonDetails implements PersonDetailsOperations {
     public DummyPersonDetails() {
         this.id = UUID.randomUUID().toString();
         this.fiscalCode = "fiscalCode";
-        this.name = new DummyCertifiableField<>(String.class);
-        this.familyName = new DummyCertifiableField<>(String.class);
-        this.email = new DummyCertifiableField<>(String.class);
-        this.birthDate = new DummyCertifiableField<>(LocalDate.class);
+        this.name = new DummyCertifiedField<>(String.class);
+        this.familyName = new DummyCertifiedField<>(String.class);
+        this.email = new DummyCertifiedField<>(String.class);
+        this.birthDate = new DummyCertifiedField<>(LocalDate.class);
         this.workContacts = Map.of("inst-1", new DummyWorkContact());
     }
 
@@ -34,7 +34,7 @@ public class DummyPersonDetails implements PersonDetailsOperations {
         private CertifiableField<String> email;
 
         public DummyWorkContact() {
-            this.email = new DummyCertifiableField<>(String.class);
+            this.email = new DummyCertifiedField<>(String.class);
         }
     }
 

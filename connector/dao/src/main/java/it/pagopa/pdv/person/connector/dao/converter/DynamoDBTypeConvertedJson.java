@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pdv.person.connector.dao.model.DynamoDBCertifiedField;
+import it.pagopa.pdv.person.connector.model.CertifiableField;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -45,7 +45,7 @@ public @interface DynamoDBTypeConvertedJson {
 
         public Converter(Class<T> targetType, DynamoDBTypeConvertedJson annotation) {
             this.targetType = annotation.targetType() == void.class ? targetType : (Class<T>) annotation.targetType();
-            if (targetType == DynamoDBCertifiedField.class) {
+            if (CertifiableField.class.isAssignableFrom(targetType)) {
                 if (annotation.targetType() != void.class) {
                     javaType = mapper.getTypeFactory().constructParametricType(targetType, annotation.targetType());
                 } else {

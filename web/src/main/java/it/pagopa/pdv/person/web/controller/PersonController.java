@@ -100,6 +100,7 @@ public class PersonController {
             notes = "${swagger.api.person.save.notes}")
     @PatchMapping(value = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @ApiResponses({@ApiResponse(code = 409, message = "Conflict")}) //TODO
     public void save(@ApiParam("${swagger.model.person.id}")
                      @PathVariable("id")
                              UUID id,

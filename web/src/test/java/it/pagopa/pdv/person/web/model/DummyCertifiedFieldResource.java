@@ -4,10 +4,10 @@ import lombok.SneakyThrows;
 
 import java.time.LocalDate;
 
-public class DummyCertifiableFieldResource<T> extends CertifiableFieldResource<T> {
+public class DummyCertifiedFieldResource<T> extends CertifiableFieldResource<T> {
 
     @SneakyThrows
-    public DummyCertifiableFieldResource(Class<T> clazz) {
+    public DummyCertifiedFieldResource(Class<T> clazz) {
         setCertification("certification");
         if (String.class.isAssignableFrom(clazz)) {
             setValue((T) "value");
