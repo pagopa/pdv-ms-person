@@ -1,6 +1,7 @@
 package it.pagopa.pdv.person.web.handler;
 
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
+import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.web.model.Problem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.ServletException;
 import javax.validation.ValidationException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -97,7 +100,7 @@ class RestExceptionsHandlerTest {
 
 
     @Test
-    void handleMethodArgumentNotValidException() {
+    void handleMethodArgumentNotValidException_noErrorDefined() {
         // given
         MethodArgumentNotValidException exceptionMock = Mockito.mock(MethodArgumentNotValidException.class);
         Mockito.when(exceptionMock.getMessage())
@@ -111,6 +114,21 @@ class RestExceptionsHandlerTest {
 
 
     @Test
+    void handleMethodArgumentNotValidException() {
+        // given
+        MethodArgumentNotValidException exceptionMock = Mockito.mock(MethodArgumentNotValidException.class);
+        final String field = "field";
+        Mockito.when(exceptionMock.getAllErrors())
+                .thenReturn(List.of(new FieldError("model", field, "message")));
+        // when
+        Problem resource = handler.handleMethodArgumentNotValidException(exceptionMock);
+        // then
+        assertNotNull(resource);
+        assertEquals("{" + field + "=[null constraint violation]}", resource.getMessage());
+    }
+
+
+    @Test
     void handleResourceNotFoundException() {
         // given
         ResourceNotFoundException mockException = Mockito.mock(ResourceNotFoundException.class);
@@ -118,6 +136,20 @@ class RestExceptionsHandlerTest {
                 .thenReturn(DETAIL_MESSAGE);
         // when
         Problem response = handler.handleResourceNotFoundException(mockException);
+        // then
+        assertNotNull(response);
+        assertEquals(DETAIL_MESSAGE, response.getMessage());
+    }
+
+
+    @Test
+    void handleUpdateNotAllowedException() {
+        // given
+        UpdateNotAllowedException mockException = Mockito.mock(UpdateNotAllowedException.class);
+        Mockito.when(mockException.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        Problem response = handler.handleUpdateNotAllowedException(mockException);
         // then
         assertNotNull(response);
         assertEquals(DETAIL_MESSAGE, response.getMessage());
