@@ -150,7 +150,7 @@ public class PersonConnectorImpl implements PersonConnector {
                         .map(personFound -> (RuntimeException) new UpdateNotAllowedException())
                         .orElseGet(ResourceNotFoundException::new);
             } catch (AmazonDynamoDBException e) {
-                if ("ValidationException".equals(e.getErrorCode())) {//FIXME: manage the "primary key not found exception" case
+                if ("ValidationException".equals(e.getErrorCode())) {
                     // create tree parent nodes
                     createParentNodes(primaryKey, missingNodes);
                     // retry failed update
