@@ -8,17 +8,17 @@ public class DummyPersonResource extends PersonResource {
 
     public DummyPersonResource() {
         setId(UUID.randomUUID());
-        setName(new DummyCertifiableFieldResource<>(String.class));
-        setFamilyName(new DummyCertifiableFieldResource<>(String.class));
-        setEmail(new DummyCertifiableFieldResource<>(String.class));
-        setBirthDate(new DummyCertifiableFieldResource<>(LocalDate.class));
+        setName(new DummyCertifiedFieldResource<>(String.class));
+        setFamilyName(new DummyCertifiedFieldResource<>(String.class));
+        setEmail(new DummyCertifiedFieldResource<>(String.class));
+        setBirthDate(new DummyCertifiedFieldResource<>(LocalDate.class));
         setWorkContacts(Map.of("inst-1", new DummyWorkContactResource()));
     }
 
 
     public static class DummyWorkContactResource extends WorkContactResource {
         public DummyWorkContactResource() {
-            setEmail(new DummyCertifiableFieldResource<>(String.class));
+            setEmail(new DummyCertifiedFieldResource<>(String.class));
         }
     }
 

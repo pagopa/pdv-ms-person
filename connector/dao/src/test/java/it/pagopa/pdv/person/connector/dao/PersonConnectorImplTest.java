@@ -6,6 +6,8 @@ import it.pagopa.pdv.person.connector.dao.config.DynamoDBTestConfig;
 import it.pagopa.pdv.person.connector.dao.model.DummyPersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.DummyPersonId;
 import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
+import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
+import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import org.junit.jupiter.api.Test;
@@ -196,13 +198,40 @@ class PersonConnectorImplTest {
 
     @Test
     void savePersonDetails_alreadyExists() {
-        //TODO
+        // given
+        PersonDetails personDetails = new DummyPersonDetails();
+        personConnector.save(personDetails);
+        // when
+        Executable executable = () -> personConnector.save(personDetails);
+        // then
+        assertDoesNotThrow(executable);
     }
 
 
     @Test
-    void savePersonDetails_notAllowed() {
-        //TODO
+    void savePersonDetails_notAllowed_certifiedField() {
+        // given
+        PersonDetails personDetails = new DummyPersonDetails();
+        personDetails.getName().setCertification("SPID");
+        personConnector.save(personDetails);
+        personDetails.getName().setCertification("NONE");
+        // when
+        Executable executable = () -> personConnector.save(personDetails);
+        // then
+        assertThrows(UpdateNotAllowedException.class, executable);
+    }
+
+
+    @Test
+    void savePersonDetails_notAllowed_notEnabled() {
+        // given
+        PersonDetails personDetails = new DummyPersonDetails();
+        personConnector.save(personDetails);
+        personConnector.deleteById(personDetails.getId());
+        // when
+        Executable executable = () -> personConnector.save(personDetails);
+        // then
+        assertThrows(ResourceNotFoundException.class, executable);
     }
 
 

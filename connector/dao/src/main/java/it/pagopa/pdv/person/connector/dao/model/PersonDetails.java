@@ -3,13 +3,11 @@ package it.pagopa.pdv.person.connector.dao.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import it.pagopa.pdv.person.connector.dao.PersonConnectorImpl;
-import it.pagopa.pdv.person.connector.dao.converter.DynamoDBTypeConvertedJson;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,16 +26,16 @@ public class PersonDetails implements PersonDetailsOperations {
     public PersonDetails(PersonDetailsOperations personDetails) {
         id = personDetails.getId();
         if (personDetails.getName() != null) {
-            name = new DynamoDBCertifiedField<>(personDetails.getName());
+            name = new DynamoDBCertifiedFieldOfString(personDetails.getName());
         }
         if (personDetails.getFamilyName() != null) {
-            familyName = new DynamoDBCertifiedField<>(personDetails.getFamilyName());
+            familyName = new DynamoDBCertifiedFieldOfString(personDetails.getFamilyName());
         }
         if (personDetails.getEmail() != null) {
-            email = new DynamoDBCertifiedField<>(personDetails.getEmail());
+            email = new DynamoDBCertifiedFieldOfString(personDetails.getEmail());
         }
         if (personDetails.getBirthDate() != null) {
-            birthDate = new DynamoDBCertifiedField<>(personDetails.getBirthDate());
+            birthDate = new DynamoDBCertifiedFieldOfLocalDate(personDetails.getBirthDate());
         }
         if (personDetails.getWorkContacts() != null) {
             workContacts = new HashMap<>(personDetails.getWorkContacts().size());
@@ -63,20 +61,16 @@ public class PersonDetails implements PersonDetailsOperations {
     private Status status = ACTIVE;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConvertedJson(targetType = String.class)
-    private DynamoDBCertifiedField<String> name;
+    private DynamoDBCertifiedFieldOfString name;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConvertedJson(targetType = String.class)
-    private DynamoDBCertifiedField<String> familyName;
+    private DynamoDBCertifiedFieldOfString familyName;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConvertedJson(targetType = String.class)
-    private DynamoDBCertifiedField<String> email;
+    private DynamoDBCertifiedFieldOfString email;
 
     @DynamoDBAttribute
-    @DynamoDBTypeConvertedJson(targetType = LocalDate.class)
-    private DynamoDBCertifiedField<LocalDate> birthDate;
+    private DynamoDBCertifiedFieldOfLocalDate birthDate;
 
 
     @DynamoDBAttribute
@@ -91,13 +85,12 @@ public class PersonDetails implements PersonDetailsOperations {
 
         public WorkContact(WorkContactOperations workContact) {
             if (workContact.getEmail() != null) {
-                email = new DynamoDBCertifiedField<>(workContact.getEmail());
+                email = new DynamoDBCertifiedFieldOfString(workContact.getEmail());
             }
         }
 
         @DynamoDBAttribute
-        @DynamoDBTypeConvertedJson(targetType = String.class)
-        private DynamoDBCertifiedField<String> email;
+        private DynamoDBCertifiedFieldOfString email;
 
     }
 
