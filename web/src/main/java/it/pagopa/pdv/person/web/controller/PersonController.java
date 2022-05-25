@@ -24,6 +24,7 @@ import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
 @RestController
 @RequestMapping(value = "people", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "person")
+@ApiResponses({@ApiResponse(code = 400, message = "Bad Request")})
 public class PersonController {
 
     private final PersonService personService;
