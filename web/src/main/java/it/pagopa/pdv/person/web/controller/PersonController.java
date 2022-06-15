@@ -1,8 +1,6 @@
 package it.pagopa.pdv.person.web.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonDto;
 import it.pagopa.pdv.person.connector.model.PersonIdDto;
@@ -26,6 +24,7 @@ import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
 @RestController
 @RequestMapping(value = "people", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "person")
+@ApiResponses({@ApiResponse(code = 400, message = "Bad Request")})
 public class PersonController {
 
     private final PersonService personService;
@@ -100,6 +99,7 @@ public class PersonController {
             notes = "${swagger.api.person.save.notes}")
     @PatchMapping(value = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponses({@ApiResponse(code = 409, message = "Conflict")})
     public void save(@ApiParam("${swagger.model.person.id}")
                      @PathVariable("id")
                              UUID id,
