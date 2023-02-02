@@ -2,18 +2,10 @@ name: Java CI
 
 on:
   push:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning' 
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
-
+    branches:
+      - main
+      - feat/*
+  
 jobs:
   build:
     runs-on: ubuntu-latest
