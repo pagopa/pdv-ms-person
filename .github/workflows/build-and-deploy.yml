@@ -35,6 +35,12 @@ jobs:
             @semantic-release/git@10.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-jar
+          path: |
+            target/*.jar
 
       - name: Log in to the Container registry
         id: docker_login
@@ -69,6 +75,12 @@ jobs:
       AWS_REGION: eu-south-1
     if: needs.build.outputs.new_release_published == 'true'
     steps:
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+      - uses: actions/download-artifact@master
+        with:
+          name: app-jar
+          path: target
+    
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
         with:
