@@ -62,6 +62,9 @@ jobs:
     name: "Deploy on ECS"
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     env:
       AWS_REGION: eu-south-1
     if: needs.build.outputs.new_release_published == 'true'
