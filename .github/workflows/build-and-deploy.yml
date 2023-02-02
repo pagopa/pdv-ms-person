@@ -112,7 +112,7 @@ jobs:
         with:
           task-definition: .aws/task-definition.json
           container-name: pdv-u-container
-          image: ${{ steps.build-image.outputs.image:latest }}
+          image: ${{ steps.build-image.outputs.image }}:latest
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
