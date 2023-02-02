@@ -70,10 +70,11 @@ jobs:
       AWS_REGION: eu-south-1
     if: needs.build.outputs.new_release_published == 'true'
     steps:
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
         with:
-          role-to-assume: ${{ secrets.IAM_ROLE }}
+          role-to-assume: arn:aws:iam::189790882570:role/GitHubDeployECS
           aws-region: ${{ env.AWS_REGION }}
       
       - name: Get Account id
