@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      new_release_published: ${{ steps.release.outputs.new_release_published }}
+      new_release_version: ${{ steps.release.outputs.new_release_version }}
 
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
@@ -61,12 +64,12 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
   deploy:
     name: "Deploy on ECS"
-    if: jobs.build.steps.release.outputs.new_release_published == 'true'
+    needs: build
     runs-on: ubuntu-latest
     env:
       AWS_REGION: eu-south-1
+    if: needs.build.outputs.new_release_published == 'true'
     steps:
-      
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
