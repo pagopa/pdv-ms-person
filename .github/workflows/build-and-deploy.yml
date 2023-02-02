@@ -110,7 +110,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@61b0c00c3743b70987a73a1faf577f0d167d1574
         with:
-          task-definition: task-definition.json
+          task-definition: .aws/task-definition.json
           container-name: pdv-u-container
           image: ${{ steps.build-image.outputs.image }}
 
