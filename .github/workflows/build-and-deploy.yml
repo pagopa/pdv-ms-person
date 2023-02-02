@@ -71,7 +71,7 @@ jobs:
     if: needs.build.outputs.new_release_published == 'true'
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
         with:
           role-to-assume: ${{ secrets.IAM_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
@@ -80,23 +80,33 @@ jobs:
         run: |
           aws sts get-caller-identity --query Account --output text
       
-      - name: Download task definition
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: pdv-u-person
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws ecs describe-task-definition \
-          --task-definition pn-d-strapi-task \
-          --query taskDefinition > task-definition.json
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        uses: aws-actions/amazon-ecs-render-task-definition@61b0c00c3743b70987a73a1faf577f0d167d1574
         with:
           task-definition: task-definition.json
-          container-name: pn-d-strapi-task
-          image: "${{ env.IMAGE }}:latest"
-      
+          container-name: pdv-u-container
+          image: ${{ steps.build-image.outputs.image }}
+
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: pn-d-strapi-srv
-          cluster: pn-d-ecs-cluster
+          service: pdv-u-service-person
+          cluster: pdv-u-ecs-cluster
           wait-for-service-stability: true
