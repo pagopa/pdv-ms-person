@@ -110,13 +110,13 @@ jobs:
         run: |
           aws ecs describe-task-definition \
           --task-definition pdv-u-task-person \
-          --query taskDefinition > .aws/task-definition.json
+          --query taskDefinition > ./task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@61b0c00c3743b70987a73a1faf577f0d167d1574
         with:
-          task-definition: .aws/task-definition.json
+          task-definition: ./task-definition.json
           container-name: pdv-u-container
           image: ${{ steps.build-image.outputs.image }}:latest
 
