@@ -59,3 +59,41 @@ jobs:
           labels: |
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
+  deploy:
+    if: steps.release.outputs.new_release_published == 'true'
+    name: "Deploy on ECS"
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-south-1
+    steps:
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Get Account id
+        run: |
+          aws sts get-caller-identity --query Account --output text
+      
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition pn-d-strapi-task \
+          --query taskDefinition > task-definition.json
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: pn-d-strapi-task
+          image: "${{ env.IMAGE }}:latest"
+      
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: pn-d-strapi-srv
+          cluster: pn-d-ecs-cluster
+          wait-for-service-stability: true
