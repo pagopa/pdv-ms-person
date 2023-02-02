@@ -25,16 +25,6 @@ jobs:
           -DeffectivePomSkip=true 
           -DsonarQubeRunAnalysis=false
 
-      - name: Release
-        id: release
-        uses: cycjimmy/semantic-release-action@8f6ceb9d5aae5578b1dcda6af00008235204e7fa
-        with:
-          semantic_version: 18.0.0
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -51,7 +41,7 @@ jobs:
       contents: read
     env:
       AWS_REGION: eu-south-1
-    if: needs.build.outputs.new_release_published == 'true'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       - uses: actions/download-artifact@master
