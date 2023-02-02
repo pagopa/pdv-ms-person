@@ -60,8 +60,8 @@ jobs:
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
   deploy:
-    if: steps.release.outputs.new_release_published == 'true'
     name: "Deploy on ECS"
+    if: build.steps.release.outputs.new_release_published == 'true'
     runs-on: ubuntu-latest
     env:
       AWS_REGION: eu-south-1
