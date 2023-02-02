@@ -61,7 +61,7 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
   deploy:
     name: "Deploy on ECS"
-    if: build.steps.release.outputs.new_release_published == 'true'
+    if: jobs.build.steps.release.outputs.new_release_published == 'true'
     runs-on: ubuntu-latest
     env:
       AWS_REGION: eu-south-1
