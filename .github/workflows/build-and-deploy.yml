@@ -40,7 +40,6 @@ jobs:
       id-token: write
       contents: read
     strategy:
-        max-parallel: 1
         matrix:
           include:
           - environment: "uat"
