@@ -1,0 +1,29 @@
+name: SonarCloud
+on:
+  push:
+    branches:
+      - master
+      - release-*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+    - name: Set up JDK
+      uses: actions/setup-java@1df8dbefe2a8cbc99770194893dd902763bee34b
+      with:
+        java-version: '11'
+    - name: Analyze with SonarCloud
+      run: > 
+        ./mvnw -B verify sonar:sonar 
+        -Dsonar.projectName=$SONARCLOUD_PROJECT_NAME
+        -Dsonar.projectKey=$SONARCLOUD_PROJECT_KEY
+        -Dsonar.organization=pagopa
+        -Dsonar.host.url=https://sonarcloud.io 
+        -Dsonar.login=$SONAR_TOKEN
+        -Dsonar.exclusions='**/enums/**, **/model/**, **/*Constant*, **/*Config.java, **/*Scheduler.java, **/*Application.java, **/src/test/**, **/Dummy*.java'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONARCLOUD_PROJECT_KEY: ${{ env.SONARCLOUD_PROJECT_KEY }}
+        SONARCLOUD_PROJECT_NAME: ${{ env.SONARCLOUD_PROJECT_NAME }}
