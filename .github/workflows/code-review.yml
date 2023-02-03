@@ -7,6 +7,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: uat
+    env:
+      AWS_REGION: eu-south-1
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
     - name: Set up JDK
@@ -14,9 +20,29 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
+      with:
+        role-to-assume: ${{ secrets.IAM_ROLE }}
+        aws-region: ${{ env.AWS_REGION }}
+    - name: Prepare SonarCloud analysis configuration
+      run: >
+        mvn -Bclean org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
+        -DpublishJUnitResults=true
+        -DtestResultsFiles='**/surefire-reports/TEST-*.xml'
+        -DjavaHomeOption='JDKVersion'
+        -DmavenVersionOption='Default'
+        -DmavenAuthenticateFeed=false
+        -DeffectivePomSkip=false
+        -DsonarQubeRunAnalysis=false
+    - name: finding jacoco.xml
+      run: |
+        xmlReportPaths=$(find "$(pwd)" -path '*jacoco.xml' | sed 's/.*/&/' | tr '\n' ','); echo "##vso[task.setvariable variable=xmlReportPaths]$xmlReportPaths"
+
     - name: Analyze with SonarCloud
       run: > 
-        mvn -B verify sonar:sonar 
+        mvn -B sonar:sonar
+        -Dsonar.coverage.jacoco.xmlReportPaths=$xmlReportPaths
         -Dsonar.projectName=$SONARCLOUD_PROJECT_NAME
         -Dsonar.projectKey=$SONARCLOUD_PROJECT_KEY
         -Dsonar.organization=pagopa
