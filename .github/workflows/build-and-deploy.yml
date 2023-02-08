@@ -32,6 +32,19 @@ jobs:
           path: |
             target/*.jar
 
+      - name: Release
+        if: github.ref == 'refs/heads/main'
+        id: release
+        # from https://github.com/cycjimmy/semantic-release-action/commits/main
+        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
+        with:
+          semantic_version: 18.0.0
+          extra_plugins: |
+            @semantic-release/release-notes-generator@10.0.3
+            @semantic-release/git@10.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
   deploy:
     name: "Deploy on ECS"
     needs: build
@@ -58,19 +71,7 @@ jobs:
         with:
           name: app-jar
           path: target
-      
-      - name: Release
-        id: release
-        # from https://github.com/cycjimmy/semantic-release-action/commits/main
-        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
-        with:
-          semantic_version: 18.0.0
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
+
       - name: Configure AWS Credentials
         if: steps.release.outputs.new_release_published == 'true'
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
