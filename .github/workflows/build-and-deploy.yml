@@ -4,7 +4,7 @@ on:
   push:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       new_release_published: ${{ steps.release.outputs.new_release_published }}
       new_release_version: ${{ steps.release.outputs.new_release_version }}
@@ -58,22 +58,33 @@ jobs:
         with:
           name: app-jar
           path: target
+      
+      - name: Release
+        id: release
+        # from https://github.com/cycjimmy/semantic-release-action/commits/main
+        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
+        with:
+          semantic_version: 18.0.0
+          extra_plugins: |
+            @semantic-release/release-notes-generator@10.0.3
+            @semantic-release/git@10.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
       - name: Configure AWS Credentials
+        if: steps.release.outputs.new_release_published == 'true'
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
         with:
           role-to-assume: ${{ secrets.IAM_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
       
-      - name: Get Account id
-        run: |
-          aws sts get-caller-identity --query Account --output text
-      
       - name: Login to Amazon ECR
+        if: steps.release.outputs.new_release_published == 'true'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@261a7de32bda11ba01f4d75c4ed6caf3739e54be
 
       - name: Build, tag, and push image to Amazon ECR
+        if: steps.release.outputs.new_release_published == 'true'
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -85,6 +96,7 @@ jobs:
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
       
       - name: Download task definition
+        if: steps.release.outputs.new_release_published == 'true'
         run: |
           aws ecs describe-task-definition \
           --task-definition pdv-${{ matrix.env_short }}-task-person \
@@ -100,6 +112,7 @@ jobs:
               )') > ./task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
+        if: steps.release.outputs.new_release_published == 'true'
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@61b0c00c3743b70987a73a1faf577f0d167d1574
         with:
@@ -108,6 +121,7 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
+        if: steps.release.outputs.new_release_published == 'true'
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
