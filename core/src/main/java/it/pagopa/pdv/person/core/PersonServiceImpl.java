@@ -25,12 +25,12 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public PersonDetailsOperations findById(String id, boolean isNamespaced) {
+    public PersonDetailsOperations findById(String id, String namespace) {
         log.trace("[findById] start");
-        log.debug("[findById] inputs: id = {}, isNamespaced = {}", id, isNamespaced);
+        log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
-        if (isNamespaced) {
-            id = findIdByNamespacedId(id);
+        if (!"GLOBAL".equals(namespace)) {
+            id = findIdByNamespacedId(id, namespace);
         }
         PersonDetailsOperations person = personConnector.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -41,11 +41,11 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public String findIdByNamespacedId(String namespacedId) {
+    public String findIdByNamespacedId(String namespacedId, String namespace) {
         log.trace("[findIdByNamespacedId] start");
         log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
         Assert.hasText(namespacedId, "A person namespaced id is required");
-        String id = personConnector.findIdByNamespacedId(namespacedId)
+        String id = personConnector.findIdByNamespacedId(namespacedId, namespace)
                 .orElseThrow(ResourceNotFoundException::new);
         log.debug("[findIdByNamespacedId] output = {}", id);
         log.trace("[findIdByNamespacedId] end");

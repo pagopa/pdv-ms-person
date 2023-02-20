@@ -5,9 +5,9 @@ import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 
 public interface PersonService {
 
-    PersonDetailsOperations findById(String id, boolean isNamespaced);
+    PersonDetailsOperations findById(String id, String namespace);
 
-    String findIdByNamespacedId(String namespacedId);
+    String findIdByNamespacedId(String namespacedId, String namespace);
 
     void save(PersonIdOperations personId);
 
