@@ -61,7 +61,7 @@ class PersonControllerTest {
         // given
         UUID uuid = UUID.randomUUID();
         Boolean isNamespaced = Boolean.FALSE;
-        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.anyBoolean()))
+        Mockito.when(personServiceMock.findById(Mockito.anyString(), namespace))
                 .thenReturn(new DummyPersonDetails());
         // when
         mvc.perform(MockMvcRequestBuilders
@@ -84,7 +84,7 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.workContacts..email.value", notNullValue()));
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
-                .findById(uuid.toString(), isNamespaced);
+                .findById(uuid.toString(), namespace);
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
@@ -93,7 +93,7 @@ class PersonControllerTest {
     void findIdByNamespacedId() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString()))
+        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString(), ))
                 .thenReturn(UUID.randomUUID().toString());
         // when
         mvc.perform(MockMvcRequestBuilders
@@ -105,7 +105,7 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.id", not(uuid)));
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
-                .findIdByNamespacedId(uuid.toString());
+                .findIdByNamespacedId(uuid.toString(), );
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 

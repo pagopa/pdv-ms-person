@@ -29,6 +29,8 @@ import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
 @Api(tags = "person")
 public class PersonController {
 
+    private static final String NAMESPACE_HEADER_NAME = "x-pagopa-namespace";
+
     private final PersonService personService;
 
 
@@ -43,15 +45,18 @@ public class PersonController {
             notes = "${swagger.api.person.findById.notes}")
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PersonResource findById(@ApiParam("${swagger.model.person.id}")
+    public PersonResource findById(@ApiParam("${swagger.model.namespace}")
+                                   @RequestHeader(NAMESPACE_HEADER_NAME)
+                                   String namespace,
+                                   @ApiParam("${swagger.model.person.id}")
                                    @PathVariable("id")
-                                           UUID id,
+                                   UUID id,
                                    @ApiParam("${swagger.model.person.isNamespaced}")
                                    @RequestParam("isNamespaced")
-                                           boolean isNamespaced) {
+                                   boolean isNamespaced) {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, isNamespaced = {}", id, isNamespaced);
-        PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced);
+        PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), namespace);
         PersonResource personResource = PersonMapper.toResource(personDetailsOperations);
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personResource);
         log.trace("[findById] end");
@@ -63,12 +68,15 @@ public class PersonController {
             notes = "${swagger.api.person.findIdByNamespacedId.notes}")
     @GetMapping(value = "/id")
     @ResponseStatus(HttpStatus.OK)
-    public PersonId findIdByNamespacedId(@ApiParam("${swagger.model.person.namespacedId}")
+    public PersonId findIdByNamespacedId(@ApiParam("${swagger.model.namespace}")
+                                         @RequestHeader(NAMESPACE_HEADER_NAME)
+                                         String namespace,
+                                         @ApiParam("${swagger.model.person.namespacedId}")
                                          @RequestParam("namespacedId")
-                                                 UUID namespacedId) {
+                                         UUID namespacedId) {
         log.trace("[findIdByNamespacedId] start");
         log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
-        String id = personService.findIdByNamespacedId(namespacedId.toString());
+        String id = personService.findIdByNamespacedId(namespacedId.toString(), namespace);
         PersonId personId = new PersonId();
         personId.setId(UUID.fromString(id));
         log.debug("[findIdByNamespacedId] output = {}", personId);
@@ -83,13 +91,13 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void saveNamespacedId(@ApiParam("${swagger.model.person.id}")
                                  @PathVariable("id")
-                                         UUID id,
+                                 UUID id,
                                  @ApiParam("${swagger.model.namespace}")
                                  @PathVariable("namespace")
-                                         String namespace,
+                                 String namespace,
                                  @RequestBody
-                                     @Valid
-                                         SavePersonNamespaceDto request) {
+                                 @Valid
+                                 SavePersonNamespaceDto request) {
         log.trace("[saveNamespacedId] start");
         log.debug("[saveNamespacedId] inputs: id = {}, namespace = {}, request = {}", id, namespace, request);
         PersonIdDto personId = PersonMapper.assembles(id, namespace, request);
@@ -110,10 +118,10 @@ public class PersonController {
             })
     public void save(@ApiParam("${swagger.model.person.id}")
                      @PathVariable("id")
-                             UUID id,
+                     UUID id,
                      @RequestBody
                      @Valid
-                             SavePersonDto request) {
+                     SavePersonDto request) {
         log.trace("[save] start");
         log.debug(CONFIDENTIAL_MARKER, "[save] inputs: id = {}, request = {}", id, request);
         PersonDto personDto = PersonMapper.assembles(id, request);
@@ -128,7 +136,7 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePerson(@ApiParam("${swagger.model.person.id}")
                              @PathVariable("id")
-                                     UUID id) {
+                             UUID id) {
         log.trace("[deletePerson] start");
         log.debug("[deletePerson] inputs: id = {}", id);
         personService.deleteById(id.toString());
@@ -142,10 +150,10 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePersonNamespace(@ApiParam("${swagger.model.person.id}")
                                       @PathVariable("id")
-                                              UUID id,
+                                      UUID id,
                                       @ApiParam("${swagger.model.namespace}")
                                       @PathVariable("namespace")
-                                              String namespace) {
+                                      String namespace) {
         log.trace("[deletePersonNamespace] start");
         log.debug("[deletePersonNamespace] inputs: id = {}, namespace = {}", id, namespace);
         personService.deleteById(id.toString(), namespace);

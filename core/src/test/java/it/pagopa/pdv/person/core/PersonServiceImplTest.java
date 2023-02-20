@@ -34,7 +34,7 @@ class PersonServiceImplTest {
         String id = null;
         boolean isNamespaced = true;
         // when
-        Executable executable = () -> personService.findById(id, isNamespaced);
+        Executable executable = () -> personService.findById(id, namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person id is required", e.getMessage());
@@ -51,7 +51,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
         // when
-        PersonDetailsOperations personDetails = personService.findById(id, isNamespaced);
+        PersonDetailsOperations personDetails = personService.findById(id, namespace);
         // then
         assertSame(personDetailsStub, personDetails);
         Mockito.verify(personConnector, Mockito.times(1))
@@ -67,16 +67,16 @@ class PersonServiceImplTest {
         boolean isNamespaced = true;
         PersonDetailsOperations personDetailsStub = new DummyPersonDetails();
         String id = "id";
-        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any()))
+        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), namespace))
                 .thenReturn(Optional.of(id));
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
         // when
-        PersonDetailsOperations personDetails = personService.findById(namespacedId, isNamespaced);
+        PersonDetailsOperations personDetails = personService.findById(namespacedId, namespace);
         // then
         assertSame(personDetailsStub, personDetails);
         Mockito.verify(personConnector, Mockito.times(1))
-                .findIdByNamespacedId(namespacedId);
+                .findIdByNamespacedId(namespacedId, namespace);
         Mockito.verify(personConnector, Mockito.times(1))
                 .findById(id);
         Mockito.verifyNoMoreInteractions(personConnector);
@@ -91,7 +91,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.empty());
         // when
-        Executable executable = () -> personService.findById(id, isNamespaced);
+        Executable executable = () -> personService.findById(id, namespace);
         // then
         assertThrows(ResourceNotFoundException.class, executable);
         Mockito.verify(personConnector, Mockito.times(1))
@@ -105,7 +105,7 @@ class PersonServiceImplTest {
         // given
         String namespacedId = null;
         // when
-        Executable executable = () -> personService.findIdByNamespacedId(namespacedId);
+        Executable executable = () -> personService.findIdByNamespacedId(namespacedId, );
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person namespaced id is required", e.getMessage());
@@ -117,14 +117,14 @@ class PersonServiceImplTest {
     void findIdByNamespacedId_NotFound() {
         // given
         String namespacedId = "namespacedId";
-        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any()))
+        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), namespace))
                 .thenReturn(Optional.empty());
         // when
-        Executable executable = () -> personService.findIdByNamespacedId(namespacedId);
+        Executable executable = () -> personService.findIdByNamespacedId(namespacedId, );
         // then
         assertThrows(ResourceNotFoundException.class, executable);
         Mockito.verify(personConnector, Mockito.times(1))
-                .findIdByNamespacedId(namespacedId);
+                .findIdByNamespacedId(namespacedId, namespace);
         Mockito.verifyNoMoreInteractions(personConnector);
     }
 
@@ -134,14 +134,14 @@ class PersonServiceImplTest {
         // given
         String namespacedId = "namespacedId";
         String idStub = "id";
-        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any()))
+        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), namespace))
                 .thenReturn(Optional.of(idStub));
         // when
-        String id = personService.findIdByNamespacedId(namespacedId);
+        String id = personService.findIdByNamespacedId(namespacedId, );
         // then
         assertEquals(idStub, id);
         Mockito.verify(personConnector, Mockito.times(1))
-                .findIdByNamespacedId(namespacedId);
+                .findIdByNamespacedId(namespacedId, namespace);
         Mockito.verifyNoMoreInteractions(personConnector);
     }
 

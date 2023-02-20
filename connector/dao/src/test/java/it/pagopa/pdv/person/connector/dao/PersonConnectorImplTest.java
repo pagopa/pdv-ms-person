@@ -82,7 +82,7 @@ class PersonConnectorImplTest {
         // given
         String namespacedId = null;
         // when
-        Executable executable = () -> personConnector.findIdByNamespacedId(namespacedId);
+        Executable executable = () -> personConnector.findIdByNamespacedId(namespacedId, namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person namespaced id is required", e.getMessage());
@@ -94,7 +94,7 @@ class PersonConnectorImplTest {
         // given
         String namespacedId = "namespacedIdNotFound";
         // when
-        final Optional<String> found = personConnector.findIdByNamespacedId(namespacedId);
+        final Optional<String> found = personConnector.findIdByNamespacedId(namespacedId, namespace);
         // then
         assertTrue(found.isEmpty());
     }
@@ -106,7 +106,7 @@ class PersonConnectorImplTest {
         final DummyPersonId savedPersonId = new DummyPersonId();
         personConnector.save(savedPersonId);
         // when
-        final Optional<String> found = personConnector.findIdByNamespacedId(savedPersonId.getNamespacedId());
+        final Optional<String> found = personConnector.findIdByNamespacedId(savedPersonId.getNamespacedId(), namespace);
         // then
         assertTrue(found.isPresent());
         assertEquals(savedPersonId.getGlobalId(), found.get());
