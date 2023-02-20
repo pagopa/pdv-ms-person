@@ -79,7 +79,7 @@ public class PersonConnectorImpl implements PersonConnector {
 
 
     @Override
-    public Optional<String> findIdByNamespacedId(String namespacedId) {
+    public Optional<String> findIdByNamespacedId(String namespacedId, String namespace) {
         log.trace("[findIdByNamespacedId] start");
         log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
         Assert.hasText(namespacedId, "A person namespaced id is required");
@@ -87,7 +87,10 @@ public class PersonConnectorImpl implements PersonConnector {
         Index index = table.getIndex("gsi_namespaced_id");
         ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
                 .withHashKey(PersonId.Fields.namespacedId, namespacedId)
-                .withProjectionExpression(personDetailsModel.hashKey().name()));
+                .withExpressionSpec(new ExpressionSpecBuilder()
+                        .withCondition(S(personDetailsModel.rangeKey().name()).eq(namespace))
+                        .addProjection(personDetailsModel.hashKey().name())
+                        .buildForQuery()));
         Iterator<Page<Item, QueryOutcome>> iterator = itemCollection.pages().iterator();
         if (iterator.hasNext()) {
             Page<Item, QueryOutcome> page = iterator.next();
