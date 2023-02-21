@@ -44,6 +44,7 @@ public class PersonConnectorImpl implements PersonConnector {
 
     public static final String TABLE_NAME = "Person";
 
+    private static final String NAMESPACE_PREFIX_ID_TABLE = "Namespace#";
     private static final List<String> M_FIELD_WHITELIST = List.of(PersonDetails.Fields.workContacts + ".");
     private static final Marker CONFIDENTIAL_MARKER = MarkerFactory.getMarker("CONFIDENTIAL");
     private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
@@ -81,16 +82,18 @@ public class PersonConnectorImpl implements PersonConnector {
     @Override
     public Optional<String> findIdByNamespacedId(String namespacedId, String namespace) {
         log.trace("[findIdByNamespacedId] start");
-        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
+        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}, namespace = {}", namespacedId, namespace);
         Assert.hasText(namespacedId, "A person namespaced id is required");
+        Assert.hasText(namespace,"A namespace is required");
         Optional<String> id = Optional.empty();
         Index index = table.getIndex("gsi_namespaced_id");
         ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
                 .withHashKey(PersonId.Fields.namespacedId, namespacedId)
                 .withExpressionSpec(new ExpressionSpecBuilder()
-                        .withCondition(S(personDetailsModel.rangeKey().name()).eq(namespace))
-                        .addProjection(personDetailsModel.hashKey().name())
-                        .buildForQuery()));
+                        .withCondition(S(personIdTableMapper.rangeKey().name()).eq(NAMESPACE_PREFIX_ID_TABLE+namespace))
+                        .addProjection(personIdTableMapper.hashKey().name())
+                        .buildForQuery())
+        );
         Iterator<Page<Item, QueryOutcome>> iterator = itemCollection.pages().iterator();
         if (iterator.hasNext()) {
             Page<Item, QueryOutcome> page = iterator.next();
