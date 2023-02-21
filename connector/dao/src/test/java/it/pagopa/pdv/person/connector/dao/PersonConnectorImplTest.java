@@ -81,6 +81,7 @@ class PersonConnectorImplTest {
     void findIdByNamespacedId_nullId() {
         // given
         String namespacedId = null;
+        String namespace = "namespace";
         // when
         Executable executable = () -> personConnector.findIdByNamespacedId(namespacedId, namespace);
         // then
@@ -93,6 +94,7 @@ class PersonConnectorImplTest {
     void findIdByNamespacedId_notFound() {
         // given
         String namespacedId = "namespacedIdNotFound";
+        String namespace = "namespace";
         // when
         final Optional<String> found = personConnector.findIdByNamespacedId(namespacedId, namespace);
         // then
@@ -106,7 +108,7 @@ class PersonConnectorImplTest {
         final DummyPersonId savedPersonId = new DummyPersonId();
         personConnector.save(savedPersonId);
         // when
-        final Optional<String> found = personConnector.findIdByNamespacedId(savedPersonId.getNamespacedId(), namespace);
+        final Optional<String> found = personConnector.findIdByNamespacedId(savedPersonId.getNamespacedId(), savedPersonId.getNamespace());
         // then
         assertTrue(found.isPresent());
         assertEquals(savedPersonId.getGlobalId(), found.get());

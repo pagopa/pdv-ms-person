@@ -43,6 +43,9 @@ class PersonControllerTest {
 
     private static final String BASE_URL = "/people";
 
+    private static final String NAMESPACE_HEADER_NAME = "x-pagopa-namespace";
+
+
     @MockBean
     private PersonService personServiceMock;
 
@@ -60,14 +63,14 @@ class PersonControllerTest {
     void findById() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Boolean isNamespaced = Boolean.FALSE;
-        Mockito.when(personServiceMock.findById(Mockito.anyString(), namespace))
+        String namespace = "namespace";
+        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.any()))
                 .thenReturn(new DummyPersonDetails());
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/{id}", uuid)
-                .queryParam("isNamespaced", isNamespaced.toString())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header(NAMESPACE_HEADER_NAME, namespace)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))
@@ -93,19 +96,21 @@ class PersonControllerTest {
     void findIdByNamespacedId() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString(), ))
+        String namespace = "namespace";
+        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString(), Mockito.any()))
                 .thenReturn(UUID.randomUUID().toString());
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id")
-                .queryParam("namespacedId", uuid.toString())
+                        .header(NAMESPACE_HEADER_NAME, namespace)
+                        .queryParam("namespacedId", uuid.toString())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", not(uuid)));
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
-                .findIdByNamespacedId(uuid.toString(), );
+                .findIdByNamespacedId(uuid.toString(), namespace);
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 

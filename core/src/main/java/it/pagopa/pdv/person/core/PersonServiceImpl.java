@@ -15,6 +15,8 @@ class PersonServiceImpl implements PersonService {
 
     private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
 
+    private static final String GLOBAL_NAMESPACE = "GLOBAL";
+
     private final PersonConnector personConnector;
 
 
@@ -29,7 +31,7 @@ class PersonServiceImpl implements PersonService {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
-        if (!"GLOBAL".equals(namespace)) {
+        if (!GLOBAL_NAMESPACE.equals(namespace)) {
             id = findIdByNamespacedId(id, namespace);
         }
         PersonDetailsOperations person = personConnector.findById(id)
@@ -43,7 +45,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public String findIdByNamespacedId(String namespacedId, String namespace) {
         log.trace("[findIdByNamespacedId] start");
-        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
+        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}, namespace = {}", namespacedId, namespace);
         Assert.hasText(namespacedId, "A person namespaced id is required");
         String id = personConnector.findIdByNamespacedId(namespacedId, namespace)
                 .orElseThrow(ResourceNotFoundException::new);
