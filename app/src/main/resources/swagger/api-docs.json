@@ -21,6 +21,14 @@
         "description" : "Find an existing person id given its namespaced id",
         "operationId" : "findIdByNamespacedIdUsingGET",
         "parameters" : [ {
+          "name" : "x-pagopa-namespace",
+          "in" : "header",
+          "description" : "Caller visibility context",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "namespacedId",
           "in" : "query",
           "description" : "Person namespaced id",
@@ -82,6 +90,14 @@
         "description" : "Retrieve the person by its internal id",
         "operationId" : "findByIdUsingGET",
         "parameters" : [ {
+          "name" : "x-pagopa-namespace",
+          "in" : "header",
+          "description" : "Caller visibility context",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "id",
           "in" : "path",
           "description" : "Person internal id",
@@ -90,15 +106,6 @@
           "schema" : {
             "type" : "string",
             "format" : "uuid"
-          }
-        }, {
-          "name" : "isNamespaced",
-          "in" : "query",
-          "description" : "Indicates if the Person is namespaced or not",
-          "required" : true,
-          "style" : "form",
-          "schema" : {
-            "type" : "boolean"
           }
         } ],
         "responses" : {

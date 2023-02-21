@@ -27,12 +27,14 @@ class PersonServiceImplTest {
     @Mock
     private PersonConnector personConnector;
 
+    private static final String GLOBAL_NAMESPACE = "GLOBAL";
+
 
     @Test
     void findById_nullId() {
         // given
         String id = null;
-        boolean isNamespaced = true;
+        String namespace = "namespace";
         // when
         Executable executable = () -> personService.findById(id, namespace);
         // then
@@ -46,7 +48,7 @@ class PersonServiceImplTest {
     void findById_isNotNamespacedId() {
         // given
         String id = "id";
-        boolean isNamespaced = false;
+        String namespace = GLOBAL_NAMESPACE;
         PersonDetailsOperations personDetailsStub = new DummyPersonDetails();
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
@@ -64,10 +66,10 @@ class PersonServiceImplTest {
     void findById_isNamespacedId() {
         // given
         String namespacedId = "namespacedId";
-        boolean isNamespaced = true;
+        String namespace = "namespace";
         PersonDetailsOperations personDetailsStub = new DummyPersonDetails();
         String id = "id";
-        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), namespace))
+        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.of(id));
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
@@ -87,7 +89,7 @@ class PersonServiceImplTest {
     void findById_isNotNamespacedId_notFound() {
         // given
         String id = "id";
-        boolean isNamespaced = false;
+        String namespace = GLOBAL_NAMESPACE;
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.empty());
         // when
@@ -104,8 +106,9 @@ class PersonServiceImplTest {
     void findIdByNamespacedId_nullId() {
         // given
         String namespacedId = null;
+        String namespace = "namespace";
         // when
-        Executable executable = () -> personService.findIdByNamespacedId(namespacedId, );
+        Executable executable = () -> personService.findIdByNamespacedId(namespacedId,namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person namespaced id is required", e.getMessage());
@@ -117,10 +120,11 @@ class PersonServiceImplTest {
     void findIdByNamespacedId_NotFound() {
         // given
         String namespacedId = "namespacedId";
-        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), namespace))
+        String namespace = "namespace";
+        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.empty());
         // when
-        Executable executable = () -> personService.findIdByNamespacedId(namespacedId, );
+        Executable executable = () -> personService.findIdByNamespacedId(namespacedId,namespace);
         // then
         assertThrows(ResourceNotFoundException.class, executable);
         Mockito.verify(personConnector, Mockito.times(1))
@@ -133,11 +137,12 @@ class PersonServiceImplTest {
     void findIdByNamespacedId() {
         // given
         String namespacedId = "namespacedId";
+        String namespace = "namespace";
         String idStub = "id";
-        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), namespace))
+        Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.of(idStub));
         // when
-        String id = personService.findIdByNamespacedId(namespacedId, );
+        String id = personService.findIdByNamespacedId(namespacedId,namespace);
         // then
         assertEquals(idStub, id);
         Mockito.verify(personConnector, Mockito.times(1))
