@@ -33,7 +33,7 @@
         }, {
           "name" : "namespace",
           "in" : "query",
-          "description" : "Caller visibility context",
+          "description" : "Tenant name",
           "required" : true,
           "style" : "form",
           "schema" : {
@@ -103,7 +103,7 @@
         }, {
           "name" : "namespace",
           "in" : "query",
-          "description" : "Caller visibility context",
+          "description" : "Tenant name",
           "required" : true,
           "style" : "form",
           "schema" : {
@@ -276,7 +276,7 @@
         }, {
           "name" : "namespace",
           "in" : "path",
-          "description" : "Caller visibility context",
+          "description" : "Tenant name",
           "required" : true,
           "style" : "simple",
           "schema" : {
@@ -336,7 +336,7 @@
         }, {
           "name" : "namespace",
           "in" : "path",
-          "description" : "Caller visibility context",
+          "description" : "Tenant name",
           "required" : true,
           "style" : "simple",
           "schema" : {
