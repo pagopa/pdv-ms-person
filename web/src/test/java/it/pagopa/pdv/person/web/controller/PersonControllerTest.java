@@ -43,8 +43,7 @@ class PersonControllerTest {
 
     private static final String BASE_URL = "/people";
 
-    private static final String NAMESPACE_HEADER_NAME = "x-pagopa-namespace";
-
+    private static final String NAMESPACE_REQUEST_PARAM = "namespace";
 
     @MockBean
     private PersonService personServiceMock;
@@ -69,8 +68,8 @@ class PersonControllerTest {
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/{id}", uuid)
-                        .header(NAMESPACE_HEADER_NAME, namespace)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .queryParam(NAMESPACE_REQUEST_PARAM,namespace)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))
@@ -102,9 +101,9 @@ class PersonControllerTest {
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id")
-                        .header(NAMESPACE_HEADER_NAME, namespace)
                         .queryParam("namespacedId", uuid.toString())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .queryParam(NAMESPACE_REQUEST_PARAM,namespace)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", not(uuid)));
