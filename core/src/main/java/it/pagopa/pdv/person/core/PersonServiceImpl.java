@@ -9,13 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import static it.pagopa.pdv.person.connector.model.PersonIdOperations.GLOBAL_NAMESPACE;
+
 @Slf4j
 @Service
 class PersonServiceImpl implements PersonService {
 
     private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
-
-    private static final String GLOBAL_NAMESPACE = "GLOBAL";
 
     private final PersonConnector personConnector;
 

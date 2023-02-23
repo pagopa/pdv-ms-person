@@ -19,6 +19,7 @@ import it.pagopa.pdv.person.connector.dao.model.Status;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
+import it.pagopa.pdv.person.connector.model.PersonIdDto;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Marker;
@@ -84,13 +85,13 @@ public class PersonConnectorImpl implements PersonConnector {
         log.trace("[findIdByNamespacedId] start");
         log.debug("[findIdByNamespacedId] inputs: namespacedId = {}, namespace = {}", namespacedId, namespace);
         Assert.hasText(namespacedId, "A person namespaced id is required");
-        Assert.hasText(namespace,"A namespace is required");
+        Assert.hasText(namespace, "A namespace is required");
         Optional<String> id = Optional.empty();
         Index index = table.getIndex("gsi_namespaced_id");
         ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
                 .withHashKey(PersonId.Fields.namespacedId, namespacedId)
                 .withExpressionSpec(new ExpressionSpecBuilder()
-                        .withCondition(S(personIdTableMapper.rangeKey().name()).eq(NAMESPACE_PREFIX_ID_TABLE+namespace))
+                        .withCondition(S(personIdTableMapper.rangeKey().name()).eq(PersonId.getSK(namespace)))
                         .addProjection(personIdTableMapper.hashKey().name())
                         .buildForQuery())
         );

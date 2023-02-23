@@ -108,7 +108,7 @@ class PersonServiceImplTest {
         String namespacedId = null;
         String namespace = "namespace";
         // when
-        Executable executable = () -> personService.findIdByNamespacedId(namespacedId,namespace);
+        Executable executable = () -> personService.findIdByNamespacedId(namespacedId, namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person namespaced id is required", e.getMessage());
@@ -124,7 +124,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.empty());
         // when
-        Executable executable = () -> personService.findIdByNamespacedId(namespacedId,namespace);
+        Executable executable = () -> personService.findIdByNamespacedId(namespacedId, namespace);
         // then
         assertThrows(ResourceNotFoundException.class, executable);
         Mockito.verify(personConnector, Mockito.times(1))
@@ -142,7 +142,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.of(idStub));
         // when
-        String id = personService.findIdByNamespacedId(namespacedId,namespace);
+        String id = personService.findIdByNamespacedId(namespacedId, namespace);
         // then
         assertEquals(idStub, id);
         Mockito.verify(personConnector, Mockito.times(1))

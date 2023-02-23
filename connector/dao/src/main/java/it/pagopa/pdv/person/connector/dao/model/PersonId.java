@@ -13,6 +13,8 @@ import lombok.experimental.FieldNameConstants;
 @DynamoDBTable(tableName = PersonConnectorImpl.TABLE_NAME)
 public class PersonId implements PersonIdOperations {
 
+    private static final String SK_PREFIX = "Namespace#";
+
     public PersonId(PersonIdOperations personId) {
         globalId = personId.getGlobalId();
         namespace = personId.getNamespace();
@@ -25,7 +27,7 @@ public class PersonId implements PersonIdOperations {
 
     @DynamoDBRangeKey(attributeName = "SK")
     public String getSK() {
-        return "Namespace#" + namespace;
+        return SK_PREFIX + namespace;
     }
 
     public void setSK(String type) {
@@ -39,5 +41,9 @@ public class PersonId implements PersonIdOperations {
     @DynamoDBIndexHashKey(globalSecondaryIndexName = "gsi_namespaced_id")
     @FieldNameConstants.Include
     private String namespacedId;
+
+    public static String getSK(String namespace) {
+        return "Namespace#" + namespace;
+    }
 
 }
