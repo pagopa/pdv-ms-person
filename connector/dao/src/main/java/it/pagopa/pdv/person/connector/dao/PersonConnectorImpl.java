@@ -19,7 +19,6 @@ import it.pagopa.pdv.person.connector.dao.model.Status;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
-import it.pagopa.pdv.person.connector.model.PersonIdDto;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Marker;
@@ -44,8 +43,6 @@ import static it.pagopa.pdv.person.connector.model.CertifiableField.NOT_CERTIFIE
 public class PersonConnectorImpl implements PersonConnector {
 
     public static final String TABLE_NAME = "Person";
-
-    private static final String NAMESPACE_PREFIX_ID_TABLE = "Namespace#";
     private static final List<String> M_FIELD_WHITELIST = List.of(PersonDetails.Fields.workContacts + ".");
     private static final Marker CONFIDENTIAL_MARKER = MarkerFactory.getMarker("CONFIDENTIAL");
     private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
