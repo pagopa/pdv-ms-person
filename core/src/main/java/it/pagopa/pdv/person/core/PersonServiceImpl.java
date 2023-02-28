@@ -31,8 +31,9 @@ class PersonServiceImpl implements PersonService {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
+        Assert.notNull(namespace, "A not null namespace is required");
         if (namespace.isPresent()) {
-            id = findIdByNamespacedId(id, namespace.toString());
+            id = findIdByNamespacedId(id, namespace.get());
         }
         PersonDetailsOperations person = personConnector.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);

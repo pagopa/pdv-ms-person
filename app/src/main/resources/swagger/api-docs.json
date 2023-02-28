@@ -31,13 +31,13 @@
             "format" : "uuid"
           }
         }, {
-          "name" : "namespace",
-          "in" : "query",
-          "description" : "Tenant name",
-          "required" : true,
-          "style" : "form",
-          "schema" : {
-            "type" : "string"
+          "name": "namespace",
+          "in": "query",
+          "description": "Namespace",
+          "required": true,
+          "style": "form",
+          "schema": {
+            "type": "string"
           }
         } ],
         "responses" : {
@@ -100,16 +100,17 @@
             "type" : "string",
             "format" : "uuid"
           }
-        }, {
-          "name": "namespace",
-          "in": "query",
-          "description": "Tenant name",
-          "required": false,
-          "style": "form",
-          "schema": {
-            "type": "string"
-          }
-        } ],
+        },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "Namespace",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -273,16 +274,17 @@
             "type" : "string",
             "format" : "uuid"
           }
-        }, {
-          "name" : "namespace",
-          "in" : "path",
-          "description" : "Tenant name",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        },
+          {
+            "name": "namespace",
+            "in": "path",
+            "description": "Namespace",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -333,16 +335,17 @@
             "type" : "string",
             "format" : "uuid"
           }
-        }, {
-          "name" : "namespace",
-          "in" : "path",
-          "description" : "Tenant name",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        },
+          {
+            "name": "namespace",
+            "in": "path",
+            "description": "Namespace",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          } ],
         "responses" : {
           "204" : {
             "description" : "No Content"

@@ -40,6 +40,19 @@ class PersonServiceImplTest {
         Mockito.verifyNoInteractions(personConnector);
     }
 
+    @Test
+    void findById_nullNamespace() {
+        // given
+        String id = "id";
+        Optional<String> namespace = null;
+        // when
+        Executable executable = () -> personService.findById(id, namespace);
+        // then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals("A not null namespace is required", e.getMessage());
+        Mockito.verifyNoInteractions(personConnector);
+    }
+
 
     @Test
     void findById_isNotNamespacedId() {
