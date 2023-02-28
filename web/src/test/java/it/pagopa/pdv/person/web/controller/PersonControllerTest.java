@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.not;
@@ -62,14 +63,14 @@ class PersonControllerTest {
     void findById() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        String namespace = "namespace";
+        Optional<String> namespace = Optional.of("namespace");
         Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.any()))
                 .thenReturn(new DummyPersonDetails());
         // when
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/{id}", uuid)
+                        .get(BASE_URL + "/{id}", uuid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .queryParam(NAMESPACE_REQUEST_PARAM,namespace)
+                        .queryParam(NAMESPACE_REQUEST_PARAM, namespace.get())
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))

@@ -27,14 +27,11 @@ class PersonServiceImplTest {
     @Mock
     private PersonConnector personConnector;
 
-    private static final String GLOBAL_NAMESPACE = "GLOBAL";
-
-
     @Test
     void findById_nullId() {
         // given
         String id = null;
-        String namespace = "namespace";
+        Optional<String> namespace = Optional.of("namespace");
         // when
         Executable executable = () -> personService.findById(id, namespace);
         // then
@@ -48,7 +45,7 @@ class PersonServiceImplTest {
     void findById_isNotNamespacedId() {
         // given
         String id = "id";
-        String namespace = GLOBAL_NAMESPACE;
+        Optional<String> namespace = Optional.empty();
         PersonDetailsOperations personDetailsStub = new DummyPersonDetails();
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
@@ -66,7 +63,7 @@ class PersonServiceImplTest {
     void findById_isNamespacedId() {
         // given
         String namespacedId = "namespacedId";
-        String namespace = "namespace";
+        Optional<String> namespace = Optional.of("namespace");
         PersonDetailsOperations personDetailsStub = new DummyPersonDetails();
         String id = "id";
         Mockito.when(personConnector.findIdByNamespacedId(Mockito.any(), Mockito.any()))
@@ -78,7 +75,7 @@ class PersonServiceImplTest {
         // then
         assertSame(personDetailsStub, personDetails);
         Mockito.verify(personConnector, Mockito.times(1))
-                .findIdByNamespacedId(namespacedId, namespace);
+                .findIdByNamespacedId(namespacedId, namespace.get());
         Mockito.verify(personConnector, Mockito.times(1))
                 .findById(id);
         Mockito.verifyNoMoreInteractions(personConnector);
@@ -89,7 +86,7 @@ class PersonServiceImplTest {
     void findById_isNotNamespacedId_notFound() {
         // given
         String id = "id";
-        String namespace = GLOBAL_NAMESPACE;
+        Optional<String> namespace = Optional.empty();
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.empty());
         // when

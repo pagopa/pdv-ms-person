@@ -101,13 +101,13 @@
             "format" : "uuid"
           }
         }, {
-          "name" : "namespace",
-          "in" : "query",
-          "description" : "Tenant name",
-          "required" : true,
-          "style" : "form",
-          "schema" : {
-            "type" : "string"
+          "name": "namespace",
+          "in": "query",
+          "description": "Tenant name",
+          "required": false,
+          "style": "form",
+          "schema": {
+            "type": "string"
           }
         } ],
         "responses" : {

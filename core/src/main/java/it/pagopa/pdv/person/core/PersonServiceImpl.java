@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import static it.pagopa.pdv.person.connector.model.PersonIdOperations.GLOBAL_NAMESPACE;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,13 +27,12 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public PersonDetailsOperations findById(String id, String namespace) {
+    public PersonDetailsOperations findById(String id, Optional<String> namespace) {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
-        Assert.hasText(namespace, "A namespace is required");
-        if (!GLOBAL_NAMESPACE.equals(namespace)) {
-            id = findIdByNamespacedId(id, namespace);
+        if (namespace.isPresent()) {
+            id = findIdByNamespacedId(id, namespace.toString());
         }
         PersonDetailsOperations person = personConnector.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);

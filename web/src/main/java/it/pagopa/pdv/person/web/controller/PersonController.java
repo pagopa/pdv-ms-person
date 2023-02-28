@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 import java.util.UUID;
 
 import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
@@ -44,12 +45,12 @@ public class PersonController {
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
     public PersonResource findById(
-                                   @ApiParam("${swagger.model.person.id}")
-                                   @PathVariable("id")
-                                   UUID id,
-                                   @ApiParam("${swagger.model.namespace}")
-                                   @RequestParam("namespace")
-                                   String namespace) {
+            @ApiParam("${swagger.model.person.id}")
+            @PathVariable("id")
+            UUID id,
+            @ApiParam("${swagger.model.namespace}")
+            @RequestParam(value = "namespace", required = false)
+            Optional<String> namespace) {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), namespace);
