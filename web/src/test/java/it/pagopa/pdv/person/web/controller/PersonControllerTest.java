@@ -64,13 +64,14 @@ class PersonControllerTest {
         // given
         UUID uuid = UUID.randomUUID();
         Optional<String> namespace = Optional.of("namespace");
-        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.any()))
+        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.anyBoolean(), Mockito.any()))
                 .thenReturn(new DummyPersonDetails());
         // when
         mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/{id}", uuid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .queryParam(NAMESPACE_REQUEST_PARAM, namespace.get())
+                        .queryParam("isNamespaced", "true")
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))
@@ -87,7 +88,7 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.workContacts..email.value", notNullValue()));
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
-                .findById(uuid.toString(), namespace);
+                .findById(uuid.toString(), true, namespace);
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 

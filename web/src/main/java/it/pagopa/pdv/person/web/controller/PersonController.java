@@ -48,12 +48,15 @@ public class PersonController {
             @ApiParam("${swagger.model.person.id}")
             @PathVariable("id")
             UUID id,
+            @ApiParam("${swagger.model.person.isNamespaced}")
+            @RequestParam("isNamespaced")
+            boolean isNamespaced,
             @ApiParam("${swagger.model.namespace}")
             @RequestParam(value = "namespace", required = false)
             Optional<String> namespace) {
         log.trace("[findById] start");
-        log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
-        PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), namespace);
+        log.debug("[findById] inputs: id = {}, namespace = {}, isNamespaced = {}", id, namespace, isNamespaced);
+        PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced, namespace);
         PersonResource personResource = PersonMapper.toResource(personDetailsOperations);
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personResource);
         log.trace("[findById] end");

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface PersonService {
 
-    PersonDetailsOperations findById(String id, Optional<String> namespace);
+    PersonDetailsOperations findById(String id, boolean isNamespaced, Optional<String> namespace);
 
     String findIdByNamespacedId(String namespacedId, String namespace);
 

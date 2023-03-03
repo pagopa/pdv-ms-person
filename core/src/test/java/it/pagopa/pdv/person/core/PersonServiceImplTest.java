@@ -33,7 +33,7 @@ class PersonServiceImplTest {
         String id = null;
         Optional<String> namespace = Optional.of("namespace");
         // when
-        Executable executable = () -> personService.findById(id, namespace);
+        Executable executable = () -> personService.findById(id, true, namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person id is required", e.getMessage());
@@ -46,7 +46,7 @@ class PersonServiceImplTest {
         String id = "id";
         Optional<String> namespace = null;
         // when
-        Executable executable = () -> personService.findById(id, namespace);
+        Executable executable = () -> personService.findById(id, true, namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A not null namespace is required", e.getMessage());
@@ -63,7 +63,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
         // when
-        PersonDetailsOperations personDetails = personService.findById(id, namespace);
+        PersonDetailsOperations personDetails = personService.findById(id, false, namespace);
         // then
         assertSame(personDetailsStub, personDetails);
         Mockito.verify(personConnector, Mockito.times(1))
@@ -84,7 +84,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.of(personDetailsStub));
         // when
-        PersonDetailsOperations personDetails = personService.findById(namespacedId, namespace);
+        PersonDetailsOperations personDetails = personService.findById(namespacedId, true, namespace);
         // then
         assertSame(personDetailsStub, personDetails);
         Mockito.verify(personConnector, Mockito.times(1))
@@ -103,7 +103,7 @@ class PersonServiceImplTest {
         Mockito.when(personConnector.findById(Mockito.any()))
                 .thenReturn(Optional.empty());
         // when
-        Executable executable = () -> personService.findById(id, namespace);
+        Executable executable = () -> personService.findById(id, false, namespace);
         // then
         assertThrows(ResourceNotFoundException.class, executable);
         Mockito.verify(personConnector, Mockito.times(1))

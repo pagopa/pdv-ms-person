@@ -27,12 +27,12 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public PersonDetailsOperations findById(String id, Optional<String> namespace) {
+    public PersonDetailsOperations findById(String id, boolean isNamespaced, Optional<String> namespace) {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         Assert.notNull(namespace, "A not null namespace is required");
-        if (namespace.isPresent()) {
+        if (isNamespaced) {
             id = findIdByNamespacedId(id, namespace.get());
         }
         PersonDetailsOperations person = personConnector.findById(id)
