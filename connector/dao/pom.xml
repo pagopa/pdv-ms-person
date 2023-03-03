@@ -34,6 +34,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.github.ganadist.sqlite4java</groupId>
+            <artifactId>libsqlite4java-osx-aarch64</artifactId>
+            <scope>test</scope>
+            <type>dylib</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -51,7 +57,7 @@
                         <configuration>
                             <includeScope>test</includeScope>
                             <includeTypes>so,dll,dylib</includeTypes>
-                            <outputDirectory>src/test/native-libs</outputDirectory>
+                            <outputDirectory>target/test/native-libs</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -10,6 +10,7 @@ import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -39,6 +40,11 @@ class PersonConnectorImplTest {
     @SpyBean
     private DynamoDBMapper dynamoDBMapper;
 
+
+    @BeforeEach
+    void init() {
+        DynamoDBTestConfig.dynamoDBLocalSetup(amazonDynamoDB, dynamoDBMapper);
+    }
 
     @Test
     void findById_nullId() {
