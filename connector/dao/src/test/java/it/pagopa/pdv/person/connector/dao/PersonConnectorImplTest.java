@@ -10,6 +10,7 @@ import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -39,6 +40,11 @@ class PersonConnectorImplTest {
     @SpyBean
     private DynamoDBMapper dynamoDBMapper;
 
+
+    @BeforeEach
+    void init() {
+        DynamoDBTestConfig.dynamoDBLocalSetup(amazonDynamoDB, dynamoDBMapper);
+    }
 
     @Test
     void findById_nullId() {
@@ -81,8 +87,9 @@ class PersonConnectorImplTest {
     void findIdByNamespacedId_nullId() {
         // given
         String namespacedId = null;
+        String namespace = "namespace";
         // when
-        Executable executable = () -> personConnector.findIdByNamespacedId(namespacedId);
+        Executable executable = () -> personConnector.findIdByNamespacedId(namespacedId, namespace);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A person namespaced id is required", e.getMessage());
@@ -93,8 +100,9 @@ class PersonConnectorImplTest {
     void findIdByNamespacedId_notFound() {
         // given
         String namespacedId = "namespacedIdNotFound";
+        String namespace = "namespace";
         // when
-        final Optional<String> found = personConnector.findIdByNamespacedId(namespacedId);
+        final Optional<String> found = personConnector.findIdByNamespacedId(namespacedId, namespace);
         // then
         assertTrue(found.isEmpty());
     }
@@ -106,7 +114,7 @@ class PersonConnectorImplTest {
         final DummyPersonId savedPersonId = new DummyPersonId();
         personConnector.save(savedPersonId);
         // when
-        final Optional<String> found = personConnector.findIdByNamespacedId(savedPersonId.getNamespacedId());
+        final Optional<String> found = personConnector.findIdByNamespacedId(savedPersonId.getNamespacedId(), savedPersonId.getNamespace());
         // then
         assertTrue(found.isPresent());
         assertEquals(savedPersonId.getGlobalId(), found.get());
