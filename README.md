@@ -66,7 +66,7 @@ Set the following Environment Variables:
 | AWS_REGION            | *eu-south-1*                                        |
 | AWS_ACCESS_KEY_ID     | AWS Access Key ID *ppa-personal-data-vault-uat*     |
 | AWS_SECRET_ACCESS_KEY | AWS Secret Access Key *ppa-personal-data-vault-uat* |
-| AWS_SESSION_TOKEN     | AWS Session Token UAT *ppa-personal-data-vault-uat* |
+| AWS_SESSION_TOKEN     | AWS Session Token *ppa-personal-data-vault-uat*     |
 
 From terminal, inside the **app** package:
 
