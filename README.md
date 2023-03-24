@@ -51,18 +51,18 @@ Check [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Dy
 
 Now, we need to setup the table on DynamoDB:
 
-Launch tests
+Launch the following test to generate the CreateTableRequest
 ```
-./mvnw clean test
+./mvnw test -DfailIfNoTests=false -Dtest=DynamoDBTestConfig#generateCreateTableRequest
 ```
-After tests results, in the directory *connector/dao/target/test/dynamodb-local-template* you'll find *Person.json* file which we can use to create the Person table on the local Dynamo instance with the following **aws cli** command:
+After test result, in the directory *connector/dao/target/test/dynamodb-local-template* you'll find *Person.json* file which we can use to create the Person table on the local Dynamo instance with the following **aws cli** command:
 
 ```
-aws dynamodb create-table --cli-input-json file://<BASE_PATH>/Person.json
+aws dynamodb create-table --region local --cli-input-json file://<BASE_PATH>/Person.json
 ```
+If you started DynamoDB local on different port from default, you have to add the following parameter from previous command: `--endpoint-url http://localhost:<PORT>`
 To run the above command, you'll first need to export the following Environment Variables, with dummy values:
 
-- AWS_REGION
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY_ID
 
