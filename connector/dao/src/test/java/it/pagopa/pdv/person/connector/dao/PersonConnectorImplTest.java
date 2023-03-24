@@ -39,12 +39,11 @@ class PersonConnectorImplTest {
 
     @SpyBean
     private DynamoDBMapper dynamoDBMapper;
-
-
     @BeforeEach
     void init() {
         DynamoDBTestConfig.dynamoDBLocalSetup(amazonDynamoDB, dynamoDBMapper);
     }
+
 
     @Test
     void findById_nullId() {
