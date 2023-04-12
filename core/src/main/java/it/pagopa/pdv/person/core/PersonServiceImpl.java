@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 class PersonServiceImpl implements PersonService {
@@ -25,12 +27,13 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public PersonDetailsOperations findById(String id, boolean isNamespaced) {
+    public PersonDetailsOperations findById(String id, boolean isNamespaced, Optional<String> namespace) {
         log.trace("[findById] start");
-        log.debug("[findById] inputs: id = {}, isNamespaced = {}", id, isNamespaced);
+        log.debug("[findById] inputs: id = {}, namespace = {}", id, namespace);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
+        Assert.notNull(namespace, "A not null namespace is required");
         if (isNamespaced) {
-            id = findIdByNamespacedId(id);
+            id = findIdByNamespacedId(id, namespace.get());
         }
         PersonDetailsOperations person = personConnector.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -41,11 +44,12 @@ class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public String findIdByNamespacedId(String namespacedId) {
+    public String findIdByNamespacedId(String namespacedId, String namespace) {
         log.trace("[findIdByNamespacedId] start");
-        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
+        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}, namespace = {}", namespacedId, namespace);
         Assert.hasText(namespacedId, "A person namespaced id is required");
-        String id = personConnector.findIdByNamespacedId(namespacedId)
+        Assert.hasText(namespace, "A namespace is required");
+        String id = personConnector.findIdByNamespacedId(namespacedId, namespace)
                 .orElseThrow(ResourceNotFoundException::new);
         log.debug("[findIdByNamespacedId] output = {}", id);
         log.trace("[findIdByNamespacedId] end");

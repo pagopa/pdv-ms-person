@@ -30,6 +30,15 @@
             "type" : "string",
             "format" : "uuid"
           }
+        }, {
+          "name": "namespace",
+          "in": "query",
+          "description": "Namespace",
+          "required": true,
+          "style": "form",
+          "schema": {
+            "type": "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -77,37 +86,52 @@
     },
     "/people/{id}" : {
       "get" : {
-        "tags" : [ "person" ],
-        "summary" : "Find person",
-        "description" : "Retrieve the person by its internal id",
-        "operationId" : "findByIdUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Person internal id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+        "tags": [
+          "person"
+        ],
+        "summary": "Find person",
+        "description": "Retrieve the person by its id, if a namespace is present then the id will be interpreted as namespaced id, otherwise as internal (global) id",
+        "operationId": "findByIdUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Person internal id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "isNamespaced",
+            "in": "query",
+            "description": "Indicates if the Person is namespaced or not",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "description": "Namespace",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "isNamespaced",
-          "in" : "query",
-          "description" : "Indicates if the Person is namespaced or not",
-          "required" : true,
-          "style" : "form",
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PersonResource"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonResource"
                 }
               }
             }
@@ -254,36 +278,39 @@
         "summary" : "Upsert person namespace",
         "description" : "Create a new person namespace given its internal (global) id, if already exists do nothing",
         "operationId" : "saveNamespacedIdUsingPUT",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Person internal id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Person internal id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "namespace",
+            "in": "path",
+            "description": "Namespace",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "namespace",
-          "in" : "path",
-          "description" : "Caller visibility context",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SavePersonNamespaceDto"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePersonNamespaceDto"
               }
             }
           }
         },
-        "responses" : {
+        "responses": {
           "204" : {
             "description" : "No Content"
           },
@@ -314,36 +341,39 @@
         "summary" : "Delete person namespace",
         "description" : "Delete person namespace by internal (global) id",
         "operationId" : "deletePersonNamespaceUsingDELETE",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Person internal id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "namespace",
-          "in" : "path",
-          "description" : "Caller visibility context",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Person internal id",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+          {
+            "name": "namespace",
+            "in": "path",
+            "description": "Namespace",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }

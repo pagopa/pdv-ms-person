@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.not;
@@ -43,6 +44,8 @@ class PersonControllerTest {
 
     private static final String BASE_URL = "/people";
 
+    private static final String NAMESPACE_REQUEST_PARAM = "namespace";
+
     @MockBean
     private PersonService personServiceMock;
 
@@ -60,14 +63,15 @@ class PersonControllerTest {
     void findById() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Boolean isNamespaced = Boolean.FALSE;
-        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.anyBoolean()))
+        Optional<String> namespace = Optional.of("namespace");
+        Mockito.when(personServiceMock.findById(Mockito.anyString(), Mockito.anyBoolean(), Mockito.any()))
                 .thenReturn(new DummyPersonDetails());
         // when
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/{id}", uuid)
-                .queryParam("isNamespaced", isNamespaced.toString())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .get(BASE_URL + "/{id}", uuid)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .queryParam(NAMESPACE_REQUEST_PARAM, namespace.get())
+                        .queryParam("isNamespaced", "true")
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))
@@ -84,7 +88,7 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.workContacts..email.value", notNullValue()));
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
-                .findById(uuid.toString(), isNamespaced);
+                .findById(uuid.toString(), true, namespace);
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 
@@ -93,19 +97,21 @@ class PersonControllerTest {
     void findIdByNamespacedId() throws Exception {
         // given
         UUID uuid = UUID.randomUUID();
-        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString()))
+        String namespace = "namespace";
+        Mockito.when(personServiceMock.findIdByNamespacedId(Mockito.anyString(), Mockito.any()))
                 .thenReturn(UUID.randomUUID().toString());
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id")
-                .queryParam("namespacedId", uuid.toString())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .queryParam("namespacedId", uuid.toString())
+                        .queryParam(NAMESPACE_REQUEST_PARAM,namespace)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", not(uuid)));
         // then
         Mockito.verify(personServiceMock, Mockito.times(1))
-                .findIdByNamespacedId(uuid.toString());
+                .findIdByNamespacedId(uuid.toString(), namespace);
         Mockito.verifyNoMoreInteractions(personServiceMock);
     }
 

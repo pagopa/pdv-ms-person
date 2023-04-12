@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 import java.util.UUID;
 
 import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
@@ -43,15 +44,19 @@ public class PersonController {
             notes = "${swagger.api.person.findById.notes}")
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PersonResource findById(@ApiParam("${swagger.model.person.id}")
-                                   @PathVariable("id")
-                                           UUID id,
-                                   @ApiParam("${swagger.model.person.isNamespaced}")
-                                   @RequestParam("isNamespaced")
-                                           boolean isNamespaced) {
+    public PersonResource findById(
+            @ApiParam("${swagger.model.person.id}")
+            @PathVariable("id")
+            UUID id,
+            @ApiParam("${swagger.model.person.isNamespaced}")
+            @RequestParam("isNamespaced")
+            boolean isNamespaced,
+            @ApiParam("${swagger.model.namespace}")
+            @RequestParam(value = "namespace", required = false)
+            Optional<String> namespace) {
         log.trace("[findById] start");
-        log.debug("[findById] inputs: id = {}, isNamespaced = {}", id, isNamespaced);
-        PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced);
+        log.debug("[findById] inputs: id = {}, namespace = {}, isNamespaced = {}", id, namespace, isNamespaced);
+        PersonDetailsOperations personDetailsOperations = personService.findById(id.toString(), isNamespaced, namespace);
         PersonResource personResource = PersonMapper.toResource(personDetailsOperations);
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personResource);
         log.trace("[findById] end");
@@ -65,10 +70,13 @@ public class PersonController {
     @ResponseStatus(HttpStatus.OK)
     public PersonId findIdByNamespacedId(@ApiParam("${swagger.model.person.namespacedId}")
                                          @RequestParam("namespacedId")
-                                                 UUID namespacedId) {
+                                         UUID namespacedId,
+                                         @ApiParam("${swagger.model.namespace}")
+                                         @RequestParam("namespace")
+                                         String namespace) {
         log.trace("[findIdByNamespacedId] start");
-        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}", namespacedId);
-        String id = personService.findIdByNamespacedId(namespacedId.toString());
+        log.debug("[findIdByNamespacedId] inputs: namespacedId = {}, namespace = {}", namespacedId, namespace);
+        String id = personService.findIdByNamespacedId(namespacedId.toString(), namespace);
         PersonId personId = new PersonId();
         personId.setId(UUID.fromString(id));
         log.debug("[findIdByNamespacedId] output = {}", personId);
@@ -83,13 +91,13 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void saveNamespacedId(@ApiParam("${swagger.model.person.id}")
                                  @PathVariable("id")
-                                         UUID id,
+                                 UUID id,
                                  @ApiParam("${swagger.model.namespace}")
                                  @PathVariable("namespace")
-                                         String namespace,
+                                 String namespace,
                                  @RequestBody
-                                     @Valid
-                                         SavePersonNamespaceDto request) {
+                                 @Valid
+                                 SavePersonNamespaceDto request) {
         log.trace("[saveNamespacedId] start");
         log.debug("[saveNamespacedId] inputs: id = {}, namespace = {}, request = {}", id, namespace, request);
         PersonIdDto personId = PersonMapper.assembles(id, namespace, request);
@@ -110,10 +118,10 @@ public class PersonController {
             })
     public void save(@ApiParam("${swagger.model.person.id}")
                      @PathVariable("id")
-                             UUID id,
+                     UUID id,
                      @RequestBody
                      @Valid
-                             SavePersonDto request) {
+                     SavePersonDto request) {
         log.trace("[save] start");
         log.debug(CONFIDENTIAL_MARKER, "[save] inputs: id = {}, request = {}", id, request);
         PersonDto personDto = PersonMapper.assembles(id, request);
@@ -128,7 +136,7 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePerson(@ApiParam("${swagger.model.person.id}")
                              @PathVariable("id")
-                                     UUID id) {
+                             UUID id) {
         log.trace("[deletePerson] start");
         log.debug("[deletePerson] inputs: id = {}", id);
         personService.deleteById(id.toString());
@@ -142,10 +150,10 @@ public class PersonController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePersonNamespace(@ApiParam("${swagger.model.person.id}")
                                       @PathVariable("id")
-                                              UUID id,
+                                      UUID id,
                                       @ApiParam("${swagger.model.namespace}")
                                       @PathVariable("namespace")
-                                              String namespace) {
+                                      String namespace) {
         log.trace("[deletePersonNamespace] start");
         log.debug("[deletePersonNamespace] inputs: id = {}, namespace = {}", id, namespace);
         personService.deleteById(id.toString(), namespace);
