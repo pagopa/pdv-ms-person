@@ -77,7 +77,7 @@ public class PersonConnectorImpl implements PersonConnector {
                     .map(Function.identity());
         }
         catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e.getCause());
+            throw new TooManyRequestsException(e);
         }
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personDetails);
         log.trace("[findById] end");
@@ -110,7 +110,7 @@ public class PersonConnectorImpl implements PersonConnector {
             }
         }
         catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e.getCause());
+            throw new TooManyRequestsException(e);
         }
         log.debug("[findIdByNamespacedId] output = {}", id);
         log.trace("[findIdByNamespacedId] end");
@@ -129,7 +129,7 @@ public class PersonConnectorImpl implements PersonConnector {
             log.debug("A PersonId with the given primary key already exists");
         }
         catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e.getCause());
+            throw new TooManyRequestsException(e);
         }
         log.trace("[save] end");
     }
@@ -170,7 +170,7 @@ public class PersonConnectorImpl implements PersonConnector {
                         .map(personFound -> (RuntimeException) new UpdateNotAllowedException())
                         .orElseGet(ResourceNotFoundException::new);
             } catch(ProvisionedThroughputExceededException e){
-                throw new TooManyRequestsException(e.getCause());
+                throw new TooManyRequestsException(e);
             } catch (AmazonDynamoDBException e) {
                 if ("ValidationException".equals(e.getErrorCode())) {
                     // create tree parent nodes
@@ -304,7 +304,7 @@ public class PersonConnectorImpl implements PersonConnector {
         } catch (ConditionalCheckFailedException e) {
             throw new ResourceNotFoundException();
         } catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e.getCause());
+            throw new TooManyRequestsException(e);
         }
         log.trace("[deleteById] end");
     }
@@ -323,7 +323,7 @@ public class PersonConnectorImpl implements PersonConnector {
             personIdTableMapper.delete(personId);
         }
         catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e.getCause());
+            throw new TooManyRequestsException(e);
         }
         log.trace("[deleteById] end");
     }
