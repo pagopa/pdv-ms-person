@@ -9,7 +9,6 @@ import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputExceededException;
 import com.amazonaws.services.dynamodbv2.xspec.Condition;
 import com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder;
 import com.amazonaws.services.dynamodbv2.xspec.UpdateAction;
@@ -18,7 +17,6 @@ import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.PersonId;
 import it.pagopa.pdv.person.connector.dao.model.Status;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
-import it.pagopa.pdv.person.connector.exception.TooManyRequestsException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonIdOperations;
@@ -71,14 +69,9 @@ public class PersonConnectorImpl implements PersonConnector {
         log.debug("[findById] inputs: id = {}", id);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
         Optional<PersonDetailsOperations> personDetails;
-        try {
-            personDetails = Optional.ofNullable(personDetailsTableMapper.load(id))
-                    .filter(p -> Status.ACTIVE.equals(p.getStatus()))
-                    .map(Function.identity());
-        }
-        catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e);
-        }
+        personDetails = Optional.ofNullable(personDetailsTableMapper.load(id))
+                .filter(p -> Status.ACTIVE.equals(p.getStatus()))
+                .map(Function.identity());
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personDetails);
         log.trace("[findById] end");
         return personDetails;
@@ -92,25 +85,20 @@ public class PersonConnectorImpl implements PersonConnector {
         Assert.hasText(namespacedId, "A person namespaced id is required");
         Assert.hasText(namespace, "A namespace is required");
         Optional<String> id = Optional.empty();
-        try {
-            Index index = table.getIndex("gsi_namespaced_id");
-            ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
-                    .withHashKey(PersonId.Fields.namespacedId, namespacedId)
-                    .withExpressionSpec(new ExpressionSpecBuilder()
-                            .withCondition(S(personIdTableMapper.rangeKey().name()).eq(PersonId.getSK(namespace)))
-                            .addProjection(personIdTableMapper.hashKey().name())
-                            .buildForQuery())
+        Index index = table.getIndex("gsi_namespaced_id");
+        ItemCollection<QueryOutcome> itemCollection = index.query(new QuerySpec()
+                .withHashKey(PersonId.Fields.namespacedId, namespacedId)
+                .withExpressionSpec(new ExpressionSpecBuilder()
+                        .withCondition(S(personIdTableMapper.rangeKey().name()).eq(PersonId.getSK(namespace)))
+                        .addProjection(personIdTableMapper.hashKey().name())
+                        .buildForQuery())
             );
-            Iterator<Page<Item, QueryOutcome>> iterator = itemCollection.pages().iterator();
-            if (iterator.hasNext()) {
-                Page<Item, QueryOutcome> page = iterator.next();
-                if (page.getLowLevelResult().getItems().size() == 1) {
-                    id = Optional.ofNullable(page.getLowLevelResult().getItems().get(0).getString(personDetailsModel.hashKey().name()));
-                }
+        Iterator<Page<Item, QueryOutcome>> iterator = itemCollection.pages().iterator();
+        if (iterator.hasNext()) {
+            Page<Item, QueryOutcome> page = iterator.next();
+            if (page.getLowLevelResult().getItems().size() == 1) {
+                id = Optional.ofNullable(page.getLowLevelResult().getItems().get(0).getString(personDetailsModel.hashKey().name()));
             }
-        }
-        catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e);
         }
         log.debug("[findIdByNamespacedId] output = {}", id);
         log.trace("[findIdByNamespacedId] end");
@@ -127,9 +115,6 @@ public class PersonConnectorImpl implements PersonConnector {
             personIdTableMapper.saveIfNotExists(new PersonId(personId));//TODO: good for performance??
         } catch (ConditionalCheckFailedException e) {
             log.debug("A PersonId with the given primary key already exists");
-        }
-        catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e);
         }
         log.trace("[save] end");
     }
@@ -169,9 +154,7 @@ public class PersonConnectorImpl implements PersonConnector {
                 throw findById(person.getId())
                         .map(personFound -> (RuntimeException) new UpdateNotAllowedException())
                         .orElseGet(ResourceNotFoundException::new);
-            } catch(ProvisionedThroughputExceededException e){
-                throw new TooManyRequestsException(e);
-            } catch (AmazonDynamoDBException e) {
+            }  catch (AmazonDynamoDBException e) {
                 if ("ValidationException".equals(e.getErrorCode())) {
                     // create tree parent nodes
                     createParentNodes(primaryKey, missingNodes);
@@ -303,8 +286,6 @@ public class PersonConnectorImpl implements PersonConnector {
             );
         } catch (ConditionalCheckFailedException e) {
             throw new ResourceNotFoundException();
-        } catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e);
         }
         log.trace("[deleteById] end");
     }
@@ -319,12 +300,7 @@ public class PersonConnectorImpl implements PersonConnector {
         PersonId personId = new PersonId();
         personId.setGlobalId(id);
         personId.setNamespace(namespace);
-        try {
-            personIdTableMapper.delete(personId);
-        }
-        catch(ProvisionedThroughputExceededException e){
-            throw new TooManyRequestsException(e);
-        }
+        personIdTableMapper.delete(personId);
         log.trace("[deleteById] end");
     }
 

@@ -71,6 +71,16 @@
               }
             }
           },
+          "429" : {
+            "description" : "Too Many Requests",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
             "content" : {
@@ -150,6 +160,16 @@
               }
             }
           },
+          "429" : {
+            "description" : "Too Many Requests",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
             "content" : {
@@ -184,6 +204,16 @@
           },
           "400" : {
             "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -245,6 +275,16 @@
           },
           "409" : {
             "description" : "Conflict",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
@@ -315,6 +355,16 @@
               }
             }
           },
+          "429" : {
+            "description" : "Too Many Requests",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
             "content" : {
@@ -358,6 +408,16 @@
           },
           "400" : {
             "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
