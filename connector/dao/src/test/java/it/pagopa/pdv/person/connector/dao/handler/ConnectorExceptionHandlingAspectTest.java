@@ -1,6 +1,6 @@
 package it.pagopa.pdv.person.connector.dao.handler;
 
-import it.pagopa.pdv.person.connector.dao.DummyConnectorImpl;
+import it.pagopa.pdv.person.connector.dao.PersonConnectorImplDummy;
 import it.pagopa.pdv.person.connector.exception.TooManyRequestsException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,12 +18,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @SpringBootTest(classes = {
         ValidationAutoConfiguration.class,
-        DummyConnectorImpl.class,
+        PersonConnectorImplDummy.class,
         ConnectorExceptionHandlingAspect.class})
 @EnableAspectJAutoProxy
 public class ConnectorExceptionHandlingAspectTest {
     @Autowired
-    private DummyConnectorImpl connector;
+    private PersonConnectorImplDummy connector;
 
     @SpyBean
     private ConnectorExceptionHandlingAspect exceptionHandlingAspectSpy;

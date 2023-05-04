@@ -3,7 +3,7 @@ package it.pagopa.pdv.person.connector.dao;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputExceededException;
 
 
-public class DummyConnectorImpl {
+public class PersonConnectorImplDummy {
     public void notThrowingProvisionedThroughputExceededException() {
 
     }
