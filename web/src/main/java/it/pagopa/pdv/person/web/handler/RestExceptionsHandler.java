@@ -1,6 +1,7 @@
 package it.pagopa.pdv.person.web.handler;
 
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
+import it.pagopa.pdv.person.connector.exception.TooManyRequestsException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.web.model.Problem;
 import it.pagopa.pdv.person.web.model.mapper.ProblemMapper;
@@ -91,6 +92,12 @@ public class RestExceptionsHandler {
     ResponseEntity<Problem> handleUpdateNotAllowedException(UpdateNotAllowedException e) {
         log.warn(e.toString());
         return ProblemMapper.toResponseEntity(new Problem(CONFLICT, e.getMessage()));
+    }
+
+    @ExceptionHandler({TooManyRequestsException.class})
+    ResponseEntity<Problem> handleTooManyRequestsException(TooManyRequestsException e){
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(TOO_MANY_REQUESTS,e.getMessage()));
     }
 
 }
