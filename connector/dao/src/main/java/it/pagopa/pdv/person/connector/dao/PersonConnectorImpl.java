@@ -68,7 +68,8 @@ public class PersonConnectorImpl implements PersonConnector {
         log.trace("[findById] start");
         log.debug("[findById] inputs: id = {}", id);
         Assert.hasText(id, PERSON_ID_REQUIRED_MESSAGE);
-        Optional<PersonDetailsOperations> personDetails = Optional.ofNullable(personDetailsTableMapper.load(id))
+        Optional<PersonDetailsOperations> personDetails;
+        personDetails = Optional.ofNullable(personDetailsTableMapper.load(id))
                 .filter(p -> Status.ACTIVE.equals(p.getStatus()))
                 .map(Function.identity());
         log.debug(CONFIDENTIAL_MARKER, "[findById] output = {}", personDetails);
@@ -91,7 +92,7 @@ public class PersonConnectorImpl implements PersonConnector {
                         .withCondition(S(personIdTableMapper.rangeKey().name()).eq(PersonId.getSK(namespace)))
                         .addProjection(personIdTableMapper.hashKey().name())
                         .buildForQuery())
-        );
+            );
         Iterator<Page<Item, QueryOutcome>> iterator = itemCollection.pages().iterator();
         if (iterator.hasNext()) {
             Page<Item, QueryOutcome> page = iterator.next();
@@ -153,7 +154,7 @@ public class PersonConnectorImpl implements PersonConnector {
                 throw findById(person.getId())
                         .map(personFound -> (RuntimeException) new UpdateNotAllowedException())
                         .orElseGet(ResourceNotFoundException::new);
-            } catch (AmazonDynamoDBException e) {
+            }  catch (AmazonDynamoDBException e) {
                 if ("ValidationException".equals(e.getErrorCode())) {
                     // create tree parent nodes
                     createParentNodes(primaryKey, missingNodes);

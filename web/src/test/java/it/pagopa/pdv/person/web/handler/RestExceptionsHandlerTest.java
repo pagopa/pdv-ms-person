@@ -1,6 +1,7 @@
 package it.pagopa.pdv.person.web.handler;
 
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
+import it.pagopa.pdv.person.connector.exception.TooManyRequestsException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.web.model.Problem;
 import org.junit.jupiter.api.Test;
@@ -166,6 +167,23 @@ class RestExceptionsHandlerTest {
         assertNotNull(responseEntity.getBody());
         assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
         assertEquals(CONFLICT.value(), responseEntity.getBody().getStatus());
+    }
+
+    @Test
+    void handleTooManyRequestsException(){
+        // given
+        TooManyRequestsException mockException = Mockito.mock(TooManyRequestsException.class);
+        Mockito.when(mockException.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ResponseEntity<Problem> responseEntity = handler.handleTooManyRequestsException(mockException);
+        // then
+        assertNotNull(responseEntity);
+        assertEquals(TOO_MANY_REQUESTS, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
+        assertEquals(TOO_MANY_REQUESTS.value(), responseEntity.getBody().getStatus());
+
     }
 
 }
