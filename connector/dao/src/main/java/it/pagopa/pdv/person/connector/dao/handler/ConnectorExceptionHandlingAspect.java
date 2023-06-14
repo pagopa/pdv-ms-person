@@ -15,7 +15,7 @@ public class ConnectorExceptionHandlingAspect {
     @AfterThrowing(pointcut = "execution(public * it.pagopa.pdv.person.connector.dao.PersonConnectorImpl*.*(..))", throwing = "ex")
     public void handleProvisionedThroughputExceededExceptionCall(ProvisionedThroughputExceededException ex){
         log.trace("[ConnectorExceptionHandlingAspect] handleProvisionedThroughputExceededExceptionCall");
-        throw new TooManyRequestsException(ex.getCause());
+        throw new TooManyRequestsException(ex);
     }
 
 }
