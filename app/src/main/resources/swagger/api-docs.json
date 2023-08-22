@@ -1,198 +1,92 @@
 {
-  "openapi" : "3.0.3",
+  "openapi" : "3.0.1",
   "info" : {
-    "title" : "pdv-ms-person",
     "description" : "People API documentation",
+    "title" : "pdv-ms-person",
     "version" : "1.0-SNAPSHOT"
   },
   "servers" : [ {
-    "url" : "http://localhost:80",
-    "description" : "Inferred Url"
-  } ],
-  "tags" : [ {
-    "name" : "person",
-    "description" : "Person operations"
+    "url" : "http://localhost",
+    "description" : "Generated server url"
   } ],
   "paths" : {
     "/people/id" : {
       "get" : {
-        "tags" : [ "person" ],
-        "summary" : "Find person id",
         "description" : "Find an existing person id given its namespaced id",
-        "operationId" : "findIdByNamespacedIdUsingGET",
+        "operationId" : "findIdByNamespacedId",
         "parameters" : [ {
-          "name" : "namespacedId",
-          "in" : "query",
           "description" : "Person namespaced id",
+          "in" : "query",
+          "name" : "namespacedId",
           "required" : true,
-          "style" : "form",
           "schema" : {
             "type" : "string",
             "format" : "uuid"
           }
         }, {
-          "name" : "namespace",
-          "in" : "query",
           "description" : "Namespace",
+          "in" : "query",
+          "name" : "namespace",
           "required" : true,
-          "style" : "form",
           "schema" : {
             "type" : "string"
           }
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PersonId"
                 }
               }
-            }
+            },
+            "description" : "OK"
           },
           "400" : {
-            "description" : "Bad Request",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
+            },
+            "description" : "Bad Request"
           },
           "429" : {
-            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Too Many Requests"
           },
           "500" : {
-            "description" : "Internal Server Error",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Internal Server Error"
           }
-        }
+        },
+        "summary" : "Find person id",
+        "tags" : [ "person" ]
       }
     },
     "/people/{id}" : {
-      "get" : {
-        "tags" : [ "person" ],
-        "summary" : "Find person",
-        "description" : "Retrieve the person by its id, if a namespace is present then the id will be interpreted as namespaced id, otherwise as internal (global) id",
-        "operationId" : "findByIdUsingGET",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Person internal id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "isNamespaced",
-          "in" : "query",
-          "description" : "Indicates if the Person is namespaced or not",
-          "required" : true,
-          "style" : "form",
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
-          "name" : "namespace",
-          "in" : "query",
-          "description" : "Namespace",
-          "required" : false,
-          "style" : "form",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PersonResource"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not Found",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "429" : {
-            "description" : "Too Many Requests",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      },
       "delete" : {
-        "tags" : [ "person" ],
-        "summary" : "Delete person",
         "description" : "Delete person by its internal id",
-        "operationId" : "deletePersonUsingDELETE",
+        "operationId" : "deletePerson",
         "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
           "description" : "Person internal id",
+          "in" : "path",
+          "name" : "id",
           "required" : true,
-          "style" : "simple",
           "schema" : {
             "type" : "string",
             "format" : "uuid"
@@ -203,48 +97,121 @@
             "description" : "No Content"
           },
           "400" : {
-            "description" : "Bad Request",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Bad Request"
           },
           "429" : {
-            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Too Many Requests"
           },
           "500" : {
-            "description" : "Internal Server Error",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Internal Server Error"
           }
-        }
+        },
+        "summary" : "Delete person",
+        "tags" : [ "person" ]
+      },
+      "get" : {
+        "description" : "Retrieve the person by its id, if a namespace is present then the id will be interpreted as namespaced id, otherwise as internal (global) id",
+        "operationId" : "findById",
+        "parameters" : [ {
+          "description" : "Person internal id",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "description" : "Indicates if the Person is namespaced or not",
+          "in" : "query",
+          "name" : "isNamespaced",
+          "required" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "description" : "Namespace",
+          "in" : "query",
+          "name" : "namespace",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PersonResource"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "400" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Bad Request"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too Many Requests"
+          },
+          "500" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Find person",
+        "tags" : [ "person" ]
       },
       "patch" : {
-        "tags" : [ "person" ],
-        "summary" : "Upsert person details",
         "description" : "Update the given subset fields of an existing person by its internal (global) id, if not present create a new one",
-        "operationId" : "saveUsingPATCH",
+        "operationId" : "save",
         "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
           "description" : "Person internal id",
+          "in" : "path",
+          "name" : "id",
           "required" : true,
-          "style" : "simple",
           "schema" : {
             "type" : "string",
             "format" : "uuid"
@@ -257,77 +224,135 @@
                 "$ref" : "#/components/schemas/SavePersonDto"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "204" : {
             "description" : "No Content"
           },
           "400" : {
-            "description" : "Bad Request",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Bad Request"
           },
           "409" : {
-            "description" : "Conflict",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Conflict"
           },
           "429" : {
-            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Too Many Requests"
           },
           "500" : {
-            "description" : "Internal Server Error",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Internal Server Error"
           }
-        }
+        },
+        "summary" : "Upsert person details",
+        "tags" : [ "person" ]
       }
     },
     "/people/{id}/namespace/{namespace}" : {
-      "put" : {
-        "tags" : [ "person" ],
-        "summary" : "Upsert person namespace",
-        "description" : "Create a new person namespace given its internal (global) id, if already exists do nothing",
-        "operationId" : "saveNamespacedIdUsingPUT",
+      "delete" : {
+        "description" : "Delete person namespace by internal (global) id",
+        "operationId" : "deletePersonNamespace",
         "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
           "description" : "Person internal id",
+          "in" : "path",
+          "name" : "id",
           "required" : true,
-          "style" : "simple",
           "schema" : {
             "type" : "string",
             "format" : "uuid"
           }
         }, {
-          "name" : "namespace",
-          "in" : "path",
           "description" : "Namespace",
+          "in" : "path",
+          "name" : "namespace",
           "required" : true,
-          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Bad Request"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too Many Requests"
+          },
+          "500" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Delete person namespace",
+        "tags" : [ "person" ]
+      },
+      "put" : {
+        "description" : "Create a new person namespace given its internal (global) id, if already exists do nothing",
+        "operationId" : "saveNamespacedId",
+        "parameters" : [ {
+          "description" : "Person internal id",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "description" : "Namespace",
+          "in" : "path",
+          "name" : "namespace",
+          "required" : true,
           "schema" : {
             "type" : "string"
           }
@@ -339,113 +364,54 @@
                 "$ref" : "#/components/schemas/SavePersonNamespaceDto"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
           "204" : {
             "description" : "No Content"
           },
           "400" : {
-            "description" : "Bad Request",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Bad Request"
           },
           "429" : {
-            "description" : "Too Many Requests",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Too Many Requests"
           },
           "500" : {
-            "description" : "Internal Server Error",
             "content" : {
               "application/problem+json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Problem"
                 }
               }
-            }
+            },
+            "description" : "Internal Server Error"
           }
-        }
-      },
-      "delete" : {
-        "tags" : [ "person" ],
-        "summary" : "Delete person namespace",
-        "description" : "Delete person namespace by internal (global) id",
-        "operationId" : "deletePersonNamespaceUsingDELETE",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Person internal id",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "namespace",
-          "in" : "path",
-          "description" : "Namespace",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "429" : {
-            "description" : "Too Many Requests",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
+        },
+        "summary" : "Upsert person namespace",
+        "tags" : [ "person" ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "CertifiableFieldResourceOfLocalDate" : {
-        "title" : "CertifiableFieldResourceOfLocalDate",
-        "required" : [ "certification", "value" ],
+      "BirthDateCertifiableSchema" : {
         "type" : "object",
+        "description" : "Person date of birth",
         "properties" : {
           "certification" : {
             "type" : "string",
@@ -456,12 +422,12 @@
             "description" : "Field value",
             "format" : "date"
           }
-        }
+        },
+        "required" : [ "certification", "value" ]
       },
-      "CertifiableFieldResourceOfstring" : {
-        "title" : "CertifiableFieldResourceOfstring",
-        "required" : [ "certification", "value" ],
+      "EmailCertifiableSchema" : {
         "type" : "object",
+        "description" : "Person email",
         "properties" : {
           "certification" : {
             "type" : "string",
@@ -471,10 +437,25 @@
             "type" : "string",
             "description" : "Field value"
           }
-        }
+        },
+        "required" : [ "certification", "value" ]
+      },
+      "FamilyNameCertifiableSchema" : {
+        "type" : "object",
+        "description" : "Person family name",
+        "properties" : {
+          "certification" : {
+            "type" : "string",
+            "description" : "Certified source of information"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "Field value"
+          }
+        },
+        "required" : [ "certification", "value" ]
       },
       "InvalidParam" : {
-        "title" : "InvalidParam",
         "required" : [ "name", "reason" ],
         "type" : "object",
         "properties" : {
@@ -486,10 +467,25 @@
             "type" : "string",
             "description" : "Invalid parameter reason."
           }
-        }
+        },
+        "description" : "A list of invalid parameters details."
+      },
+      "NameCertifiableSchema" : {
+        "type" : "object",
+        "description" : "Person name",
+        "properties" : {
+          "certification" : {
+            "type" : "string",
+            "description" : "Certified source of information"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "Field value"
+          }
+        },
+        "required" : [ "certification", "value" ]
       },
       "PersonId" : {
-        "title" : "PersonId",
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
@@ -501,21 +497,17 @@
         }
       },
       "PersonResource" : {
-        "title" : "PersonResource",
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "birthDate" : {
-            "description" : "Person date of birth",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfLocalDate"
+            "$ref" : "#/components/schemas/BirthDateCertifiableSchema"
           },
           "email" : {
-            "description" : "Person email",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/EmailCertifiableSchema"
           },
           "familyName" : {
-            "description" : "Person family name",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/FamilyNameCertifiableSchema"
           },
           "id" : {
             "type" : "string",
@@ -523,8 +515,7 @@
             "format" : "uuid"
           },
           "name" : {
-            "description" : "Person name",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/NameCertifiableSchema"
           },
           "workContacts" : {
             "type" : "object",
@@ -536,7 +527,6 @@
         }
       },
       "Problem" : {
-        "title" : "Problem",
         "required" : [ "status", "title" ],
         "type" : "object",
         "properties" : {
@@ -556,6 +546,8 @@
             }
           },
           "status" : {
+            "maximum" : 599,
+            "minimum" : 100,
             "type" : "integer",
             "description" : "The HTTP status code.",
             "format" : "int32",
@@ -573,24 +565,19 @@
         "description" : "A \"problem detail\" as a way to carry machine-readable details of errors (https://datatracker.ietf.org/doc/html/rfc7807)"
       },
       "SavePersonDto" : {
-        "title" : "SavePersonDto",
         "type" : "object",
         "properties" : {
           "birthDate" : {
-            "description" : "Person date of birth",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfLocalDate"
+            "$ref" : "#/components/schemas/BirthDateCertifiableSchema"
           },
           "email" : {
-            "description" : "Person email",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/EmailCertifiableSchema"
           },
           "familyName" : {
-            "description" : "Person family name",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/FamilyNameCertifiableSchema"
           },
           "name" : {
-            "description" : "Person name",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/NameCertifiableSchema"
           },
           "workContacts" : {
             "type" : "object",
@@ -602,7 +589,6 @@
         }
       },
       "SavePersonNamespaceDto" : {
-        "title" : "SavePersonNamespaceDto",
         "required" : [ "namespacedId" ],
         "type" : "object",
         "properties" : {
@@ -614,14 +600,13 @@
         }
       },
       "WorkContactResource" : {
-        "title" : "WorkContactResource",
         "type" : "object",
         "properties" : {
           "email" : {
-            "description" : "Person work email",
-            "$ref" : "#/components/schemas/CertifiableFieldResourceOfstring"
+            "$ref" : "#/components/schemas/EmailCertifiableSchema"
           }
-        }
+        },
+        "description" : "Person work contacts"
       }
     }
   }
