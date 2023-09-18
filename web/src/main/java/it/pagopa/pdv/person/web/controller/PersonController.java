@@ -1,15 +1,17 @@
 package it.pagopa.pdv.person.web.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonDto;
 import it.pagopa.pdv.person.connector.model.PersonIdDto;
 import it.pagopa.pdv.person.core.PersonService;
+import it.pagopa.pdv.person.web.annotations.CommonApiResponsesWrapper;
 import it.pagopa.pdv.person.web.model.*;
 import it.pagopa.pdv.person.web.model.mapper.PersonMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,7 @@ import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
 @Slf4j
 @RestController
 @RequestMapping(value = "people", produces = MediaType.APPLICATION_JSON_VALUE)
-@Api(tags = "person")
+@Tag(name = "person")
 public class PersonController {
 
     private final PersonService personService;
@@ -40,18 +42,19 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.api.person.findById.summary}",
-            notes = "${swagger.api.person.findById.notes}")
+    @Operation(summary = "${swagger.api.person.findById.summary}",
+            description = "${swagger.api.person.findById.notes}")
+    @CommonApiResponsesWrapper
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
     public PersonResource findById(
-            @ApiParam("${swagger.model.person.id}")
+            @Parameter(description="${swagger.model.person.id}")
             @PathVariable("id")
             UUID id,
-            @ApiParam("${swagger.model.person.isNamespaced}")
+            @Parameter(description="${swagger.model.person.isNamespaced}")
             @RequestParam("isNamespaced")
             boolean isNamespaced,
-            @ApiParam("${swagger.model.namespace}")
+            @Parameter(description="${swagger.model.namespace}")
             @RequestParam(value = "namespace", required = false)
             Optional<String> namespace) {
         log.trace("[findById] start");
@@ -64,14 +67,15 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.api.person.findIdByNamespacedId.summary}",
-            notes = "${swagger.api.person.findIdByNamespacedId.notes}")
+    @Operation(summary = "${swagger.api.person.findIdByNamespacedId.summary}",
+            description = "${swagger.api.person.findIdByNamespacedId.notes}")
+    @CommonApiResponsesWrapper
     @GetMapping(value = "/id")
     @ResponseStatus(HttpStatus.OK)
-    public PersonId findIdByNamespacedId(@ApiParam("${swagger.model.person.namespacedId}")
+    public PersonId findIdByNamespacedId(@Parameter(description="${swagger.model.person.namespacedId}")
                                          @RequestParam("namespacedId")
                                          UUID namespacedId,
-                                         @ApiParam("${swagger.model.namespace}")
+                                         @Parameter(description="${swagger.model.namespace}")
                                          @RequestParam("namespace")
                                          String namespace) {
         log.trace("[findIdByNamespacedId] start");
@@ -85,14 +89,15 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.api.person.saveNamespacedId.summary}",
-            notes = "${swagger.api.person.saveNamespacedId.notes}")
+    @Operation(summary = "${swagger.api.person.saveNamespacedId.summary}",
+            description = "${swagger.api.person.saveNamespacedId.notes}")
+    @CommonApiResponsesWrapper
     @PutMapping(value = "{id}/namespace/{namespace}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void saveNamespacedId(@ApiParam("${swagger.model.person.id}")
+    public void saveNamespacedId(@Parameter(description="${swagger.model.person.id}")
                                  @PathVariable("id")
                                  UUID id,
-                                 @ApiParam("${swagger.model.namespace}")
+                                 @Parameter(description="${swagger.model.namespace}")
                                  @PathVariable("namespace")
                                  String namespace,
                                  @RequestBody
@@ -106,17 +111,18 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.api.person.save.summary}",
-            notes = "${swagger.api.person.save.notes}")
-    @PatchMapping(value = "{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "${swagger.api.person.save.summary}",
+            description = "${swagger.api.person.save.notes}")
+    @CommonApiResponsesWrapper
     @ApiResponse(responseCode = "409",
             description = "Conflict",
             content = {
                     @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                             schema = @Schema(implementation = Problem.class))
             })
-    public void save(@ApiParam("${swagger.model.person.id}")
+    @PatchMapping(value = "{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void save(@Parameter(description="${swagger.model.person.id}")
                      @PathVariable("id")
                      UUID id,
                      @RequestBody
@@ -130,11 +136,12 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.api.person.deletePerson.summary}",
-            notes = "${swagger.api.person.deletePerson.notes}")
+    @Operation(summary = "${swagger.api.person.deletePerson.summary}",
+            description = "${swagger.api.person.deletePerson.notes}")
+    @CommonApiResponsesWrapper
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePerson(@ApiParam("${swagger.model.person.id}")
+    public void deletePerson(@Parameter(description="${swagger.model.person.id}")
                              @PathVariable("id")
                              UUID id) {
         log.trace("[deletePerson] start");
@@ -144,14 +151,15 @@ public class PersonController {
     }
 
 
-    @ApiOperation(value = "${swagger.api.person.deletePersonNamespace.summary}",
-            notes = "${swagger.api.person.deletePersonNamespace.notes}")
+    @Operation(summary = "${swagger.api.person.deletePersonNamespace.summary}",
+            description = "${swagger.api.person.deletePersonNamespace.notes}")
+    @CommonApiResponsesWrapper
     @DeleteMapping("{id}/namespace/{namespace}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePersonNamespace(@ApiParam("${swagger.model.person.id}")
+    public void deletePersonNamespace(@Parameter(description="${swagger.model.person.id}")
                                       @PathVariable("id")
                                       UUID id,
-                                      @ApiParam("${swagger.model.namespace}")
+                                      @Parameter(description="${swagger.model.namespace}")
                                       @PathVariable("namespace")
                                       String namespace) {
         log.trace("[deletePersonNamespace] start");

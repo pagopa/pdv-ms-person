@@ -15,6 +15,7 @@ spring:
     include:
       # TO enable specific-language documentations
       - swaggerEN
+      - ${APP_PROFILE_LOCAL}
   zipkin:
     enabled: false
   sleuth:
@@ -31,3 +32,8 @@ info:
 logging:
   level:
     it.pagopa.pdv.person: ${APP_LOG_LEVEL:DEBUG}
+
+springdoc:
+  api-docs:
+    resolve-schema-properties: true
+  writer-with-order-by-keys: true
