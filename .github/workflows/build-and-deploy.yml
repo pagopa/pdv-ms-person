@@ -121,7 +121,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
-          --task-definition pdv-${{ matrix.env_short }}-task-person \          
+          --task-definition pdv-${{ matrix.env_short }}-task-person \
           --query taskDefinition > ./task-definition.json
           echo $(cat ./task-definition.json | jq 'del(
                   .taskDefinitionArn,
