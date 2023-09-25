@@ -5,13 +5,13 @@ on:
     branches:
       - "**"
       - "!main"
-      - "!release-*"
+      - "!develop"
   pull_request:
     types:
       - closed
     branches:
       - "main"
-      - "release-*"
+      - "develop"
     paths:
       - "**/src/main/**"
       - "**pom.xml"
@@ -22,9 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     outputs:
-      new_release_published: ${{ steps.release.outputs.new_release_published }}
-      new_release_version: ${{ steps.release.outputs.new_release_version }}
-      matrix: ${{ steps.setmatrix.outputs.matrix }}
+        matrix: ${{ steps.setmatrix.outputs.matrix }}
 
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
@@ -33,6 +31,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+
       - name: Build with Maven
         run: >
           mvn package -B -DskipTests=true 
@@ -49,34 +48,18 @@ jobs:
           path: |
             target/*.jar
 
-      - name: Release
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' }}
-        id: release
-        # from https://github.com/cycjimmy/semantic-release-action/commits/main
-        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
-        with:
-          semantic_version: 18.0.0
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set Dynamic Env Matrix
         id: setmatrix
         run: |
-          if [ ${{ steps.release.outputs.new_release_published == 'true' }} == true ]; then 
-            matrixStringifiedObject="{\"include\":[{\"environment\":\"prod\", \"env_short\": \"p\"}]}"
-          elif [ ${{ github.event.pull_request.base.ref == 'release-uat' }} == true ]; then
-            matrixStringifiedObject="{\"include\":[{\"environment\":\"uat\", \"env_short\": \"u\"}]}"
-          elif [ ${{ github.event.pull_request.base.ref == 'release-dev' }} == true ]; then
-            matrixStringifiedObject="{\"include\":[{\"environment\":\"dev\", \"env_short\": \"d\"}]}"          
+          if [ ${{ github.event.pull_request.base.ref == 'main' }}} == true ]; then 
+            matrixStringifiedObject="{\"include\":[{\"environment\":\"uat\", \"env_short\": \"u\"},{\"environment\":\"prod\", \"env_short\": \"p\"}]}"
+          elif [ ${{ github.event.pull_request.base.ref == 'develop' }} == true ]; then
+            matrixStringifiedObject="{\"include\":[{\"environment\":\"dev\", \"env_short\": \"d\"}]}"        
           else
             matrixStringifiedObject=""
           fi
           
-          echo "matrix=$matrixStringifiedObject" >> $GITHUB_OUTPUT
-
+          echo "matrix=$matrixStringifiedObject" >> $GITHUB_OUTPUT          
       
   deploy:
     name: "Deploy on ECS"
@@ -88,12 +71,26 @@ jobs:
       contents: read
     strategy:
         matrix: ${{ fromJson(needs.build.outputs.matrix) }}
-
+         
     continue-on-error: false
     environment: ${{ matrix.environment }}
     env:
       AWS_REGION: eu-south-1
+
     steps:
+      - name: Release
+        if: ${{ matrix.environment == 'prod' }}
+        id: release
+        # from https://github.com/cycjimmy/semantic-release-action/commits/main
+        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
+        with:
+          semantic_version: 18.0.0
+          extra_plugins: |
+            @semantic-release/release-notes-generator@10.0.3
+            @semantic-release/git@10.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
@@ -114,7 +111,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: pdv-${{ matrix.env_short }}-person
+          ECR_REPOSITORY: tokenizer-${{ matrix.env_short }}-ecr
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -124,7 +121,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
-          --task-definition pdv-${{ matrix.env_short }}-task-person \
+          --task-definition tokenizer-${{ matrix.env_short }}-task-tokenizer \
           --query taskDefinition > ./task-definition.json
           echo $(cat ./task-definition.json | jq 'del(
                   .taskDefinitionArn,
@@ -141,13 +138,13 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@61b0c00c3743b70987a73a1faf577f0d167d1574
         with:
           task-definition: ./task-definition.json
-          container-name: pdv-${{ matrix.env_short }}-container
+          container-name: tokenizer-${{ matrix.env_short }}-container
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: pdv-${{ matrix.env_short }}-service-person
-          cluster: pdv-${{ matrix.env_short }}-ecs-cluster
+          service: tokenizer-${{ matrix.env_short }}-service-tokenizer
+          cluster: tokenizer-${{ matrix.env_short }}-ecs-cluster
           wait-for-service-stability: true
