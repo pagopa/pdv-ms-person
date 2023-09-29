@@ -18,9 +18,7 @@ spring:
       - ${APP_PROFILE_LOCAL}
   zipkin:
     enabled: false
-  sleuth:
-    propagation:
-      type: AWS
+
 
 info:
   build:
@@ -29,6 +27,10 @@ info:
     description: "@project.description@"
     version: "@project.version@"
 
+management:
+  sampling:
+    probability: 1.0
+    
 logging:
   level:
     it.pagopa.pdv.person: ${APP_LOG_LEVEL:DEBUG}

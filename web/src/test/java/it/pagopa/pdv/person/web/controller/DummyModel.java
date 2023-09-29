@@ -3,7 +3,7 @@ package it.pagopa.pdv.person.web.controller;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -4,7 +4,7 @@ package it.pagopa.pdv.person.web.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Map;
 
