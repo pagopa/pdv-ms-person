@@ -16,6 +16,9 @@ spring:
       # TO enable specific-language documentations
       - swaggerEN
       - ${APP_PROFILE_LOCAL}
+  zipkin:
+    enabled: false
+
 
 info:
   build:
@@ -25,13 +28,8 @@ info:
     version: "@project.version@"
 
 management:
-  tracing:
-    baggage:
-      correlation:
-        fields:
-          - x-amzn-trace-id
-      remote-fields:
-        - x-amzn-trace-id
+  sampling:
+    probability: 1.0
     
 logging:
   level:
