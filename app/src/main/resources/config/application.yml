@@ -16,11 +16,6 @@ spring:
       # TO enable specific-language documentations
       - swaggerEN
       - ${APP_PROFILE_LOCAL}
-  zipkin:
-    enabled: false
-  sleuth:
-    propagation:
-      type: AWS
 
 info:
   build:
@@ -29,6 +24,15 @@ info:
     description: "@project.description@"
     version: "@project.version@"
 
+management:
+  tracing:
+    baggage:
+      correlation:
+        fields:
+          - x-amzn-trace-id
+      remote-fields:
+        - x-amzn-trace-id
+    
 logging:
   level:
     it.pagopa.pdv.person: ${APP_LOG_LEVEL:DEBUG}
