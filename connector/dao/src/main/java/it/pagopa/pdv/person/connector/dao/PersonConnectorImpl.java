@@ -16,6 +16,7 @@ import it.pagopa.pdv.person.connector.PersonConnector;
 import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.PersonId;
 import it.pagopa.pdv.person.connector.dao.model.Status;
+import it.pagopa.pdv.person.connector.exception.ExpressionLimitExceededException;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
@@ -159,7 +160,12 @@ public class PersonConnectorImpl implements PersonConnector {
                     // create tree parent nodes
                     createParentNodes(primaryKey, missingNodes);
                     // retry failed update
-                    table.updateItem(updateItemSpec);
+                    try{
+                        table.updateItem(updateItemSpec);
+                    }
+                    catch(AmazonDynamoDBException ex){
+                        throw new ExpressionLimitExceededException();
+                    }
                 }
             }
         }

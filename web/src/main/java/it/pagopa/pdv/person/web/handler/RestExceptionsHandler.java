@@ -1,10 +1,13 @@
 package it.pagopa.pdv.person.web.handler;
 
+import it.pagopa.pdv.person.connector.exception.ExpressionLimitExceededException;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.TooManyRequestsException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.web.model.Problem;
 import it.pagopa.pdv.person.web.model.mapper.ProblemMapper;
+import jakarta.servlet.ServletException;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,8 +20,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import jakarta.servlet.ServletException;
-import jakarta.validation.ValidationException;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -98,6 +99,12 @@ public class RestExceptionsHandler {
     ResponseEntity<Problem> handleTooManyRequestsException(TooManyRequestsException e){
         log.warn(e.toString());
         return ProblemMapper.toResponseEntity(new Problem(TOO_MANY_REQUESTS,e.getMessage()));
+    }
+
+    @ExceptionHandler({ExpressionLimitExceededException.class})
+    ResponseEntity<Problem> handleExpressionLimitExceededException(ExpressionLimitExceededException e){
+        log.warn(e.toString());
+        return ProblemMapper.toResponseEntity(new Problem(BAD_REQUEST,e.getMessage()));
     }
 
 }
