@@ -1,9 +1,12 @@
 package it.pagopa.pdv.person.web.handler;
 
+import it.pagopa.pdv.person.connector.exception.ExpressionLimitExceededException;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.exception.TooManyRequestsException;
 import it.pagopa.pdv.person.connector.exception.UpdateNotAllowedException;
 import it.pagopa.pdv.person.web.model.Problem;
+import jakarta.servlet.ServletException;
+import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -18,8 +21,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import jakarta.servlet.ServletException;
-import jakarta.validation.ValidationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -183,6 +184,23 @@ class RestExceptionsHandlerTest {
         assertNotNull(responseEntity.getBody());
         assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
         assertEquals(TOO_MANY_REQUESTS.value(), responseEntity.getBody().getStatus());
+
+    }
+
+    @Test
+    void handleExpressionLimitExceededException(){
+        // given
+        ExpressionLimitExceededException mockException = Mockito.mock(ExpressionLimitExceededException.class);
+        Mockito.when(mockException.getMessage())
+                .thenReturn(DETAIL_MESSAGE);
+        // when
+        ResponseEntity<Problem> responseEntity = handler.handleExpressionLimitExceededException(mockException);
+        // then
+        assertNotNull(responseEntity);
+        assertEquals(BAD_REQUEST, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
+        assertEquals(DETAIL_MESSAGE, responseEntity.getBody().getDetail());
+        assertEquals(BAD_REQUEST.value(), responseEntity.getBody().getStatus());
 
     }
 
