@@ -2,7 +2,7 @@ package it.pagopa.pdv.person.connector.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ExpressionLimitExceededExceptionTest {
@@ -12,6 +12,6 @@ public class ExpressionLimitExceededExceptionTest {
 
         ExpressionLimitExceededException exception = new ExpressionLimitExceededException();
 
-        assertNotNull(exception);
+        assertThrows(ExpressionLimitExceededException.class, () -> {throw exception;});
     }
 }
