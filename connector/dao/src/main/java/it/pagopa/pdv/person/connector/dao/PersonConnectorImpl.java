@@ -12,6 +12,7 @@ import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.dynamodbv2.xspec.Condition;
 import com.amazonaws.services.dynamodbv2.xspec.ExpressionSpecBuilder;
 import com.amazonaws.services.dynamodbv2.xspec.UpdateAction;
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import it.pagopa.pdv.person.connector.PersonConnector;
 import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.dao.model.PersonId;
@@ -41,6 +42,7 @@ import static it.pagopa.pdv.person.connector.model.CertifiableField.NOT_CERTIFIE
 
 @Slf4j
 @Service
+@XRayEnabled
 public class PersonConnectorImpl implements PersonConnector {
 
     public static final String TABLE_NAME = "Person";

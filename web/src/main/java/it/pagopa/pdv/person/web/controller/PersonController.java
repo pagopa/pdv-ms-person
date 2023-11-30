@@ -1,6 +1,7 @@
 package it.pagopa.pdv.person.web.controller;
 
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,13 +15,13 @@ import it.pagopa.pdv.person.core.PersonService;
 import it.pagopa.pdv.person.web.annotations.CommonApiResponsesWrapper;
 import it.pagopa.pdv.person.web.model.*;
 import it.pagopa.pdv.person.web.model.mapper.PersonMapper;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ import static it.pagopa.pdv.person.core.logging.LogUtils.CONFIDENTIAL_MARKER;
 @RestController
 @RequestMapping(value = "people", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "person")
+@XRayEnabled
 public class PersonController {
 
     private final PersonService personService;
