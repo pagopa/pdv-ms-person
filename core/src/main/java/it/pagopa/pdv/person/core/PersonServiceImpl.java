@@ -1,5 +1,6 @@
 package it.pagopa.pdv.person.core;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import it.pagopa.pdv.person.connector.PersonConnector;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@XRayEnabled
 class PersonServiceImpl implements PersonService {
 
     private static final String PERSON_ID_REQUIRED_MESSAGE = "A person id is required";
