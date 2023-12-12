@@ -16,6 +16,16 @@
             <artifactId>pdv-ms-person-connector-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-xray-recorder-sdk-spring</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>it.pagopa.pdv</groupId>
             <artifactId>pdv-ms-person-connector-api</artifactId>
             <type>test-jar</type>
