@@ -24,14 +24,6 @@ info:
     description: "@project.description@"
     version: "@project.version@"
 
-management:
-  tracing:
-    baggage:
-      correlation:
-        fields:
-          - x-amzn-trace-id
-      remote-fields:
-        - x-amzn-trace-id
     
 logging:
   level:
