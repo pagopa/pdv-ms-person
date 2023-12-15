@@ -6,6 +6,7 @@ import com.amazonaws.xray.jakarta.servlet.AWSXRayServletFilter;
 import com.amazonaws.xray.strategy.jakarta.SegmentNamingStrategy;
 import com.amazonaws.xray.plugins.EC2Plugin;
 import com.amazonaws.xray.plugins.ECSPlugin;
+import com.amazonaws.xray.slf4j.SLF4JSegmentListener;
 import com.amazonaws.xray.strategy.sampling.CentralizedSamplingStrategy;
 import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +51,15 @@ class WebConfig implements WebMvcConfigurer {
         configurer.setUseTrailingSlashMatch(true);
     }
     static {
-        AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new ECSPlugin()).withPlugin(new EC2Plugin());
+        AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder
+                .standard()
+                .withSegmentListener(new SLF4JSegmentListener(""))
+                .withPlugin(new ECSPlugin())
+                .withPlugin(new EC2Plugin());
         builder.withSamplingStrategy(new CentralizedSamplingStrategy());
         AWSXRay.setGlobalRecorder(builder.build());
     }
+
     @Bean
     public Filter TracingFilter() {
         return new AWSXRayServletFilter(SegmentNamingStrategy.dynamic(this.applicationContext.getId()));
