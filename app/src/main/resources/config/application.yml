@@ -28,6 +28,7 @@ info:
 logging:
   level:
     it.pagopa.pdv.person: ${APP_LOG_LEVEL:DEBUG}
+    com.amazonaws.xray: ERROR
 
 springdoc:
   api-docs:
