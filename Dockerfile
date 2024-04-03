@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine@sha256:839f3208bfc22f17bf57391d5c91d51c627d032d6900a0475228b94e48a8f9b3
+FROM eclipse-temurin:17-jre-alpine@sha256:ff32f6a063be7a0dbdfcf5486968ed268d797ee45465cd2ea956bd42ba22cd9b
 VOLUME /tmp
 COPY target/*.jar app.jar
 ENTRYPOINT ["java","-jar","app.jar"]
