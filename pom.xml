@@ -91,7 +91,7 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
-                <version>1.12.172</version>
+                <version>1.12.693</version>
             </dependency>
             <dependency>
                 <groupId>com.amazonaws</groupId>
