@@ -199,7 +199,6 @@ class PersonMapperTest {
         assertIterableEquals(personDetailsOperations.getWorkContacts().keySet(), model.getWorkContacts().keySet());
     }
 
-
     private void assertCertifiableFieldEquals(CertifiableField<?> expected, CertifiableField<?> actual) {
         assertEquals(expected.getCertification(), actual.getCertification());
         assertEquals(expected.getValue(), actual.getValue());
@@ -220,6 +219,17 @@ class PersonMapperTest {
     void toWorkContactResource_notNull() {
         // given
         PersonDetailsOperations.WorkContactOperations workContactOperations = new DummyPersonDetails.DummyWorkContact();
+        // when
+        WorkContactResource model = PersonMapper.toResource(workContactOperations);
+        // then
+        assertNotNull(model);
+        assertCertifiableFieldEquals(workContactOperations.getEmail(), model.getEmail());
+    }
+
+    @Test
+    void toWorkContactResource_nullValue() {
+        // given
+        PersonDetailsOperations.WorkContactOperations workContactOperations = new DummyPersonDetails.DummyWorkContactNullValue();
         // when
         WorkContactResource model = PersonMapper.toResource(workContactOperations);
         // then
