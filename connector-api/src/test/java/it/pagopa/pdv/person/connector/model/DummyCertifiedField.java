@@ -23,4 +23,9 @@ public class DummyCertifiedField<T> implements CertifiableField<T> {
         }
     }
 
+    @SneakyThrows
+    public DummyCertifiedField() {
+        value = null;
+    }
+
 }

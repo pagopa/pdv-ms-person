@@ -1,5 +1,6 @@
 package it.pagopa.pdv.person.web.model.mapper;
 
+import it.pagopa.pdv.person.connector.model.CertifiableField;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonDto;
 import it.pagopa.pdv.person.connector.model.PersonIdDto;
@@ -93,7 +94,14 @@ public class PersonMapper {
         if (workContactOperations != null) {
             workContactResource = new WorkContactResource();
             if (workContactOperations.getEmail() != null) {
-                workContactResource.setEmail(new CertifiableFieldResource<>(workContactOperations.getEmail()));
+                if(workContactOperations.getEmail().getValue() != null) {
+                    workContactResource.setEmail(new CertifiableFieldResource<>(workContactOperations.getEmail()));
+                }
+                else{
+                    CertifiableField<String> emptyEmail = workContactOperations.getEmail();
+                    emptyEmail.setValue("");
+                    workContactResource.setEmail(new CertifiableFieldResource<>(emptyEmail));
+                }
             }
         }
         return workContactResource;

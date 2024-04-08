@@ -28,13 +28,20 @@ public class DummyPersonDetails implements PersonDetailsOperations {
         this.workContacts = Map.of("inst-1", new DummyWorkContact());
     }
 
-
     @Data
     public static class DummyWorkContact implements WorkContactOperations {
         private CertifiableField<String> email;
 
         public DummyWorkContact() {
             this.email = new DummyCertifiedField<>(String.class);
+        }
+    }
+    @Data
+    public static class DummyWorkContactNullValue implements WorkContactOperations {
+        private CertifiableField<String> email;
+
+        public DummyWorkContactNullValue() {
+            this.email = new DummyCertifiedField<>();
         }
     }
 
