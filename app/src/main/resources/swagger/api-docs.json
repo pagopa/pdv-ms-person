@@ -526,6 +526,21 @@
           }
         }
       },
+      "PhoneCertifiableSchema" : {
+        "type" : "object",
+        "description" : "Person work phone",
+        "properties" : {
+          "certification" : {
+            "type" : "string",
+            "description" : "Certified source of information"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "Field value"
+          }
+        },
+        "required" : [ "certification", "value" ]
+      },
       "Problem" : {
         "required" : [ "status", "title" ],
         "type" : "object",
@@ -604,6 +619,9 @@
         "properties" : {
           "email" : {
             "$ref" : "#/components/schemas/EmailCertifiableSchema"
+          },
+          "phone" : {
+            "$ref" : "#/components/schemas/PhoneCertifiableSchema"
           }
         },
         "description" : "Person work contacts"

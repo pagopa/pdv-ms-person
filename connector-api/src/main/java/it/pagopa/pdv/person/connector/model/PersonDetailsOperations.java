@@ -23,6 +23,8 @@ public interface PersonDetailsOperations {
 
         CertifiableField<String> getEmail();
 
+        CertifiableField<String> getPhone();
+
     }
 
 }

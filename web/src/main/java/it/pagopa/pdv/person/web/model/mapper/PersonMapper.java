@@ -4,13 +4,16 @@ import it.pagopa.pdv.person.connector.model.CertifiableField;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
 import it.pagopa.pdv.person.connector.model.PersonDto;
 import it.pagopa.pdv.person.connector.model.PersonIdDto;
-import it.pagopa.pdv.person.web.model.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
+import it.pagopa.pdv.person.web.model.CertifiableFieldResource;
+import it.pagopa.pdv.person.web.model.PersonResource;
+import it.pagopa.pdv.person.web.model.SavePersonDto;
+import it.pagopa.pdv.person.web.model.SavePersonNamespaceDto;
+import it.pagopa.pdv.person.web.model.WorkContactResource;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonMapper {
@@ -57,6 +60,9 @@ public class PersonMapper {
             if (workContactResource.getEmail() != null) {
                 workContactDto.setEmail(workContactResource.getEmail());
             }
+            if (workContactResource.getPhone() != null) {
+                workContactDto.setPhone(workContactResource.getPhone());
+            }
         }
         return workContactDto;
     }
@@ -101,6 +107,16 @@ public class PersonMapper {
                     CertifiableField<String> emptyEmail = workContactOperations.getEmail();
                     emptyEmail.setValue("");
                     workContactResource.setEmail(new CertifiableFieldResource<>(emptyEmail));
+                }
+            }
+            if (workContactOperations.getPhone() != null) {
+                if(workContactOperations.getPhone().getValue() != null) {
+                    workContactResource.setPhone(new CertifiableFieldResource<>(workContactOperations.getPhone()));
+                }
+                else{
+                    CertifiableField<String> emptyPhone = workContactOperations.getPhone();
+                    emptyPhone.setValue("");
+                    workContactResource.setPhone(new CertifiableFieldResource<>(emptyPhone));
                 }
             }
         }

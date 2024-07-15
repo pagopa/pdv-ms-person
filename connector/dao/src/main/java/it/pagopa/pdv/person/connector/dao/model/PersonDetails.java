@@ -1,17 +1,20 @@
 package it.pagopa.pdv.person.connector.dao.model;
 
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import static it.pagopa.pdv.person.connector.dao.model.Status.ACTIVE;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import it.pagopa.pdv.person.connector.dao.PersonConnectorImpl;
 import it.pagopa.pdv.person.connector.model.PersonDetailsOperations;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static it.pagopa.pdv.person.connector.dao.model.Status.ACTIVE;
 
 @Data
 @NoArgsConstructor
@@ -87,10 +90,16 @@ public class PersonDetails implements PersonDetailsOperations {
             if (workContact.getEmail() != null) {
                 email = new DynamoDBCertifiedFieldOfString(workContact.getEmail());
             }
+            if (workContact.getPhone() != null) {
+                phone = new DynamoDBCertifiedFieldOfString(workContact.getPhone());
+            }
         }
 
         @DynamoDBAttribute
         private DynamoDBCertifiedFieldOfString email;
+
+        @DynamoDBAttribute
+        private DynamoDBCertifiedFieldOfString phone;
 
     }
 

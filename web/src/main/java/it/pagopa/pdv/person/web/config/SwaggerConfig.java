@@ -6,7 +6,9 @@ import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import it.pagopa.pdv.person.web.model.CertifiableFieldResource;
+import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +17,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
-import io.swagger.v3.oas.models.media.Schema;
-import java.time.LocalDate;
 
 
 @Slf4j
@@ -61,7 +61,8 @@ class SwaggerConfig {
                         .addSchemas("NameCertifiableSchema", getSchemaWithDifferentDescription(CertifiableFieldResourceString.class, "${swagger.model.person.name}" ))
                         .addSchemas("FamilyNameCertifiableSchema", getSchemaWithDifferentDescription(CertifiableFieldResourceString.class, "${swagger.model.person.familyName}" ))
                         .addSchemas("EmailCertifiableSchema", getSchemaWithDifferentDescription(CertifiableFieldResourceString.class, "${swagger.model.person.email}" ))
-                        .addSchemas("BirthDateCertifiableSchema", getSchemaWithDifferentDescription(CertifiableFieldResourceDate.class, "${swagger.model.person.birthDate}" )));
+                    .addSchemas("PhoneCertifiableSchema", getSchemaWithDifferentDescription(CertifiableFieldResourceString.class, "${swagger.model.person.workContact.phone}" ))
+                    .addSchemas("BirthDateCertifiableSchema", getSchemaWithDifferentDescription(CertifiableFieldResourceDate.class, "${swagger.model.person.birthDate}" )));
 
     }
 

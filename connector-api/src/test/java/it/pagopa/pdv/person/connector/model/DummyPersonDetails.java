@@ -1,10 +1,9 @@
 package it.pagopa.pdv.person.connector.model;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
+import lombok.Data;
 
 @Data
 public class DummyPersonDetails implements PersonDetailsOperations {
@@ -31,17 +30,23 @@ public class DummyPersonDetails implements PersonDetailsOperations {
     @Data
     public static class DummyWorkContact implements WorkContactOperations {
         private CertifiableField<String> email;
+        private CertifiableField<String> phone;
 
         public DummyWorkContact() {
+
             this.email = new DummyCertifiedField<>(String.class);
+            this.phone = new DummyCertifiedField<>(String.class);
         }
     }
     @Data
     public static class DummyWorkContactNullValue implements WorkContactOperations {
         private CertifiableField<String> email;
+        private CertifiableField<String> phone;
 
         public DummyWorkContactNullValue() {
+
             this.email = new DummyCertifiedField<>();
+            this.phone = new DummyCertifiedField<>();
         }
     }
 

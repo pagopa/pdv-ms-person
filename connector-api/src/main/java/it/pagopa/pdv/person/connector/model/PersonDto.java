@@ -1,9 +1,8 @@
 package it.pagopa.pdv.person.connector.model;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class PersonDto implements PersonDetailsOperations {
@@ -20,6 +19,7 @@ public class PersonDto implements PersonDetailsOperations {
     @Data
     public static class WorkContactDto implements WorkContactOperations {
         private CertifiableField<String> email;
+        private CertifiableField<String> phone;
     }
 
 }
