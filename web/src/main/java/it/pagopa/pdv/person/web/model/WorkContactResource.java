@@ -12,8 +12,12 @@ public class WorkContactResource implements PersonDetailsOperations.WorkContactO
     @Valid
     private CertifiableFieldResource<String> email;
 
-    @Schema(ref = "PhoneCertifiableSchema")
+    @Schema(ref = "MobilePhoneCertifiableSchema")
     @Valid
-    private CertifiableFieldResource<String> phone;
+    private CertifiableFieldResource<String> mobilePhone;
+
+    @Schema(ref = "TelephoneCertifiableSchema")
+    @Valid
+    private CertifiableFieldResource<String> telephone;
 
 }

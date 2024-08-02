@@ -60,8 +60,11 @@ public class PersonMapper {
             if (workContactResource.getEmail() != null) {
                 workContactDto.setEmail(workContactResource.getEmail());
             }
-            if (workContactResource.getPhone() != null) {
-                workContactDto.setPhone(workContactResource.getPhone());
+            if (workContactResource.getMobilePhone() != null) {
+                workContactDto.setMobilePhone(workContactResource.getMobilePhone());
+            }
+            if (workContactResource.getTelephone() != null) {
+                workContactDto.setTelephone(workContactResource.getTelephone());
             }
         }
         return workContactDto;
@@ -109,14 +112,24 @@ public class PersonMapper {
                     workContactResource.setEmail(new CertifiableFieldResource<>(emptyEmail));
                 }
             }
-            if (workContactOperations.getPhone() != null) {
-                if(workContactOperations.getPhone().getValue() != null) {
-                    workContactResource.setPhone(new CertifiableFieldResource<>(workContactOperations.getPhone()));
+
+            CertifiableField<String> mobilePhone = workContactOperations.getMobilePhone();
+            if (mobilePhone != null) {
+                if (mobilePhone.getValue() != null) {
+                    workContactResource.setMobilePhone(new CertifiableFieldResource<>(mobilePhone));
+                } else {
+                    mobilePhone.setValue("");
+                    workContactResource.setMobilePhone(new CertifiableFieldResource<>(mobilePhone));
                 }
-                else{
-                    CertifiableField<String> emptyPhone = workContactOperations.getPhone();
-                    emptyPhone.setValue("");
-                    workContactResource.setPhone(new CertifiableFieldResource<>(emptyPhone));
+            }
+
+            CertifiableField<String> telephone = workContactOperations.getTelephone();
+            if (telephone != null) {
+                if (telephone.getValue() != null) {
+                    workContactResource.setTelephone(new CertifiableFieldResource<>(telephone));
+                } else {
+                    telephone.setValue("");
+                    workContactResource.setTelephone(new CertifiableFieldResource<>(telephone));
                 }
             }
         }

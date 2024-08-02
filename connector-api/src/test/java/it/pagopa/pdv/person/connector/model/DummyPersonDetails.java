@@ -30,24 +30,27 @@ public class DummyPersonDetails implements PersonDetailsOperations {
     @Data
     public static class DummyWorkContact implements WorkContactOperations {
         private CertifiableField<String> email;
-        private CertifiableField<String> phone;
+        private CertifiableField<String> mobilePhone;
+        private CertifiableField<String> telephone;
 
         public DummyWorkContact() {
 
             this.email = new DummyCertifiedField<>(String.class);
-            this.phone = new DummyCertifiedField<>(String.class);
+            this.mobilePhone = new DummyCertifiedField<>(String.class);
+            this.telephone = new DummyCertifiedField<>(String.class);
         }
     }
     @Data
     public static class DummyWorkContactNullValue implements WorkContactOperations {
         private CertifiableField<String> email;
-        private CertifiableField<String> phone;
+        private CertifiableField<String> mobilePhone;
+        private CertifiableField<String> telephone;
 
         public DummyWorkContactNullValue() {
 
             this.email = new DummyCertifiedField<>();
-            this.phone = new DummyCertifiedField<>();
-        }
+            this.mobilePhone = new DummyCertifiedField<>(String.class);
+            this.telephone = new DummyCertifiedField<>(String.class);        }
     }
 
 }

@@ -19,7 +19,8 @@ public class PersonDto implements PersonDetailsOperations {
     @Data
     public static class WorkContactDto implements WorkContactOperations {
         private CertifiableField<String> email;
-        private CertifiableField<String> phone;
+        private CertifiableField<String> mobilePhone;
+        private CertifiableField<String> telephone;
     }
 
 }

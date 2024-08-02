@@ -19,7 +19,8 @@ public class DummyPersonDetails extends PersonDetails {
     public static class DummyWorkContact extends WorkContact {
         public DummyWorkContact() {
             setEmail(new DummyDynamoDBCertifiedFieldOfString(String.class));
-            setPhone(new DummyDynamoDBCertifiedFieldOfString(String.class));
+            setMobilePhone(new DummyDynamoDBCertifiedFieldOfString(String.class));
+            setTelephone(new DummyDynamoDBCertifiedFieldOfString(String.class));
         }
     }
 

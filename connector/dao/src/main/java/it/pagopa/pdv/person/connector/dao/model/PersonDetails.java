@@ -90,8 +90,10 @@ public class PersonDetails implements PersonDetailsOperations {
             if (workContact.getEmail() != null) {
                 email = new DynamoDBCertifiedFieldOfString(workContact.getEmail());
             }
-            if (workContact.getPhone() != null) {
-                phone = new DynamoDBCertifiedFieldOfString(workContact.getPhone());
+            if (workContact.getMobilePhone() != null) {
+                mobilePhone = new DynamoDBCertifiedFieldOfString(workContact.getMobilePhone());
+            }if (workContact.getTelephone() != null) {
+                telephone = new DynamoDBCertifiedFieldOfString(workContact.getTelephone());
             }
         }
 
@@ -99,7 +101,10 @@ public class PersonDetails implements PersonDetailsOperations {
         private DynamoDBCertifiedFieldOfString email;
 
         @DynamoDBAttribute
-        private DynamoDBCertifiedFieldOfString phone;
+        private DynamoDBCertifiedFieldOfString mobilePhone;
+
+        @DynamoDBAttribute
+        private DynamoDBCertifiedFieldOfString telephone;
 
     }
 
