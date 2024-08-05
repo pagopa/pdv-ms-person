@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import it.pagopa.pdv.person.connector.dao.config.DynamoDBTestConfig;
 import it.pagopa.pdv.person.connector.dao.model.DummyPersonDetails;
+import it.pagopa.pdv.person.connector.dao.model.DummyPersonDetailsNoPhoneNumbers;
 import it.pagopa.pdv.person.connector.dao.model.DummyPersonId;
 import it.pagopa.pdv.person.connector.dao.model.PersonDetails;
 import it.pagopa.pdv.person.connector.exception.ResourceNotFoundException;
@@ -71,14 +72,29 @@ class PersonConnectorImplTest {
     @Test
     void findById() {
         // given
-        final DummyPersonDetails sevedPerson = new DummyPersonDetails();
-        personConnector.save(sevedPerson);
+        final DummyPersonDetails savedPerson = new DummyPersonDetails();
+        personConnector.save(savedPerson);
         // when
-        Optional<PersonDetailsOperations> found = personConnector.findById(sevedPerson.getId());
+        Optional<PersonDetailsOperations> found = personConnector.findById(savedPerson.getId());
         // then
         assertTrue(found.isPresent());
-        assertEquals(sevedPerson.getId(), found.get().getId());
-        assertEquals(sevedPerson, found.get());
+        assertEquals(savedPerson.getId(), found.get().getId());
+        assertEquals(savedPerson, found.get());
+    }
+
+    @Test
+    void findById_noWorkContactsPhoneNumbers_regression() {
+        // given
+        final DummyPersonDetailsNoPhoneNumbers savedPerson = new DummyPersonDetailsNoPhoneNumbers();
+        personConnector.save(savedPerson);
+        // when
+        Optional<PersonDetailsOperations> found = personConnector.findById(savedPerson.getId());
+        // then
+        assertTrue(found.isPresent());
+        assertEquals(savedPerson.getId(), found.get().getId());
+        assertNull(found.get().getWorkContacts().get("inst-1").getMobilePhone());
+        assertNull(found.get().getWorkContacts().get("inst-1").getTelephone());
+        assertEquals(savedPerson, found.get());
     }
 
 
@@ -195,7 +211,7 @@ class PersonConnectorImplTest {
     @Test
     void savePersonDetails_newItem() {
         // given
-        PersonDetails personDetails = new DummyPersonDetails();
+        PersonDetails personDetails = new DummyPersonDetailsNoPhoneNumbers();
         // when
         Executable executable = () -> personConnector.save(personDetails);
         // then
@@ -206,7 +222,7 @@ class PersonConnectorImplTest {
     @Test
     void savePersonDetails_alreadyExists() {
         // given
-        PersonDetails personDetails = new DummyPersonDetails();
+        PersonDetails personDetails = new DummyPersonDetailsNoPhoneNumbers();
         personConnector.save(personDetails);
         // when
         Executable executable = () -> personConnector.save(personDetails);
@@ -218,7 +234,7 @@ class PersonConnectorImplTest {
     @Test
     void savePersonDetails_notAllowed_certifiedField() {
         // given
-        PersonDetails personDetails = new DummyPersonDetails();
+        PersonDetails personDetails = new DummyPersonDetailsNoPhoneNumbers();
         personDetails.getName().setCertification("SPID");
         personConnector.save(personDetails);
         personDetails.getName().setCertification("NONE");
@@ -232,7 +248,7 @@ class PersonConnectorImplTest {
     @Test
     void savePersonDetails_notAllowed_notEnabled() {
         // given
-        PersonDetails personDetails = new DummyPersonDetails();
+        PersonDetails personDetails = new DummyPersonDetailsNoPhoneNumbers();
         personConnector.save(personDetails);
         personConnector.deleteById(personDetails.getId());
         // when
