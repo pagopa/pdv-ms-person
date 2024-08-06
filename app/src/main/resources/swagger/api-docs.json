@@ -470,6 +470,21 @@
         },
         "description" : "A list of invalid parameters details."
       },
+      "MobilePhoneCertifiableSchema" : {
+        "type" : "object",
+        "description" : "Person work mobile phone number",
+        "properties" : {
+          "certification" : {
+            "type" : "string",
+            "description" : "Certified source of information"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "Field value"
+          }
+        },
+        "required" : [ "certification", "value" ]
+      },
       "NameCertifiableSchema" : {
         "type" : "object",
         "description" : "Person name",
@@ -599,11 +614,32 @@
           }
         }
       },
+      "TelephoneCertifiableSchema" : {
+        "type" : "object",
+        "description" : "Person work telephone number",
+        "properties" : {
+          "certification" : {
+            "type" : "string",
+            "description" : "Certified source of information"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "Field value"
+          }
+        },
+        "required" : [ "certification", "value" ]
+      },
       "WorkContactResource" : {
         "type" : "object",
         "properties" : {
           "email" : {
             "$ref" : "#/components/schemas/EmailCertifiableSchema"
+          },
+          "mobilePhone" : {
+            "$ref" : "#/components/schemas/MobilePhoneCertifiableSchema"
+          },
+          "telephone" : {
+            "$ref" : "#/components/schemas/TelephoneCertifiableSchema"
           }
         },
         "description" : "Person work contacts"
