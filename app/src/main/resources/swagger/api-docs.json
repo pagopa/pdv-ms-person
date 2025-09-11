@@ -515,22 +515,118 @@
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
+          "address" : {
+            "$ref" : "#/components/schemas/AddressCertifiableSchema"
+          },
           "birthDate" : {
             "$ref" : "#/components/schemas/BirthDateCertifiableSchema"
+          },
+          "city" : {
+            "$ref" : "#/components/schemas/CityCertifiableSchema"
+          },
+          "commonName" : {
+            "$ref" : "#/components/schemas/CommonNameCertifiableSchema"
+          },
+          "companyName" : {
+            "$ref" : "#/components/schemas/CompanyNameCertifiableSchema"
+          },
+          "country" : {
+            "$ref" : "#/components/schemas/CountryCertifiableSchema"
+          },
+          "countyOfBirth" : {
+            "$ref" : "#/components/schemas/CountyOfBirthCertifiableSchema"
+          },
+          "digitalAddress" : {
+            "$ref" : "#/components/schemas/DigitalAddressCertifiableSchema"
+          },
+          "domicileAddress" : {
+            "$ref" : "#/components/schemas/DomicileAddressCertifiableSchema"
+          },
+          "domicileCountry" : {
+            "$ref" : "#/components/schemas/DomicileCountryCertifiableSchema"
+          },
+          "domicilePlace" : {
+            "$ref" : "#/components/schemas/DomicilePlaceCertifiableSchema"
+          },
+          "domicilePostalCode" : {
+            "$ref" : "#/components/schemas/DomicilePostalCodeCertifiableSchema"
+          },
+          "domicileProvince" : {
+            "$ref" : "#/components/schemas/DomicileProvinceCertifiableSchema"
           },
           "email" : {
             "$ref" : "#/components/schemas/EmailCertifiableSchema"
           },
+          "employeeNumber" : {
+            "$ref" : "#/components/schemas/EmployeeNumberCertifiableSchema"
+          },
+          "expirationDate" : {
+            "$ref" : "#/components/schemas/ExpirationDateCertifiableSchema"
+          },
           "familyName" : {
             "$ref" : "#/components/schemas/FamilyNameCertifiableSchema"
+          },
+          "gender" : {
+            "$ref" : "#/components/schemas/GenderCertifiableSchema"
+          },
+          "givenName" : {
+            "$ref" : "#/components/schemas/GivenNameCertifiableSchema"
           },
           "id" : {
             "type" : "string",
             "description" : "Person internal id",
             "format" : "uuid"
           },
+          "idCard" : {
+            "$ref" : "#/components/schemas/IdCardCertifiableSchema"
+          },
+          "ivaCode" : {
+            "$ref" : "#/components/schemas/IvaCodeCertifiableSchema"
+          },
+          "mobilePhone" : {
+            "$ref" : "#/components/schemas/MobilePhoneCertifiableSchema"
+          },
           "name" : {
             "$ref" : "#/components/schemas/NameCertifiableSchema"
+          },
+          "orgUnitName" : {
+            "$ref" : "#/components/schemas/OrgUnitNameCertifiableSchema"
+          },
+          "placeOfBirth" : {
+            "$ref" : "#/components/schemas/PlaceOfBirthCertifiableSchema"
+          },
+          "postalCode" : {
+            "$ref" : "#/components/schemas/PostalCodeCertifiableSchema"
+          },
+          "preferredLanguage" : {
+            "$ref" : "#/components/schemas/PreferredLanguageCertifiableSchema"
+          },
+          "preferredUsername" : {
+            "$ref" : "#/components/schemas/PreferredUsernameCertifiableSchema"
+          },
+          "qualification" : {
+            "$ref" : "#/components/schemas/QualificationCertifiableSchema"
+          },
+          "registeredOffice" : {
+            "$ref" : "#/components/schemas/RegisteredOfficeCertifiableSchema"
+          },
+          "spidCode" : {
+            "$ref" : "#/components/schemas/SpidCodeCertifiableSchema"
+          },
+          "stateOrProvince" : {
+            "$ref" : "#/components/schemas/StateOrProvinceCertifiableSchema"
+          },
+          "street" : {
+            "$ref" : "#/components/schemas/StreetCertifiableSchema"
+          },
+          "surname" : {
+            "$ref" : "#/components/schemas/SurnameCertifiableSchema"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/TitleCertifiableSchema"
+          },
+          "userCertificate" : {
+            "$ref" : "#/components/schemas/UserCertificateCertifiableSchema"
           },
           "workContacts" : {
             "type" : "object",
@@ -582,17 +678,113 @@
       "SavePersonDto" : {
         "type" : "object",
         "properties" : {
+          "address" : {
+            "$ref" : "#/components/schemas/AddressCertifiableSchema"
+          },
           "birthDate" : {
             "$ref" : "#/components/schemas/BirthDateCertifiableSchema"
+          },
+          "city" : {
+            "$ref" : "#/components/schemas/CityCertifiableSchema"
+          },
+          "commonName" : {
+            "$ref" : "#/components/schemas/CommonNameCertifiableSchema"
+          },
+          "companyName" : {
+            "$ref" : "#/components/schemas/CompanyNameCertifiableSchema"
+          },
+          "country" : {
+            "$ref" : "#/components/schemas/CountryCertifiableSchema"
+          },
+          "countyOfBirth" : {
+            "$ref" : "#/components/schemas/CountyOfBirthCertifiableSchema"
+          },
+          "digitalAddress" : {
+            "$ref" : "#/components/schemas/DigitalAddressCertifiableSchema"
+          },
+          "domicileAddress" : {
+            "$ref" : "#/components/schemas/DomicileAddressCertifiableSchema"
+          },
+          "domicileCountry" : {
+            "$ref" : "#/components/schemas/DomicileCountryCertifiableSchema"
+          },
+          "domicilePlace" : {
+            "$ref" : "#/components/schemas/DomicilePlaceCertifiableSchema"
+          },
+          "domicilePostalCode" : {
+            "$ref" : "#/components/schemas/DomicilePostalCodeCertifiableSchema"
+          },
+          "domicileProvince" : {
+            "$ref" : "#/components/schemas/DomicileProvinceCertifiableSchema"
           },
           "email" : {
             "$ref" : "#/components/schemas/EmailCertifiableSchema"
           },
+          "employeeNumber" : {
+            "$ref" : "#/components/schemas/EmployeeNumberCertifiableSchema"
+          },
+          "expirationDate" : {
+            "$ref" : "#/components/schemas/ExpirationDateCertifiableSchema"
+          },
           "familyName" : {
             "$ref" : "#/components/schemas/FamilyNameCertifiableSchema"
           },
+          "gender" : {
+            "$ref" : "#/components/schemas/GenderCertifiableSchema"
+          },
+          "givenName" : {
+            "$ref" : "#/components/schemas/GivenNameCertifiableSchema"
+          },
+          "idCard" : {
+            "$ref" : "#/components/schemas/IdCardCertifiableSchema"
+          },
+          "ivaCode" : {
+            "$ref" : "#/components/schemas/IvaCodeCertifiableSchema"
+          },
+          "mobilePhone" : {
+            "$ref" : "#/components/schemas/MobilePhoneCertifiableSchema"
+          },
           "name" : {
             "$ref" : "#/components/schemas/NameCertifiableSchema"
+          },
+          "orgUnitName" : {
+            "$ref" : "#/components/schemas/OrgUnitNameCertifiableSchema"
+          },
+          "placeOfBirth" : {
+            "$ref" : "#/components/schemas/PlaceOfBirthCertifiableSchema"
+          },
+          "postalCode" : {
+            "$ref" : "#/components/schemas/PostalCodeCertifiableSchema"
+          },
+          "preferredLanguage" : {
+            "$ref" : "#/components/schemas/PreferredLanguageCertifiableSchema"
+          },
+          "preferredUsername" : {
+            "$ref" : "#/components/schemas/PreferredUsernameCertifiableSchema"
+          },
+          "qualification" : {
+            "$ref" : "#/components/schemas/QualificationCertifiableSchema"
+          },
+          "registeredOffice" : {
+            "$ref" : "#/components/schemas/RegisteredOfficeCertifiableSchema"
+          },
+          "spidCode" : {
+            "$ref" : "#/components/schemas/SpidCodeCertifiableSchema"
+          },
+          "stateOrProvince" : {
+            "$ref" : "#/components/schemas/StateOrProvinceCertifiableSchema"
+          },
+          "street" : {
+            "$ref" : "#/components/schemas/StreetCertifiableSchema"
+          },
+          "surname" : {
+            "$ref" : "#/components/schemas/SurnameCertifiableSchema"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/TitleCertifiableSchema"
+          },
+          "userCertificate" : {
+            "$ref" : "#/components/schemas/UserCertificateCertifiableSchema"
           },
           "workContacts" : {
             "type" : "object",

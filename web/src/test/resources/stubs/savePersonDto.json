@@ -1,9 +1,5 @@
 {
-  "birthDate": {
-    "certification": "string",
-    "value": "2022-05-02"
-  },
-  "email": {
+  "name": {
     "certification": "string",
     "value": "string"
   },
@@ -11,28 +7,156 @@
     "certification": "string",
     "value": "string"
   },
-  "name": {
+  "email": {
     "certification": "string",
     "value": "string"
+  },
+  "birthDate": {
+    "certification": "string",
+    "value": "2022-05-02"
   },
   "workContacts": {
     "additionalProp1": {
       "email": {
         "certification": "string",
         "value": "string"
-      }
-    },
-    "additionalProp2": {
-      "email": {
+      },
+      "mobilePhone": {
         "certification": "string",
         "value": "string"
-      }
-    },
-    "additionalProp3": {
-      "email": {
+      },
+      "telephone": {
         "certification": "string",
         "value": "string"
       }
     }
+  },
+  "spidCode": {
+    "certification": "string",
+    "value": "string"
+  },
+  "placeOfBirth": {
+    "certification": "string",
+    "value": "string"
+  },
+  "countyOfBirth": {
+    "certification": "string",
+    "value": "string"
+  },
+  "gender": {
+    "certification": "string",
+    "value": "string"
+  },
+  "companyName": {
+    "certification": "string",
+    "value": "string"
+  },
+  "registeredOffice": {
+    "certification": "string",
+    "value": "string"
+  },
+  "ivaCode": {
+    "certification": "string",
+    "value": "string"
+  },
+  "idCard": {
+    "certification": "string",
+    "value": "string"
+  },
+  "mobilePhone": {
+    "certification": "string",
+    "value": "string"
+  },
+  "address": {
+    "certification": "string",
+    "value": "string"
+  },
+  "expirationDate": {
+    "certification": "string",
+    "value": "2022-05-02"
+  },
+  "digitalAddress": {
+    "certification": "string",
+    "value": "string"
+  },
+  "domicileAddress": {
+    "certification": "string",
+    "value": "string"
+  },
+  "domicilePlace": {
+    "certification": "string",
+    "value": "string"
+  },
+  "domicilePostalCode": {
+    "certification": "string",
+    "value": "string"
+  },
+  "domicileProvince": {
+    "certification": "string",
+    "value": "string"
+  },
+  "domicileCountry": {
+    "certification": "string",
+    "value": "string"
+  },
+  "qualification": {
+    "certification": "string",
+    "value": "string"
+  },
+  "commonName": {
+    "certification": "string",
+    "value": "string"
+  },
+  "surname": {
+    "certification": "string",
+    "value": "string"
+  },
+  "givenName": {
+    "certification": "string",
+    "value": "string"
+  },
+  "preferredUsername": {
+    "certification": "string",
+    "value": "string"
+  },
+  "title": {
+    "certification": "string",
+    "value": "string"
+  },
+  "userCertificate": {
+    "certification": "string",
+    "value": "string"
+  },
+  "employeeNumber": {
+    "certification": "string",
+    "value": "string"
+  },
+  "orgUnitName": {
+    "certification": "string",
+    "value": "string"
+  },
+  "preferredLanguage": {
+    "certification": "string",
+    "value": "string"
+  },
+  "country": {
+    "certification": "string",
+    "value": "string"
+  },
+  "stateOrProvince": {
+    "certification": "string",
+    "value": "string"
+  },
+  "city": {
+    "certification": "string",
+    "value": "string"
+  },
+  "postalCode": {
+    "certification": "string",
+    "value": "string"
+  },
+  "street": {
+    "certification": "string",
+    "value": "string"
   }
 }
