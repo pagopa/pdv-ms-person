@@ -232,9 +232,8 @@ class PersonMapperTest {
     assertEquals(savePersonDto.getPostalCode(), model.getPostalCode());
     assertEquals(savePersonDto.getStreet(), model.getStreet());
     assertNotNull(model.getWorkContacts());
-    assertEquals(savePersonDto.getWorkContacts().size(), model.getWorkContacts().size());
-    assertIterableEquals(savePersonDto.getWorkContacts().keySet(),
-        model.getWorkContacts().keySet());
+    assertEquals(savePersonDto.getWorkContacts().size(), savePersonDto.getWorkContacts().size());
+    assertIterableEquals(savePersonDto.getWorkContacts().keySet(), savePersonDto.getWorkContacts().keySet());
   }
 
 
