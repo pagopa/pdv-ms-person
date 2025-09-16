@@ -455,6 +455,472 @@
         },
         "required" : [ "certification", "value" ]
       },
+      "AddressCertifiableSchema": {
+        "type": "object",
+        "description": "Person address",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "CityCertifiableSchema": {
+        "type": "object",
+        "description": "Person city",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "CommonNameCertifiableSchema": {
+        "type": "object",
+        "description": "Person common name",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "CompanyNameCertifiableSchema": {
+        "type": "object",
+        "description": "Person company name",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "CountryCertifiableSchema": {
+        "type": "object",
+        "description": "Person country",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "CountyOfBirthCertifiableSchema": {
+        "type": "object",
+        "description": "Person county of birth",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "DigitalAddressCertifiableSchema": {
+        "type": "object",
+        "description": "Person digital address",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "DomicileAddressCertifiableSchema": {
+        "type": "object",
+        "description": "Person domicile address",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "DomicileCountryCertifiableSchema": {
+        "type": "object",
+        "description": "Person domicile country",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "DomicilePlaceCertifiableSchema": {
+        "type": "object",
+        "description": "Person domicile place",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "DomicilePostalCodeCertifiableSchema": {
+        "type": "object",
+        "description": "Person domicile postal code",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "DomicileProvinceCertifiableSchema": {
+        "type": "object",
+        "description": "Person domicile province",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "EmployeeNumberCertifiableSchema": {
+        "type": "object",
+        "description": "Person employee number",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "ExpirationDateCertifiableSchema": {
+        "type": "object",
+        "description": "Person expiration date",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value",
+            "format": "date"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "GenderCertifiableSchema": {
+        "type": "object",
+        "description": "Person gender",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "GivenNameCertifiableSchema": {
+        "type": "object",
+        "description": "Person given name",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "IdCardCertifiableSchema": {
+        "type": "object",
+        "description": "Person id card",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "IvaCodeCertifiableSchema": {
+        "type": "object",
+        "description": "Person IVA code",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "OrgUnitNameCertifiableSchema": {
+        "type": "object",
+        "description": "Person organization unit name",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "PlaceOfBirthCertifiableSchema": {
+        "type": "object",
+        "description": "Person place of birth",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "PostalCodeCertifiableSchema": {
+        "type": "object",
+        "description": "Person postal code",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "PreferredLanguageCertifiableSchema": {
+        "type": "object",
+        "description": "Person preferred language",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "PreferredUsernameCertifiableSchema": {
+        "type": "object",
+        "description": "Person preferred username",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "QualificationCertifiableSchema": {
+        "type": "object",
+        "description": "Person qualification",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "RegisteredOfficeCertifiableSchema": {
+        "type": "object",
+        "description": "Person registered office",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "SpidCodeCertifiableSchema": {
+        "type": "object",
+        "description": "Person SPID code",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "StateOrProvinceCertifiableSchema": {
+        "type": "object",
+        "description": "Person state or province",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "StreetCertifiableSchema": {
+        "type": "object",
+        "description": "Person street",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "SurnameCertifiableSchema": {
+        "type": "object",
+        "description": "Person surname",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "TitleCertifiableSchema": {
+        "type": "object",
+        "description": "Person title",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
+      "UserCertificateCertifiableSchema": {
+        "type": "object",
+        "description": "Person user certificate",
+        "properties": {
+          "certification": {
+            "type": "string",
+            "description": "Certified source of information"
+          },
+          "value": {
+            "type": "string",
+            "description": "Field value"
+          }
+        },
+        "required": ["certification", "value"]
+      },
       "InvalidParam" : {
         "required" : [ "name", "reason" ],
         "type" : "object",
@@ -515,22 +981,118 @@
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
+          "address" : {
+            "$ref" : "#/components/schemas/AddressCertifiableSchema"
+          },
           "birthDate" : {
             "$ref" : "#/components/schemas/BirthDateCertifiableSchema"
+          },
+          "city" : {
+            "$ref" : "#/components/schemas/CityCertifiableSchema"
+          },
+          "commonName" : {
+            "$ref" : "#/components/schemas/CommonNameCertifiableSchema"
+          },
+          "companyName" : {
+            "$ref" : "#/components/schemas/CompanyNameCertifiableSchema"
+          },
+          "country" : {
+            "$ref" : "#/components/schemas/CountryCertifiableSchema"
+          },
+          "countyOfBirth" : {
+            "$ref" : "#/components/schemas/CountyOfBirthCertifiableSchema"
+          },
+          "digitalAddress" : {
+            "$ref" : "#/components/schemas/DigitalAddressCertifiableSchema"
+          },
+          "domicileAddress" : {
+            "$ref" : "#/components/schemas/DomicileAddressCertifiableSchema"
+          },
+          "domicileCountry" : {
+            "$ref" : "#/components/schemas/DomicileCountryCertifiableSchema"
+          },
+          "domicilePlace" : {
+            "$ref" : "#/components/schemas/DomicilePlaceCertifiableSchema"
+          },
+          "domicilePostalCode" : {
+            "$ref" : "#/components/schemas/DomicilePostalCodeCertifiableSchema"
+          },
+          "domicileProvince" : {
+            "$ref" : "#/components/schemas/DomicileProvinceCertifiableSchema"
           },
           "email" : {
             "$ref" : "#/components/schemas/EmailCertifiableSchema"
           },
+          "employeeNumber" : {
+            "$ref" : "#/components/schemas/EmployeeNumberCertifiableSchema"
+          },
+          "expirationDate" : {
+            "$ref" : "#/components/schemas/ExpirationDateCertifiableSchema"
+          },
           "familyName" : {
             "$ref" : "#/components/schemas/FamilyNameCertifiableSchema"
+          },
+          "gender" : {
+            "$ref" : "#/components/schemas/GenderCertifiableSchema"
+          },
+          "givenName" : {
+            "$ref" : "#/components/schemas/GivenNameCertifiableSchema"
           },
           "id" : {
             "type" : "string",
             "description" : "Person internal id",
             "format" : "uuid"
           },
+          "idCard" : {
+            "$ref" : "#/components/schemas/IdCardCertifiableSchema"
+          },
+          "ivaCode" : {
+            "$ref" : "#/components/schemas/IvaCodeCertifiableSchema"
+          },
+          "mobilePhone" : {
+            "$ref" : "#/components/schemas/MobilePhoneCertifiableSchema"
+          },
           "name" : {
             "$ref" : "#/components/schemas/NameCertifiableSchema"
+          },
+          "orgUnitName" : {
+            "$ref" : "#/components/schemas/OrgUnitNameCertifiableSchema"
+          },
+          "placeOfBirth" : {
+            "$ref" : "#/components/schemas/PlaceOfBirthCertifiableSchema"
+          },
+          "postalCode" : {
+            "$ref" : "#/components/schemas/PostalCodeCertifiableSchema"
+          },
+          "preferredLanguage" : {
+            "$ref" : "#/components/schemas/PreferredLanguageCertifiableSchema"
+          },
+          "preferredUsername" : {
+            "$ref" : "#/components/schemas/PreferredUsernameCertifiableSchema"
+          },
+          "qualification" : {
+            "$ref" : "#/components/schemas/QualificationCertifiableSchema"
+          },
+          "registeredOffice" : {
+            "$ref" : "#/components/schemas/RegisteredOfficeCertifiableSchema"
+          },
+          "spidCode" : {
+            "$ref" : "#/components/schemas/SpidCodeCertifiableSchema"
+          },
+          "stateOrProvince" : {
+            "$ref" : "#/components/schemas/StateOrProvinceCertifiableSchema"
+          },
+          "street" : {
+            "$ref" : "#/components/schemas/StreetCertifiableSchema"
+          },
+          "surname" : {
+            "$ref" : "#/components/schemas/SurnameCertifiableSchema"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/TitleCertifiableSchema"
+          },
+          "userCertificate" : {
+            "$ref" : "#/components/schemas/UserCertificateCertifiableSchema"
           },
           "workContacts" : {
             "type" : "object",
@@ -582,17 +1144,113 @@
       "SavePersonDto" : {
         "type" : "object",
         "properties" : {
+          "address" : {
+            "$ref" : "#/components/schemas/AddressCertifiableSchema"
+          },
           "birthDate" : {
             "$ref" : "#/components/schemas/BirthDateCertifiableSchema"
+          },
+          "city" : {
+            "$ref" : "#/components/schemas/CityCertifiableSchema"
+          },
+          "commonName" : {
+            "$ref" : "#/components/schemas/CommonNameCertifiableSchema"
+          },
+          "companyName" : {
+            "$ref" : "#/components/schemas/CompanyNameCertifiableSchema"
+          },
+          "country" : {
+            "$ref" : "#/components/schemas/CountryCertifiableSchema"
+          },
+          "countyOfBirth" : {
+            "$ref" : "#/components/schemas/CountyOfBirthCertifiableSchema"
+          },
+          "digitalAddress" : {
+            "$ref" : "#/components/schemas/DigitalAddressCertifiableSchema"
+          },
+          "domicileAddress" : {
+            "$ref" : "#/components/schemas/DomicileAddressCertifiableSchema"
+          },
+          "domicileCountry" : {
+            "$ref" : "#/components/schemas/DomicileCountryCertifiableSchema"
+          },
+          "domicilePlace" : {
+            "$ref" : "#/components/schemas/DomicilePlaceCertifiableSchema"
+          },
+          "domicilePostalCode" : {
+            "$ref" : "#/components/schemas/DomicilePostalCodeCertifiableSchema"
+          },
+          "domicileProvince" : {
+            "$ref" : "#/components/schemas/DomicileProvinceCertifiableSchema"
           },
           "email" : {
             "$ref" : "#/components/schemas/EmailCertifiableSchema"
           },
+          "employeeNumber" : {
+            "$ref" : "#/components/schemas/EmployeeNumberCertifiableSchema"
+          },
+          "expirationDate" : {
+            "$ref" : "#/components/schemas/ExpirationDateCertifiableSchema"
+          },
           "familyName" : {
             "$ref" : "#/components/schemas/FamilyNameCertifiableSchema"
           },
+          "gender" : {
+            "$ref" : "#/components/schemas/GenderCertifiableSchema"
+          },
+          "givenName" : {
+            "$ref" : "#/components/schemas/GivenNameCertifiableSchema"
+          },
+          "idCard" : {
+            "$ref" : "#/components/schemas/IdCardCertifiableSchema"
+          },
+          "ivaCode" : {
+            "$ref" : "#/components/schemas/IvaCodeCertifiableSchema"
+          },
+          "mobilePhone" : {
+            "$ref" : "#/components/schemas/MobilePhoneCertifiableSchema"
+          },
           "name" : {
             "$ref" : "#/components/schemas/NameCertifiableSchema"
+          },
+          "orgUnitName" : {
+            "$ref" : "#/components/schemas/OrgUnitNameCertifiableSchema"
+          },
+          "placeOfBirth" : {
+            "$ref" : "#/components/schemas/PlaceOfBirthCertifiableSchema"
+          },
+          "postalCode" : {
+            "$ref" : "#/components/schemas/PostalCodeCertifiableSchema"
+          },
+          "preferredLanguage" : {
+            "$ref" : "#/components/schemas/PreferredLanguageCertifiableSchema"
+          },
+          "preferredUsername" : {
+            "$ref" : "#/components/schemas/PreferredUsernameCertifiableSchema"
+          },
+          "qualification" : {
+            "$ref" : "#/components/schemas/QualificationCertifiableSchema"
+          },
+          "registeredOffice" : {
+            "$ref" : "#/components/schemas/RegisteredOfficeCertifiableSchema"
+          },
+          "spidCode" : {
+            "$ref" : "#/components/schemas/SpidCodeCertifiableSchema"
+          },
+          "stateOrProvince" : {
+            "$ref" : "#/components/schemas/StateOrProvinceCertifiableSchema"
+          },
+          "street" : {
+            "$ref" : "#/components/schemas/StreetCertifiableSchema"
+          },
+          "surname" : {
+            "$ref" : "#/components/schemas/SurnameCertifiableSchema"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/TitleCertifiableSchema"
+          },
+          "userCertificate" : {
+            "$ref" : "#/components/schemas/UserCertificateCertifiableSchema"
           },
           "workContacts" : {
             "type" : "object",
